@@ -1,6 +1,5 @@
 <?php
 /*
- Plugin Name: Open Graph
  Plugin URI: http://wordpress.org/extend/plugins/opengraph
  Description: Adds Open Graph metadata to your pages
  Author: Will Norris, patches and updates by Casey Bisson
@@ -107,7 +106,12 @@ function opengraph_default_type( $type = '' )
 function opengraph_default_image( $image = '' )
 {
 	global $wp_query;
-	if ( is_singular() && empty($image) && current_theme_supports('post-thumbnails') && has_post_thumbnail($wp_query->queried_object_id) )
+	if ( 
+		is_singular() && // only operate on single posts or pages, not the front page of the site
+		empty( $image ) && // don't replace the image if one is already set
+		current_theme_supports( 'post-thumbnails' ) && // only attempt to get the post thumbnail if the theme supports them
+		has_post_thumbnail( $wp_query->queried_object_id ) // only set the meta if we have a thumbnail
+	)
 	{
 		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $wp_query->queried_object_id ), 'post-thumbnail');
 		if ($thumbnail)
