@@ -19,7 +19,7 @@ class bSocial_FacebookApi
 
 		add_filter( 'opengraph_metadata' , 'opengraph_metadata' );
 		add_filter( 'language_attributes' , 'add_namespace' );
-		add_action( 'get_footer' , 'inject_js' );
+		add_action( 'print_footer_scripts' , 'inject_js' );
 		add_filter( 'the_content' , 'inject_like_button' );
 	}
 
