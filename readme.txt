@@ -22,7 +22,7 @@ More social, more fun; a better connected blog.
 
 = History =
 
-The bSocial plugin is derived from bSuite and includes many of the social features and none of the cruft from that plugin. See <a href="http://wordpress.org/extend/plugins/tags/facebook">the whole family of bSuite plugins</a>.
+The bSocial plugin is derived from bSuite and includes many of the social features and none of the cruft from that plugin. See <a href="http://wordpress.org/extend/plugins/tags/bsuite">the whole family of bSuite plugins</a>.
 
 == Installation ==
 
