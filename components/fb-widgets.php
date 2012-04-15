@@ -66,11 +66,30 @@ class Widget_FB_Like extends WP_Widget
 
 		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'] );
 		
+		switch( $instance['context'] )
+		{
+			case 'page':
+				if( is_singular() ) // get clean URLs on single post pages
+				{
+					wp_reset_query(); // reset the query for good luck
+					$url = get_permalink( get_queried_object_id() ); // get the permalink to the requested page
+				}
+				else // use the current URL for any other page
+				{
+					$url = ''; // empty URL 
+				}
+				break;
+
+			case 'site':
+			default:
+				$url = trailingslashit( home_url() );
+		}
+
 		echo $before_widget . $before_title . $title . $after_title;
 ?>
 		<span id="fb_activity_like">
-			<fb:like ref="top_activity" width="50" show_faces="false" send="false" layout="box_count" href="<?php echo trailingslashit( site_url() ); ?>" font="segoe ui"></fb:like>
-			<fb:facepile href="<?php echo trailingslashit( site_url() ); ?>" width="225" max_rows="1"  font="segoe ui"></fb:facepile>
+			<fb:like ref="top_activity" width="50" show_faces="false" send="false" layout="box_count" href="<?php echo $url; ?>" font="segoe ui"></fb:like>
+			<fb:facepile href="<?php echo $url; ?>" width="225" max_rows="1"  font="segoe ui"></fb:facepile>
 		</span>
 <?php
 		echo $after_widget;
@@ -80,6 +99,7 @@ class Widget_FB_Like extends WP_Widget
 	{
 		$instance = $old_instance;
 		$instance['title'] = wp_filter_nohtml_kses( $new_instance['title'] );
+		$instance['context'] = in_array( $new_instance['context'], array( 'site', 'page' )) ? $new_instance['context'] : 'site';
 
 		return $instance;
 	}
@@ -90,13 +110,22 @@ class Widget_FB_Like extends WP_Widget
 		$instance = wp_parse_args( (array) $instance, 
 			array( 
 				'title' => 'Find Us On Facebook', 
+				'context' => 'site', 
 			)
 		);
 
 		$title = esc_attr( $instance['title'] );
 ?>
 		<p>
-			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
+		</p>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('context'); ?>"><?php _e( 'Like what:' ); ?></label>
+			<select name="<?php echo $this->get_field_name('context'); ?>" id="<?php echo $this->get_field_id('context'); ?>" class="widefat">
+				<option value="site"<?php selected( $instance['context'], 'site' ); ?>><?php _e('This site'); ?></option>
+				<option value="page"<?php selected( $instance['context'], 'page' ); ?>><?php _e('The current page'); ?></option>
+			</select>
 		</p>
 <?php
 	}
