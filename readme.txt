@@ -1,7 +1,7 @@
 === bCMS ===
 Contributors: misterbisson
 Donate link: http://MaisonBisson.com/
-Tags: social, social networks, comments, Facebook, Twitter, widgets, featured comments, social proof
+Tags: bSuite, social, social networks, comments, Facebook, Twitter, widgets, featured comments, social proof
 Requires at least: 3.3
 Tested up to: 3.3.1
 Stable tag: trunk
@@ -22,7 +22,7 @@ More social, more fun; a better connected blog.
 
 = History =
 
-The bSocial plugin is derived from bSuite and includes many of the social features and none of the cruft from that plugin.
+The bSocial plugin is derived from bSuite and includes many of the social features and none of the cruft from that plugin. See <a href="http://wordpress.org/extend/plugins/tags/facebook">the whole family of bSuite plugins</a>.
 
 == Installation ==
 
