@@ -30,7 +30,7 @@ The bSocial plugin is derived from bSuite and includes many of the social featur
 
 == Screenshots ==
 
-1. bSocial includes the JS SDKs you need to add social buttons for Twitter and Facebook.
+1. bSocial includes the JS SDKs you need to add social buttons for Twitter and Facebook, as seen on <a href="http://musictotakeyourclothesoffto.com/blog/lets-get-it-on/">Tease.FM</a>.
 2. Easily add many Facebook widgets.
 3. Incorporate conversations in Twitter and Facebook into your WordPress-native comment stream.
 4. The <a href="http://developers.facebook.com/tools/debug/og/object?q=http%3A%2F%2Fgigaom.com%2Feurope%2Fstudents-force-facebook-to-cough-up-more-user-data%2F">Open Graph metadata</a> improves sharing and discoverability of your site.
