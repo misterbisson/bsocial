@@ -8,22 +8,19 @@ Author: Casey Bisson
 Author URI: http://maisonbisson.com/blog/
 */
 
-$bsoptions = array(
-	'twitter-api' => 1,
-	'twitter-comments' => 1,
-	'facebook-api' => 1,
-	'facebook-comments' => 1,
-);
+$bsoptions = get_option('bsocial-options');
 
 // the admin menu
-//if ( is_admin() )
-//	require_once dirname( __FILE__ ) . '/admin.php';
+if ( is_admin() )
+	require_once dirname( __FILE__ ) . '/admin.php';
 
 // Better describe your content to social sites
-require_once( dirname( __FILE__ ) .'/components/open-graph.php' );
+if( $bsoptions['open-graph'] )
+	require_once( dirname( __FILE__ ) .'/components/open-graph.php' );
 
 // Feature your comments
-require_once( dirname( __FILE__ ) .'/components/featured-comments.php' );
+if( $bsoptions['featured-comments'] )
+	require_once( dirname( __FILE__ ) .'/components/featured-comments.php' );
 
 // Components shared by both Twitter API and Facebook Comments
 if( $bsoptions['twitter-api'] || $bsoptions['facebook-comments'] )
@@ -33,24 +30,29 @@ if( $bsoptions['twitter-api'] || $bsoptions['facebook-comments'] )
 if( $bsoptions['twitter-api'] )
 {
 	require_once( dirname( __FILE__ ) .'/components/twitter-api.php' );
-	new bSocial_TwitterApi;
+	$twitter_api = new bSocial_TwitterApi;
+	$twitter_api->app_id = $bsoptions['twitter-app_id'];
 
 	if( $bsoptions['twitter-comments'] )
 		require_once( dirname( __FILE__ ) .'/components/twitter-comments.php' );
 }	
 
 // Facebook components
-if( $bsoptions['facebook-api'] )
+if( $bsoptions['facebook-api'] && $bsoptions['facebook-app_id'] )
 {
 	require_once( dirname( __FILE__ ) .'/components/fb-api.php' );
-	new bSocial_FacebookApi;
+	$facebook_api = new bSocial_FacebookApi;
+	$facebook_api->admins = $bsoptions['facebook-admins'];
+	$facebook_api->app_id = $bsoptions['facebook-app_id'];
 
 	require_once( dirname( __FILE__ ) .'/components/fb-widgets.php' );
 
-	if( $bsoptions['facebook-comments'] )
+	if( $bsoptions['facebook-comments'] && $bsoptions['facebook-secret'])
 	{
 		require_once( dirname( __FILE__ ) .'/components/fb-comments.php' );
-		new bSocial_FacebookComments;
+		$facebook_comments = new bSocial_FacebookComments;
+		$facebook_comments->app_id = $bsoptions['facebook-app_id'];
+		$facebook_comments->app_secret = $bsoptions['facebook-secret'];
 	}
 }
 

@@ -9,7 +9,11 @@ class bSocial_TwitterApi
 {
 	function __construct()
 	{
-		$this->app_id = TWTTR_APP_ID;
+
+		/*
+		* be sure to set the app ID after instantiating the object
+		* $this->app_id = TWTTR_APP_ID;
+		*/
 
 		add_action( 'init' , array( $this , 'init' ));
 	}
@@ -38,6 +42,7 @@ class bSocial_TwitterApi
 
 	function inject_js()
 	{
+//	print_r( $this );
 ?>
 		<script type="text/javascript">	
 <?php 

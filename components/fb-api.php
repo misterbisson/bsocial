@@ -5,8 +5,12 @@ class bSocial_FacebookApi
 
 	function __construct()
 	{
-		$this->admins = FBJS_ADMINS;
-		$this->app_id = FBJS_APP_ID;
+		/*
+		* be sure to set the app ID and admins after instantiating the object
+		* $this->app_id = FBJS_APP_ID;
+		* $this->admins = FBJS_ADMINS;
+		*/
+
 		$this->namespace = 'http://www.facebook.com/2008/fbml';
 
 		add_action( 'init' , array( $this , 'init' ));

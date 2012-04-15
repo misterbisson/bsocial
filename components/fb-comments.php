@@ -11,8 +11,12 @@ class bSocial_FacebookComments
 {
 	function __construct()
 	{
-		$this->app_id = FBJS_APP_ID;
-		$this->app_secret = FBJS_APP_SECRET;
+
+		/*
+		* be sure to set the app ID and secret after instantiating the object
+		* $this->app_id = FBJS_APP_ID;
+		* $this->app_secret = FBJS_APP_SECRET;
+		*/
 
 		add_action( 'init' , array( $this , 'init' ));
 	}
