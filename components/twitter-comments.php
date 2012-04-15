@@ -16,7 +16,7 @@ function ingest_twitter_comments()
 	$tz_offset = get_option('gmt_offset'); // get the timezone offset
 
 	// get a new search object
-	$twitter_search = new Twitter_Search;
+	$twitter_search = bSocial_TwitterApi::new_search();
 	$home_url = preg_replace( '|https?://|' , '' , home_url() );
 
 	// run with it
@@ -74,6 +74,7 @@ function ingest_twitter_comments()
 			'comment_author_url' => 'http://twitter.com/'. $tweet->from_user->screen_name,
 			'comment_content' => $tweet->text,
 			'comment_type' => 'tweet',
+			'comment_date_gmt' => date('Y-m-d H:i:s', strtotime( $tweet->created_at )),
 			'comment_date' => date('Y-m-d H:i:s', strtotime( $tweet->created_at ) + (3600 * $tz_offset)),
 		);
 
@@ -98,7 +99,7 @@ function ingest_twitter_comments()
 	update_option( 'bsuite_twitter_comments' , $twitter_search->api_response->max_id_str );
 
 	// delete the dummy comment meta we used to prime HyperDB earlier
-	add_comment_meta( 1 , 'bsuite_twitter_comments' );
+	delete_comment_meta( 1 , 'bsuite_twitter_comments' );
 
 }
 add_action( 'ingest_twitter_comments' , 'ingest_twitter_comments' );
