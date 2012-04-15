@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: bSocial
+Plugin Name: bSocial Connected Blogging Tools
 Plugin URI: http://maisonbisson.com/bsuite/
-Description: .
+Description: Social widgets and connectivity.
 Version: 5.0
 Author: Casey Bisson
 Author URI: http://maisonbisson.com/blog/
