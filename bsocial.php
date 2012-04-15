@@ -8,7 +8,28 @@ Author: Casey Bisson
 Author URI: http://maisonbisson.com/blog/
 */
 
+// get options
 $bsoptions = get_option('bsocial-options');
+
+// insert default options if the options array is empty
+if( empty( $bsoptions ))
+{
+	$bsoptions = array( 
+		'open-graph' => 1,
+		'featured-comments' => 1,
+		'twitter-api' => 1,
+		'twitter-comments' => 1,
+		'twitter-app_id' => '',
+		'facebook-api' => 1,
+		'facebook-add_button' => 1,
+		'facebook-comments' => 0,
+		'facebook-admins' => '',
+		'facebook-app_id' => '',
+		'facebook-secret' => '',
+	);
+
+	update_option( 'bsocial-options' , $bsoptions );
+}
 
 // the admin menu
 if ( is_admin() )
@@ -42,6 +63,7 @@ if( $bsoptions['facebook-api'] && $bsoptions['facebook-app_id'] )
 {
 	require_once( dirname( __FILE__ ) .'/components/facebook-api.php' );
 	$facebook_api = new bSocial_FacebookApi;
+	$facebook_api->options->add_like_button = $bsoptions['facebook-add_button'];
 	$facebook_api->admins = $bsoptions['facebook-admins'];
 	$facebook_api->app_id = $bsoptions['facebook-app_id'];
 

@@ -32,12 +32,13 @@ function bsocial_sanitize_options( $input )
 
 	// filter the values so we only store known items
 	$input = wp_parse_args( (array) $input , array(
-		'open-graph' => 1,
-		'featured-comments' => 1,
-		'twitter-api' => 1,
-		'twitter-comments' => 1,
+		'open-graph' => 0,
+		'featured-comments' => 0,
+		'twitter-api' => 0,
+		'twitter-comments' => 0,
 		'twitter-app_id' => '',
-		'facebook-api' => 1,
+		'facebook-api' => 0,
+		'facebook-add_button' => 0,
 		'facebook-comments' => 0,
 		'facebook-admins' => '',
 		'facebook-app_id' => '',
@@ -51,6 +52,7 @@ function bsocial_sanitize_options( $input )
 		'twitter-api',
 		'twitter-comments',
 		'facebook-api',
+		'facebook-add_button',
 		'facebook-comments',
 	) as $key )
 		$input[ $key ] = absint( $input[ $key ] );
@@ -98,6 +100,10 @@ function bsocial_options()
 
 			<tr valign="top"><th scope="row">Activate Facebook components</th>
 				<td><input name="bsocial-options[facebook-api]" type="checkbox" value="1" <?php checked( '1' , $options['facebook-api']); ?> /></td>
+			</tr>
+
+			<tr valign="top"><th scope="row">Add a Facebook like button to every post</th>
+				<td><input name="bsocial-options[facebook-add_button]" type="checkbox" value="1" <?php checked( '1' , $options['facebook-add_button']); ?> /></td>
 			</tr>
 
 			<tr valign="top"><th scope="row">Facebook admin IDs</th>

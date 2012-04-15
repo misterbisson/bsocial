@@ -13,6 +13,8 @@ class bSocial_FacebookApi
 
 		$this->namespace = 'http://www.facebook.com/2008/fbml';
 
+		$this->options->add_like_button = FALSE;
+
 		add_action( 'init' , array( $this , 'init' ));
 	}
 
@@ -24,7 +26,9 @@ class bSocial_FacebookApi
 		add_filter( 'opengraph_metadata' , array( $this , 'opengraph_metadata' ));
 		add_filter( 'language_attributes' , array( $this , 'add_namespace' ));
 		add_action( 'print_footer_scripts' , array( $this , 'inject_js' ));
-		add_filter( 'the_content' , array( $this , 'inject_like_button' ));
+
+		if( $this->options->add_like_button )
+			add_filter( 'the_content' , array( $this , 'inject_like_button' ));
 	}
 
 	function opengraph_metadata( $properties )
