@@ -41,7 +41,12 @@ if( $bsoptions['open-graph'] )
 
 // Feature your comments
 if( $bsoptions['featured-comments'] )
+{
 	require_once( dirname( __FILE__ ) .'/components/featured-comments.php' );
+	$featured_comments = new bSuite_FeaturedComments;
+	$featured_comments->use_comment_date = TRUE;
+	$featured_comments->add_to_waterfall = TRUE;
+}
 
 // Components shared by both Twitter API and Facebook Comments
 if( $bsoptions['twitter-api'] || $bsoptions['facebook-comments'] )

@@ -2,12 +2,16 @@
 class bSuite_FeaturedComments
 {
 
+	// options that can be changed (it's best to change them in the bootstrapper)
+	var $use_comment_date = TRUE;
+	var $add_to_waterfall = TRUE;
+
+	// don't mess with these
 	var $id_base = 'bsuite-fcomment';
 	var $post_type_name = 'bsuite-fcomment';
 	var $meta_key = 'bsuite-fcomment';
 	var $tag_regex = '/\[\/?featured_?comment\]/i'; // just match the single tag to make it easy to remove
 	var $wrapper_regex = '/\[featured_?comment\](.*?)\[\/?featured_?comment\]/i'; // match the content inside the tags
-	var $use_comment_date = TRUE;
 	var $enqueued_admin_js = FALSE;
 
 	function __construct()
@@ -47,7 +51,7 @@ class bSuite_FeaturedComments
 	function pre_get_posts( $query )
 	{
 
-		if( ! is_admin() && $query->is_main_query() )
+		if( $this->add_to_waterfall ! is_admin() && $query->is_main_query() )
 		{
 
 			$post_types = array_merge( 
@@ -348,7 +352,6 @@ class bSuite_FeaturedComments
 
 
 }//end bSuite_FeaturedComments class
-new bSuite_FeaturedComments;
 
 
 
