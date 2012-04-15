@@ -11,7 +11,7 @@ class bSocial_TwitterApi
 	{
 		$this->app_id = TWTTR_APP_ID;
 
-		add_action( 'init' , 'init' );
+		add_action( 'init' , array( $this , 'init' ));
 	}
 
 	function init()
@@ -19,7 +19,7 @@ class bSocial_TwitterApi
 		if( is_admin() )
 			return;
 
-		add_action( 'print_footer_scripts' , 'inject_js' );
+		add_action( 'print_footer_scripts' , array( $this , 'inject_js' ));
 	}
 
 	function new_search()
