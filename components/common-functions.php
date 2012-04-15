@@ -115,6 +115,20 @@ function json_int_to_string( $string )
 	return preg_replace( '/:(\d+)/' , ':"${1}"' , $string );
 }
 
+function new_twitter_search()
+{
+	require_once( dirname( __FILE__ ) .'/twitter-streams.php' );
+
+	return new Twitter_Search;
+}
+
+function new_twitter_user_stream()
+{
+	require_once( dirname( __FILE__ ) .'/twitter-streams.php' );
+
+	return new Twitter_User_Stream;
+}
+
 // Show cron array for debugging
 function show_cron()
 {

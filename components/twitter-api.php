@@ -26,23 +26,8 @@ class bSocial_TwitterApi
 		add_action( 'print_footer_scripts' , array( $this , 'inject_js' ));
 	}
 
-	function new_search()
-	{
-		require_once( dirname( __FILE__ ) .'/twitter-streams.php' );
-
-		return new Twitter_Search;
-	}
-
-	function new_user_stream()
-	{
-		require_once( dirname( __FILE__ ) .'/twitter-streams.php' );
-
-		return new Twitter_User_Stream;
-	}
-
 	function inject_js()
 	{
-//	print_r( $this );
 ?>
 		<script type="text/javascript">	
 <?php 
