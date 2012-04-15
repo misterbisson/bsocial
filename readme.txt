@@ -1,4 +1,4 @@
-=== bCMS ===
+=== bSocial ===
 Contributors: misterbisson
 Donate link: http://MaisonBisson.com/
 Tags: bSuite, social, social networks, comments, Facebook, Twitter, widgets, featured comments, social proof
