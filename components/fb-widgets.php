@@ -1,12 +1,90 @@
 <?php
 
+class Widget_FB_Comments extends WP_Widget
+{
+
+	function Widget_FB_Comments()
+	{
+		$widget_ops = array('classname' => 'widget_fb_comments', 'description' => __( 'Displays Facebook comments') );
+		$this->WP_Widget('fb_comments', __('Facebook Comments (bSocial)'), $widget_ops);
+	}
+
+	function widget( $args, $instance )
+	{
+		extract( $args );
+
+		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'] );
+		if( is_singular() ) // get clean URLs on single post pages
+		{
+			wp_reset_query(); // reset the query for good luck
+			$url = 'data-href="'. get_permalink( get_queried_object_id() ) .'"'; // get the permalink to the requested page
+		}
+		else // use the current URL for any other page
+		{
+			$url = ''; // empty URL 
+		}
+
+		echo $before_widget . $before_title . $title . $after_title;
+?>
+		<div class="fb-comments" <?php echo $url; ?> data-num-posts="<?php echo $instance['comments'] ?>" data-width="<?php echo $instance['width'] ?>" data-colorscheme="<?php echo $instance['colorscheme'] ?>"></div>
+<?php
+		echo $after_widget;
+	}
+
+	function update( $new_instance, $old_instance )
+	{
+		$instance = $old_instance;
+		$instance['title'] = wp_filter_nohtml_kses( $new_instance['title'] );
+		$instance['comments'] = absint( $new_instance['comments'] );
+		$instance['width'] = absint( $new_instance['width'] );
+		$instance['colorscheme'] = in_array( $new_instance['colorscheme'], array( 'light', 'dark' )) ? $new_instance['colorscheme'] : 'dark';
+
+		return $instance;
+	}
+
+	function form( $instance )
+	{
+		//Defaults
+		$instance = wp_parse_args( (array) $instance, 
+			array( 
+				'title' => 'Comment Via Facebook', 
+				'comments' => 5, 
+				'width' => 300, 
+				'colorscheme' => 'light', 
+			)
+		);
+?>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ) ?>" />
+		</p>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('comments'); ?>"><?php _e('Number of comments to show:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('comments'); ?>" name="<?php echo $this->get_field_name('comments'); ?>" type="text" value="<?php echo esc_attr( $instance['comments'] ) ?>" />
+		</p>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('width'); ?>"><?php _e('Width of the comment box in pixels:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('width'); ?>" name="<?php echo $this->get_field_name('width'); ?>" type="text" value="<?php echo esc_attr( $instance['width'] ) ?>" />
+		</p>
+
+		<p>
+			<label for="<?php echo $this->get_field_id('colorscheme'); ?>"><?php _e( 'Color scheme:' ); ?></label>
+			<select name="<?php echo $this->get_field_name('colorscheme'); ?>" id="<?php echo $this->get_field_id('colorscheme'); ?>" class="widefat">
+				<option value="light"<?php selected( $instance['colorscheme'], 'light' ); ?>><?php _e('Light'); ?></option>
+				<option value="dark"<?php selected( $instance['colorscheme'], 'dark' ); ?>><?php _e('Dark'); ?></option>
+			</select>
+		</p>
+<?php
+	}
+}// end Widget_FB_Comments
+
 class Widget_FB_Activity extends WP_Widget
 {
 
 	function Widget_FB_Activity()
 	{
 		$widget_ops = array('classname' => 'widget_fb_activity', 'description' => __( 'Displays Facebook activity for this domain') );
-		$this->WP_Widget('fb_activity', __('Facebook Activity'), $widget_ops);
+		$this->WP_Widget('fb_activity', __('Facebook Activity (bSocial)'), $widget_ops);
 	}
 
 	function widget( $args, $instance )
@@ -57,7 +135,7 @@ class Widget_FB_Like extends WP_Widget
 	function Widget_FB_Like()
 	{
 		$widget_ops = array('classname' => 'widget_fb_like', 'description' => __( 'Displays a Facebook like button and facepile') );
-		$this->WP_Widget('fb_like', __('Facebook Like'), $widget_ops);
+		$this->WP_Widget('fb_like', __('Facebook Like (bSocial)'), $widget_ops);
 	}
 
 	function widget( $args, $instance )
@@ -136,6 +214,7 @@ class Widget_FB_Like extends WP_Widget
 // register these widgets
 function fb_widgets_init()
 {
+	register_widget( 'Widget_FB_Comments' );
 	register_widget( 'Widget_FB_Activity' );
 	register_widget( 'Widget_FB_Like' );
 }
