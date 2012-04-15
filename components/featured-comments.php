@@ -51,7 +51,7 @@ class bSuite_FeaturedComments
 	function pre_get_posts( $query )
 	{
 
-		if( $this->add_to_waterfall ! is_admin() && $query->is_main_query() )
+		if( $this->add_to_waterfall && ! is_admin() && $query->is_main_query() )
 		{
 
 			$post_types = array_merge( 
