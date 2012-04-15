@@ -1,7 +1,7 @@
 === bCMS ===
 Contributors: misterbisson
 Donate link: http://MaisonBisson.com/
-Tags: cms, content management, formatting, widgets, shortcodes, post loop, post, posts, page, pages, show posts, scroller, featured posts
+Tags: social, social networks, comments, Facebook, Twitter, widgets, featured comments, social proof
 Requires at least: 3.3
 Tested up to: 3.3.1
 Stable tag: trunk
