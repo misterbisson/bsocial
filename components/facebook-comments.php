@@ -46,11 +46,11 @@ class bSocial_FacebookComments
 		$url = 'https://graph.facebook.com/oauth/access_token?client_id=' . $this->app_id .
 				'&client_secret=' . $this->app_secret .
 				'&grant_type=client_credentials';
-		$token = fb_api_fetch( $url, $post_id );
+		$token = $this->fb_api_fetch( $url, $post_id );
 	
 		// get the link ID for this post URL
 		$url = $api_root . urlencode( 'SELECT comments_fbid FROM link_stat WHERE url="' . get_permalink( $post_id )) .'"&format=json';
-		$response = fb_api_fetch( $url , $post_id );
+		$response = $this->fb_api_fetch( $url , $post_id );
 		$comments_fbid = json_decode( json_int_to_string( $response ));
 		$comments_fbid = $comments_fbid[0]->comments_fbid;
 	
@@ -63,12 +63,12 @@ class bSocial_FacebookComments
 	
 		// get the top-level comments on this post	
 		$comment_query = 'SELECT post_fbid , fromid , time , text , id , username FROM comment WHERE object_id = "' . $comments_fbid .'" ORDER BY time DESC LIMIT '. $comment_limit;
-		$response = fb_api_fetch( $api_root . urlencode( $comment_query ) .'&format=json' , $post_id );
+		$response = $this->fb_api_fetch( $api_root . urlencode( $comment_query ) .'&format=json' , $post_id );
 		$fb_comments = json_decode( json_int_to_string( $response ));	
 	
 		// get replies to those comments
 		$reply_query = 'SELECT fromid , time , text , id , username FROM comment WHERE object_id in (SELECT post_fbid FROM comment WHERE object_id = "' . $comments_fbid . '" ORDER BY time DESC LIMIT '. $comment_limit .')';
-		$response = fb_api_fetch( $api_root . urlencode( $reply_query ) .'&format=json' , $post_id );
+		$response = $this->fb_api_fetch( $api_root . urlencode( $reply_query ) .'&format=json' , $post_id );
 		$replies = json_decode( json_int_to_string( $response ));
 	
 		// merge the comments and replies
@@ -92,7 +92,7 @@ class bSocial_FacebookComments
 		$url = 'https://api.facebook.com/method/users.getInfo?' . $token .
 				'&uids=' . $uids .
 				'&format=json&fields=name,pic_square';
-		$response = fb_api_fetch( $url , $post_id );
+		$response = $this->fb_api_fetch( $url , $post_id );
 		$names = json_decode( json_int_to_string( $response ));
 	
 		// make a happy array that maps user ID to details

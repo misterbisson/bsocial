@@ -53,7 +53,7 @@ class bSocial_FacebookApi
 		<div id="fb-root"></div>
 		<script>
 			window.fbAsyncInit = function() {
-				FB.init({appId: <?php echo FBJS_APP_ID; ?>, status: true, cookie: true, xfbml: true});
+				FB.init({appId: <?php echo $this->app_id; ?>, status: true, cookie: true, xfbml: true});
 			};
 
 			var e = document.createElement('script');
