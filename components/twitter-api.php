@@ -1,8 +1,9 @@
 <?php
 
 /**
- * Author: Vasken Hauri
+ * Author: Vasken Hauri, Casey Bisson
  * Prints JS to load Twitter JS SDK in a deferred manner
+ * Puts Twitter card meta in the head, https://dev.twitter.com/docs/cards
  */
 
 class bSocial_TwitterApi
@@ -20,10 +21,64 @@ class bSocial_TwitterApi
 
 	function init()
 	{
+		// don't do anything to admin pages
 		if( is_admin() )
 			return;
 
+		// inject the JS include
 		add_action( 'print_footer_scripts' , array( $this , 'inject_js' ));
+
+		// twitter card metadata
+		add_action( 'wp_head' , array( $this , 'head' ));
+
+		// defaults
+		add_filter( 'twittercard_card', array( $this , 'default_card' ) , 5 );
+	}
+
+	function default_card( $type = '' )
+	{
+		if( empty( $type )) $type = 'summary';
+		return $type;
+	}
+
+	function head()
+	{
+		$metadata = $this->metadata();
+		foreach ( $metadata as $key => $value )
+		{
+			if( empty( $key ) || empty( $value )) continue;
+			echo '<meta name="'. esc_attr( $key ) .'" value="'. esc_attr($value) .'" />' . "\n";
+		}
+	}
+
+	function metadata()
+	{
+		$metadata = array();
+
+		// definitions: https://dev.twitter.com/docs/cards
+		$properties = array(
+			// required
+			'card',
+
+			// identity (optional)
+			'site', 'site:id', 'creator', 'creator:id', 
+
+			// content
+			//'url', 'title', 'description', 
+
+			// image
+			//'image', 'image:width', 'image:height', 
+
+			// player
+			//'player', 'player:width', 'player:height', 'player:stream', 
+		);
+
+		foreach ($properties as $property) {
+			$filter = 'twittercard_' . $property;
+			$metadata["twitter:$property"] = apply_filters( $filter, '' );
+		}
+
+		return apply_filters( 'twittercard_metadata' , $metadata );
 	}
 
 	function inject_js()
