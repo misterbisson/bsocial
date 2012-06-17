@@ -33,12 +33,31 @@ class bSocial_TwitterApi
 
 		// defaults
 		add_filter( 'twittercard_card', array( $this , 'default_card' ) , 5 );
+		add_filter( 'twittercard_site', array( $this , 'default_site' ) , 5 );
 	}
 
 	function default_card( $type = '' )
 	{
-		if( empty( $type )) $type = 'summary';
+
+		// default to 'summary', unless something else is set
+		if( empty( $type )) 
+			return 'summary';
+
 		return $type;
+	}
+
+	function default_site( $twitteruser = '' )
+	{
+
+		// can only move forward if we have a twitter username of our own
+		if( empty( $this->card_site ))
+			return $twitteruser;
+
+		// default, unless something else is set
+		if( empty( $twitteruser )) 
+			return $this->card_site;
+
+		return $twitteruser;
 	}
 
 	function head()
@@ -46,7 +65,8 @@ class bSocial_TwitterApi
 		$metadata = $this->metadata();
 		foreach ( $metadata as $key => $value )
 		{
-			if( empty( $key ) || empty( $value )) continue;
+			if( empty( $key ) || empty( $value )) 
+				continue;
 			echo '<meta name="'. esc_attr( $key ) .'" value="'. esc_attr($value) .'" />' . "\n";
 		}
 	}
@@ -73,7 +93,8 @@ class bSocial_TwitterApi
 			//'player', 'player:width', 'player:height', 'player:stream', 
 		);
 
-		foreach ($properties as $property) {
+		foreach ($properties as $property)
+		{
 			$filter = 'twittercard_' . $property;
 			$metadata["twitter:$property"] = apply_filters( $filter, '' );
 		}

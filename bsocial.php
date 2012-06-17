@@ -59,6 +59,9 @@ if( $bsoptions['twitter-api'] )
 	$twitter_api = new bSocial_TwitterApi;
 	$twitter_api->app_id = $bsoptions['twitter-app_id'];
 
+	if( $bsoptions['twitter-card_site'] )
+		$twitter_api->card_site = $bsoptions['twitter-card_site'];
+
 	if( $bsoptions['twitter-comments'] )
 		require_once( dirname( __FILE__ ) .'/components/twitter-comments.php' );
 }	
