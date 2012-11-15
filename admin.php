@@ -93,11 +93,11 @@ function bsocial_options()
 			</tr>
 
 			<tr valign="top"><th scope="row">Twitter application consumer key</th>
-				<td><input type="text" name="bsocial-options[twitter-app_id]" value="<?php esc_attr_e( $options['twitter-app_id'] ); ?>" /></td>
+				<td><input type="text" name="bsocial-options[twitter-app_id]" value="<?php echo esc_attr( $options['twitter-app_id'] ); ?>" /></td>
 			</tr>
 
 			<tr valign="top"><th scope="row">Twitter @username for site</th>
-				<td><input type="text" name="bsocial-options[twitter-card_site]" value="<?php esc_attr_e( $options['twitter-card_site'] ); ?>" /></td>
+				<td><input type="text" name="bsocial-options[twitter-card_site]" value="<?php echo esc_attr( $options['twitter-card_site'] ); ?>" /></td>
 			</tr>
 
 			<tr valign="top"><th scope="row">Ingest tweets that link to this site as comments on the post they link to</th>
@@ -113,13 +113,13 @@ function bsocial_options()
 			</tr>
 
 			<tr valign="top"><th scope="row">Facebook admin IDs</th>
-				<td><input type="text" name="bsocial-options[facebook-admins]" value="<?php esc_attr_e( $options['facebook-admins'] ); ?>" /></td>
+				<td><input type="text" name="bsocial-options[facebook-admins]" value="<?php echo esc_attr( $options['facebook-admins'] ); ?>" /></td>
 			</tr>
 			<tr valign="top"><th scope="row">Facebook app ID/API key</th>
-				<td><input type="text" name="bsocial-options[facebook-app_id]" value="<?php esc_attr_e( $options['facebook-app_id'] ); ?>" /></td>
+				<td><input type="text" name="bsocial-options[facebook-app_id]" value="<?php echo esc_attr( $options['facebook-app_id'] ); ?>" /></td>
 			</tr>
 			<tr valign="top"><th scope="row">Facebook secret</th>
-				<td><input type="text" name="bsocial-options[facebook-secret]" value="<?php esc_attr_e( $options['facebook-secret'] ); ?>" /></td>
+				<td><input type="text" name="bsocial-options[facebook-secret]" value="<?php echo esc_attr( $options['facebook-secret'] ); ?>" /></td>
 			</tr>
 
 			<tr valign="top"><th scope="row">Ingest Facebook comments</th>
