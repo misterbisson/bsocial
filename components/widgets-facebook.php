@@ -3,7 +3,7 @@
 class bSocial_Facebook_Comments_Widget extends WP_Widget
 {
 
-	function Widget_FB_Comments()
+	function bSocial_Facebook_Comments_Widget()
 	{
 		$widget_ops = array('classname' => 'widget_fb_comments', 'description' => __( 'Displays Facebook comments') );
 		$this->WP_Widget('fb_comments', __('Facebook Comments (bSocial)'), $widget_ops);
@@ -81,7 +81,7 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 class bSocial_Facebook_Activity_Widget extends WP_Widget
 {
 
-	function Widget_FB_Activity()
+	function bSocial_Facebook_Activity_Widget()
 	{
 		$widget_ops = array('classname' => 'widget_fb_activity', 'description' => __( 'Displays Facebook activity for this domain') );
 		$this->WP_Widget('fb_activity', __('Facebook Activity (bSocial)'), $widget_ops);
@@ -132,7 +132,7 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 class bSocial_Facebook_Like_Widget extends WP_Widget
 {
 
-	function Widget_FB_Like()
+	function bSocial_Facebook_Like_Widget()
 	{
 		$widget_ops = array('classname' => 'widget_fb_like', 'description' => __( 'Displays a Facebook like button and facepile') );
 		$this->WP_Widget('fb_like', __('Facebook Like (bSocial)'), $widget_ops);
