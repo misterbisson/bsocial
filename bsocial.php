@@ -69,17 +69,17 @@ if( $bsoptions['twitter-api'] )
 // Facebook components
 if( $bsoptions['facebook-api'] && $bsoptions['facebook-app_id'] )
 {
-	require_once( dirname( __FILE__ ) .'/components/facebook-api.php' );
+	require_once( dirname( __FILE__ ) .'/components/class-bsocial-facebook-api.php' );
 	$facebook_api = new bSocial_FacebookApi;
 	$facebook_api->options->add_like_button = $bsoptions['facebook-add_button'];
 	$facebook_api->admins = $bsoptions['facebook-admins'];
 	$facebook_api->app_id = $bsoptions['facebook-app_id'];
 
-	require_once( dirname( __FILE__ ) .'/components/facebook-widgets.php' );
+	require_once( dirname( __FILE__ ) .'/components/widgets-facebook.php' );
 
 	if( $bsoptions['facebook-comments'] && $bsoptions['facebook-secret'])
 	{
-		require_once( dirname( __FILE__ ) .'/components/facebook-comments.php' );
+		require_once( dirname( __FILE__ ) .'/components/class-bsocial-facebook-comments.php' );
 		$facebook_comments = new bSocial_FacebookComments;
 		$facebook_comments->app_id = $bsoptions['facebook-app_id'];
 		$facebook_comments->app_secret = $bsoptions['facebook-secret'];
