@@ -42,8 +42,8 @@ if( $bsoptions['open-graph'] )
 // Feature your comments
 if( $bsoptions['featured-comments'] )
 {
-	require_once( dirname( __FILE__ ) .'/components/featured-comments.php' );
-	$featured_comments = new bSuite_FeaturedComments;
+	require_once( dirname( __FILE__ ) .'/components/class-bsocial-featuredcomments.php' );
+	$featured_comments = new bSocial_FeaturedComments;
 	$featured_comments->use_comment_date = TRUE;
 	$featured_comments->add_to_waterfall = TRUE;
 }
