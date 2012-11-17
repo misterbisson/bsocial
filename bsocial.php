@@ -42,15 +42,15 @@ if( $bsoptions['open-graph'] )
 // Feature your comments
 if( $bsoptions['featured-comments'] )
 {
-	require_once( dirname( __FILE__ ) .'/components/featured-comments.php' );
-	$featured_comments = new bSuite_FeaturedComments;
+	require_once( dirname( __FILE__ ) .'/components/class-bsocial-featuredcomments.php' );
+	$featured_comments = new bSocial_FeaturedComments;
 	$featured_comments->use_comment_date = TRUE;
 	$featured_comments->add_to_waterfall = TRUE;
 }
 
 // Components shared by both Twitter API and Facebook Comments
 if( $bsoptions['twitter-api'] || $bsoptions['facebook-comments'] )
-	require_once( dirname( __FILE__ ) .'/components/common-functions.php' );
+	require_once( dirname( __FILE__ ) .'/components/functions.php' );
 
 // Twitter components
 if( $bsoptions['twitter-api'] )
@@ -69,17 +69,17 @@ if( $bsoptions['twitter-api'] )
 // Facebook components
 if( $bsoptions['facebook-api'] && $bsoptions['facebook-app_id'] )
 {
-	require_once( dirname( __FILE__ ) .'/components/facebook-api.php' );
+	require_once( dirname( __FILE__ ) .'/components/class-bsocial-facebook-api.php' );
 	$facebook_api = new bSocial_FacebookApi;
 	$facebook_api->options->add_like_button = $bsoptions['facebook-add_button'];
 	$facebook_api->admins = $bsoptions['facebook-admins'];
 	$facebook_api->app_id = $bsoptions['facebook-app_id'];
 
-	require_once( dirname( __FILE__ ) .'/components/facebook-widgets.php' );
+	require_once( dirname( __FILE__ ) .'/components/widgets-facebook.php' );
 
 	if( $bsoptions['facebook-comments'] && $bsoptions['facebook-secret'])
 	{
-		require_once( dirname( __FILE__ ) .'/components/facebook-comments.php' );
+		require_once( dirname( __FILE__ ) .'/components/class-bsocial-facebook-comments.php' );
 		$facebook_comments = new bSocial_FacebookComments;
 		$facebook_comments->app_id = $bsoptions['facebook-app_id'];
 		$facebook_comments->app_secret = $bsoptions['facebook-secret'];
