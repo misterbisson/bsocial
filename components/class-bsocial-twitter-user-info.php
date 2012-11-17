@@ -3,15 +3,15 @@
  * Twitter rest API glue
  * 
  * Don't include this file or directly call it's methods.
- * See new_twitter_search() and new_twitter_user_stream() instead.
+ * See bsocial_twitter_user_info() instead.
  *
  */
 
 /*
- * twitter_user_info
+ * bSocial_Twitter_User_Info class
  * 
  * Get the public information for a given user
- * Example: twitter_user_info( 'misterbisson' ) 
+ * Example: bsocial_twitter_user_info()->get( 'misterbisson' ) 
  * 
  * @author Casey Bisson
  */

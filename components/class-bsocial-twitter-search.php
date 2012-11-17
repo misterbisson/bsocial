@@ -3,7 +3,7 @@
  * Twitter rest API glue
  * 
  * Don't include this file or directly call it's methods.
- * See new_twitter_search() and new_twitter_user_stream() instead.
+ * See new_twitter_search() instead.
  *
  */
 
@@ -19,7 +19,7 @@
  */
 class bSocial_Twitter_Search
 {
-	var $get_user_info = TRUE;
+	var $get_user_info = FALSE;
 
 	function tweets()
 	{
@@ -114,7 +114,7 @@ class bSocial_Twitter_Search
 			// we can't rely on the user_ids in the result, so we do a name lookup and unset the unreliable data.
 			// http://code.google.com/p/twitter-api/issues/detail?id=214
 			if( $this->get_user_info )
-				$result->from_user = twitter_user_info( $result->from_user );
+				$result->from_user = bsocial_twitter_user_info()-get( $result->from_user );
 
 			$this->api_response->min_id = $result->id;
 			$this->api_response->min_id_str = $result->id_str;

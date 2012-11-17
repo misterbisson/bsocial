@@ -3,12 +3,12 @@
  * Twitter rest API glue
  * 
  * Don't include this file or directly call it's methods.
- * See new_twitter_search() and new_twitter_user_stream() instead.
+ * See new_twitter_user_stream() instead.
  *
  */
 
 /*
- * Twitter_User_Stream class
+ * bSocial_Twitter_User_Stream class
  * 
  * Get the public Twitter history for a given user
  * Example: $twitter_search->search ( array( 'q' => 'search phrase' )) 
