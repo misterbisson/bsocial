@@ -50,7 +50,7 @@ if( $bsoptions['featured-comments'] )
 
 // Components shared by both Twitter API and Facebook Comments
 if( $bsoptions['twitter-api'] || $bsoptions['facebook-comments'] )
-	require_once( dirname( __FILE__ ) .'/components/common-functions.php' );
+	require_once( dirname( __FILE__ ) .'/components/functions.php' );
 
 // Twitter components
 if( $bsoptions['twitter-api'] )
