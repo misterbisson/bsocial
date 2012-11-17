@@ -117,16 +117,29 @@ function json_int_to_string( $string )
 
 function new_twitter_search()
 {
-	require_once( dirname( __FILE__ ) .'/twitter-streams.php' );
+	require_once dirname( __FILE__ ) .'/class-bsocial-twitter-search.php';
 
-	return new Twitter_Search;
+	return new bSocial_Twitter_Search;
 }
 
 function new_twitter_user_stream()
 {
-	require_once( dirname( __FILE__ ) .'/twitter-streams.php' );
+	require_once dirname( __FILE__ ) .'/class-bsocial-twitter-user-stream.php';
 
-	return new Twitter_User_Stream;
+	return new bSocial_Twitter_User_Stream;
+}
+
+function bsocial_twitter_user_info()
+{
+	global $bsocial_twitter_user_info;
+
+	if( ! $bsocial_twitter_user_info )
+	{
+		require_once dirname( __FILE__ ) .'/class-bsocial-twitter-user-info.php';
+		$bsocial_twitter_user_info = new bSocial_Twitter_User_Info;
+	}
+
+	return $bsocial_twitter_user_info;
 }
 
 // Show cron array for debugging

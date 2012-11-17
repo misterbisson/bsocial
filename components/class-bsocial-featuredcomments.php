@@ -1,5 +1,5 @@
 <?php
-class bSuite_FeaturedComments
+class bSocial_FeaturedComments
 {
 
 	// options that can be changed (it's best to change them in the bootstrapper)
