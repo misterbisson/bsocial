@@ -1,6 +1,6 @@
 <?php
 
-class Widget_FB_Comments extends WP_Widget
+class bSocial_Facebook_Comments_Widget extends WP_Widget
 {
 
 	function Widget_FB_Comments()
@@ -78,7 +78,7 @@ class Widget_FB_Comments extends WP_Widget
 	}
 }// end Widget_FB_Comments
 
-class Widget_FB_Activity extends WP_Widget
+class bSocial_Facebook_Activity_Widget extends WP_Widget
 {
 
 	function Widget_FB_Activity()
@@ -129,7 +129,7 @@ class Widget_FB_Activity extends WP_Widget
 }// end Widget_FB_Activity
 
 
-class Widget_FB_Like extends WP_Widget
+class bSocial_Facebook_Like_Widget extends WP_Widget
 {
 
 	function Widget_FB_Like()
@@ -214,8 +214,8 @@ class Widget_FB_Like extends WP_Widget
 // register these widgets
 function fb_widgets_init()
 {
-	register_widget( 'Widget_FB_Comments' );
-	register_widget( 'Widget_FB_Activity' );
-	register_widget( 'Widget_FB_Like' );
+	register_widget( 'bSocial_Facebook_Comments_Widget' );
+	register_widget( 'bSocial_Facebook_Activity_Widget' );
+	register_widget( 'bSocial_Facebook_Like_Widget' );
 }
 add_action( 'widgets_init' , 'fb_widgets_init', 1 );
