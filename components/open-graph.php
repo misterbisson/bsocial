@@ -9,7 +9,7 @@
  Text Domain: opengraph
  */
 
-define('OPENGRAPH_NS_URI', 'http://opengraphprotocol.org/schema/');
+define('OPENGRAPH_NS_URI', 'http://ogp.me/ns#');
 $opengraph_ns_set = false;
 
 
@@ -20,7 +20,7 @@ function opengraph_add_namespace( $output ) {
 	global $opengraph_ns_set;
 	$opengraph_ns_set = true;
 
-	$output .= ' xmlns:og="' . esc_attr(OPENGRAPH_NS_URI) . '"';
+	$output .= ' prefix="og: ' . esc_attr(OPENGRAPH_NS_URI) . '"';
 	return $output;
 }
 add_filter('language_attributes', 'opengraph_add_namespace');
