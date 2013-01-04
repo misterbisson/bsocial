@@ -20,7 +20,7 @@ class bSocial_FeaturedComments
 		add_action( 'init' , array( $this, 'register_post_type' ) , 11 );
 		add_action( 'edit_comment' , array( $this, 'edit_comment' ) , 5 );
 		add_action( 'delete_comment' , array( $this, 'unfeature_comment' ));
-		add_action( 'wp_ajax_feature_comment' , array( $this, 'ajax' ));
+		add_action( 'wp_ajax_bsocial_feature_comment' , array( $this, 'ajax' ));
 
 		add_filter( 'quicktags_settings' , array( $this, 'quicktags_settings' ));
 		add_filter( 'comment_row_actions' , array( $this , 'comment_row_actions' ) , 10 , 2 );
@@ -256,6 +256,7 @@ class bSocial_FeaturedComments
 
 		?>
 		<script type="text/javascript">
+			var bsocial_featuredcomment_nonce = '<?php echo wp_create_nonce( 'bsocial-featuredcomment-save' ); ?>';
 			function cwsFeatComLoad() {
 				jQuery('#replyrow a.save').click(function() { cwsFeatComLoadLoop( jQuery('#comment_ID').val() ); });
 				jQuery('a.feature-comment').removeClass('feature-comment-needs-refresh');
@@ -266,14 +267,22 @@ class bSocial_FeaturedComments
 					if ( cmt.hasClass('featured-comment') ) {
 						cmt.fadeOut();
 						jQuery.post(ajaxURL, {
-							action:"feature_comment", direction:"unfeature", comment_id: comment_id, cookie: encodeURIComponent(document.cookie)
+							action:"bsocial_feature_comment",
+							direction:"unfeature",
+							comment_id: comment_id,
+							cookie: encodeURIComponent(document.cookie),
+							_bsocial_featuredcomment_nonce: bsocial_featuredcomment_nonce
 						}, function(str){
 							cmt.text("Feature").addClass('unfeatured-comment').removeClass('featured-comment').fadeIn();
 						});
 					} else {
 						cmt.fadeOut();
 						jQuery.post(ajaxURL, {
-							action:"feature_comment", direction:"feature", comment_id: comment_id, cookie: encodeURIComponent(document.cookie)
+							action:"bsocial_feature_comment",
+							direction:"feature",
+							comment_id: comment_id,
+							cookie: encodeURIComponent(document.cookie),
+							_bsocial_featuredcomment_nonce: bsocial_featuredcomment_nonce
 						}, function(str){
 							cmt.text("Unfeature").addClass('featured-comment').removeClass('unfeatured-comment').fadeIn();
 						});
@@ -339,12 +348,19 @@ class bSocial_FeaturedComments
 
 	function ajax()
 	{
-		if( get_comment( $_REQUEST['comment_id'] ))
+		$comment_id = intval( $_REQUEST['comment_id'] );
+
+		if ( ! check_ajax_referer( 'bsocial-featuredcomment-save', '_bsocial_featuredcomment_nonce' ) )
+		{
+			return;
+		}//end if
+
+		if( get_comment( $comment_id ) )
 		{
 			if ( 'feature' == $_POST['direction'] )
-				$this->feature_comment( $_REQUEST['comment_id'] );
+				$this->feature_comment( $comment_id );
 			else
-				$this->unfeature_comment( $_REQUEST['comment_id'] );
+				$this->unfeature_comment( $comment_id );
 		}
 
 		die;
@@ -352,7 +368,3 @@ class bSocial_FeaturedComments
 
 
 }//end bSuite_FeaturedComments class
-
-
-
-
