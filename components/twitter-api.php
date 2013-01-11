@@ -8,9 +8,13 @@
 
 class bSocial_TwitterApi
 {
+	/**
+	 * boolean to determine if the JS should be loaded
+	 */
+	public $load_js = true;
+
 	function __construct()
 	{
-
 		/*
 		* be sure to set the app ID after instantiating the object
 		* $this->app_id = TWTTR_APP_ID;
@@ -25,8 +29,11 @@ class bSocial_TwitterApi
 		if( is_admin() )
 			return;
 
-		// inject the JS include
-		add_action( 'print_footer_scripts' , array( $this , 'inject_js' ));
+		if ( $this->load_js )
+		{
+			// inject the JS include
+			add_action( 'print_footer_scripts' , array( $this , 'inject_js' ));
+		}// end if
 
 		// twitter card metadata
 		add_action( 'wp_head' , array( $this , 'head' ));
@@ -38,9 +45,8 @@ class bSocial_TwitterApi
 
 	function default_card( $type = '' )
 	{
-
 		// default to 'summary', unless something else is set
-		if( empty( $type )) 
+		if( empty( $type ))
 			return 'summary';
 
 		return $type;
@@ -48,13 +54,12 @@ class bSocial_TwitterApi
 
 	function default_site( $twitteruser = '' )
 	{
-
 		// can only move forward if we have a twitter username of our own
 		if( empty( $this->card_site ))
 			return $twitteruser;
 
 		// default, unless something else is set
-		if( empty( $twitteruser )) 
+		if( empty( $twitteruser ))
 			return $this->card_site;
 
 		return $twitteruser;
@@ -65,7 +70,7 @@ class bSocial_TwitterApi
 		$metadata = $this->metadata();
 		foreach ( $metadata as $key => $value )
 		{
-			if( empty( $key ) || empty( $value )) 
+			if( empty( $key ) || empty( $value ))
 				continue;
 			echo '<meta name="'. esc_attr( $key ) .'" value="'. esc_attr($value) .'" />' . "\n";
 		}
@@ -81,16 +86,16 @@ class bSocial_TwitterApi
 			'card',
 
 			// identity (optional)
-			'site', 'site:id', 'creator', 'creator:id', 
+			'site', 'site:id', 'creator', 'creator:id',
 
 			// content
-			//'url', 'title', 'description', 
+			//'url', 'title', 'description',
 
 			// image
-			//'image', 'image:width', 'image:height', 
+			//'image', 'image:width', 'image:height',
 
 			// player
-			//'player', 'player:width', 'player:height', 'player:stream', 
+			//'player', 'player:width', 'player:height', 'player:stream',
 		);
 
 		foreach ($properties as $property)
@@ -105,24 +110,24 @@ class bSocial_TwitterApi
 	function inject_js()
 	{
 ?>
-		<script type="text/javascript">	
-<?php 
+		<script type="text/javascript">
+<?php
 		if( ! empty( $this->app_id ))
 		{
 ?>
 			setTimeout(function() {
 				var bstwittera = document.createElement('script'); bstwittera.type = 'text/javascript'; bstwittera.async = true;
 				bstwittera.src = 'http://platform.twitter.com/anywhere.js?id=<?php echo $this->app_id ; ?>&v=1';
-				var z = document.getElementsByTagName('script')[0]; z.parentNode.insertBefore(bstwittera, z);      
+				var z = document.getElementsByTagName('script')[0]; z.parentNode.insertBefore(bstwittera, z);
 			}, 1);
-	
-<?php 
+
+<?php
 		}
 ?>
 			setTimeout(function() {
 				var bstwitterb = document.createElement('script'); bstwitterb.type = 'text/javascript'; bstwitterb.async = true;
 				bstwitterb.src = 'http://platform.twitter.com/widgets.js';
-				var z = document.getElementsByTagName('script')[0]; z.parentNode.insertBefore(bstwitterb, z);      
+				var z = document.getElementsByTagName('script')[0]; z.parentNode.insertBefore(bstwitterb, z);
 			}, 1);
 		</script>
 <?php
