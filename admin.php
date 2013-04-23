@@ -66,7 +66,7 @@ function bsocial_sanitize_options( $input )
 		'facebook-app_id',
 		'facebook-secret',
 	) as $key )
-		$input[ $key ] = wp_filter_nohtml_kses( $input[ $key ] );
+		$input[ $key ] = wp_kses( $input[ $key ], array() );
 
 	return $input;
 }
