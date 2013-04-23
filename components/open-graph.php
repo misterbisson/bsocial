@@ -38,13 +38,13 @@ function opengraph_metadata() {
  	// defualt properties defined at http://opengraphprotocol.org/
 	$properties = array(
 		// required
-		'title', 'type', 'image', 'url', 
+		'title', 'type', 'image', 'url',
 
 		// optional
-		'site_name', 'description', 
+		'site_name', 'description',
 
 		// location
-		'longitude', 'latitude', 'street-address', 'locality', 'region', 
+		'longitude', 'latitude', 'street-address', 'locality', 'region',
 		'postal-code', 'country-name',
 
 		// contact
@@ -106,7 +106,7 @@ function opengraph_default_type( $type = '' )
 function opengraph_default_image( $image = '' )
 {
 	global $wp_query;
-	if ( 
+	if (
 		is_singular() && // only operate on single posts or pages, not the front page of the site
 		empty( $image ) && // don't replace the image if one is already set
 		current_theme_supports( 'post-thumbnails' ) && // only attempt to get the post thumbnail if the theme supports them
@@ -168,7 +168,7 @@ function opengraph_default_description( $description = '' )
 	// replace the description with a more specific one if available
     global $wp_query;
     if ( is_singular() )
-		$description = wp_filter_nohtml_kses( apply_filters( 'the_excerpt' , empty( $wp_query->queried_object->post_excerpt ) ? wp_trim_words( strip_shortcodes( $wp_query->queried_object->post_content )) : $wp_query->queried_object->post_excerpt ));
+		$description = wp_kses( apply_filters( 'the_excerpt' , empty( $wp_query->queried_object->post_excerpt ) ? wp_trim_words( strip_shortcodes( $wp_query->queried_object->post_content ) ) : $wp_query->queried_object->post_excerpt ), array() );
 
     return $description;
 }
