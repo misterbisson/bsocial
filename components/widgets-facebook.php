@@ -3,13 +3,13 @@
 class bSocial_Facebook_Comments_Widget extends WP_Widget
 {
 
-	function bSocial_Facebook_Comments_Widget()
+	public function __construct()
 	{
 		$widget_ops = array('classname' => 'widget_fb_comments', 'description' => __( 'Displays Facebook comments') );
 		$this->WP_Widget('fb_comments', __('Facebook Comments (bSocial)'), $widget_ops);
 	}
 
-	function widget( $args, $instance )
+	public function widget( $args, $instance )
 	{
 		extract( $args );
 
@@ -21,7 +21,7 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 		}
 		else // use the current URL for any other page
 		{
-			$url = ''; // empty URL 
+			$url = ''; // empty URL
 		}
 
 		echo $before_widget . $before_title . $title . $after_title;
@@ -31,10 +31,10 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 		echo $after_widget;
 	}
 
-	function update( $new_instance, $old_instance )
+	public function update( $new_instance, $old_instance )
 	{
 		$instance = $old_instance;
-		$instance['title'] = wp_filter_nohtml_kses( $new_instance['title'] );
+		$instance['title'] = wp_kses( $new_instance['title'] );
 		$instance['comments'] = absint( $new_instance['comments'] );
 		$instance['width'] = absint( $new_instance['width'] );
 		$instance['colorscheme'] = in_array( $new_instance['colorscheme'], array( 'light', 'dark' )) ? $new_instance['colorscheme'] : 'dark';
@@ -42,15 +42,15 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 		return $instance;
 	}
 
-	function form( $instance )
+	public function form( $instance )
 	{
 		//Defaults
-		$instance = wp_parse_args( (array) $instance, 
-			array( 
-				'title' => 'Comment Via Facebook', 
-				'comments' => 5, 
-				'width' => 300, 
-				'colorscheme' => 'light', 
+		$instance = wp_parse_args( (array) $instance,
+			array(
+				'title' => 'Comment Via Facebook',
+				'comments' => 5,
+				'width' => 300,
+				'colorscheme' => 'light',
 			)
 		);
 ?>
@@ -81,13 +81,13 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 class bSocial_Facebook_Activity_Widget extends WP_Widget
 {
 
-	function bSocial_Facebook_Activity_Widget()
+	public function __construct()
 	{
 		$widget_ops = array('classname' => 'widget_fb_activity', 'description' => __( 'Displays Facebook activity for this domain') );
 		$this->WP_Widget('fb_activity', __('Facebook Activity (bSocial)'), $widget_ops);
 	}
 
-	function widget( $args, $instance )
+	public function widget( $args, $instance )
 	{
 		extract( $args );
 
@@ -101,20 +101,20 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 		echo $after_widget;
 	}
 
-	function update( $new_instance, $old_instance )
+	public function update( $new_instance, $old_instance )
 	{
 		$instance = $old_instance;
-		$instance['title'] = wp_filter_nohtml_kses( $new_instance['title'] );
+		$instance['title'] = wp_kses( $new_instance['title'] );
 
 		return $instance;
 	}
 
-	function form( $instance )
+	public function form( $instance )
 	{
 		//Defaults
-		$instance = wp_parse_args( (array) $instance, 
-			array( 
-				'title' => 'Recent Activity', 
+		$instance = wp_parse_args( (array) $instance,
+			array(
+				'title' => 'Recent Activity',
 			)
 		);
 
@@ -132,18 +132,18 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 class bSocial_Facebook_Like_Widget extends WP_Widget
 {
 
-	function bSocial_Facebook_Like_Widget()
+	public function __construct()
 	{
 		$widget_ops = array('classname' => 'widget_fb_like', 'description' => __( 'Displays a Facebook like button and facepile') );
 		$this->WP_Widget('fb_like', __('Facebook Like (bSocial)'), $widget_ops);
 	}
 
-	function widget( $args, $instance )
+	public function widget( $args, $instance )
 	{
 		extract( $args );
 
 		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'] );
-		
+
 		switch( $instance['context'] )
 		{
 			case 'page':
@@ -154,7 +154,7 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 				}
 				else // use the current URL for any other page
 				{
-					$url = ''; // empty URL 
+					$url = ''; // empty URL
 				}
 				break;
 
@@ -173,22 +173,22 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 		echo $after_widget;
 	}
 
-	function update( $new_instance, $old_instance )
+	public function update( $new_instance, $old_instance )
 	{
 		$instance = $old_instance;
-		$instance['title'] = wp_filter_nohtml_kses( $new_instance['title'] );
+		$instance['title'] = wp_kses( $new_instance['title'] );
 		$instance['context'] = in_array( $new_instance['context'], array( 'site', 'page' )) ? $new_instance['context'] : 'site';
 
 		return $instance;
 	}
 
-	function form( $instance )
+	public function form( $instance )
 	{
 		//Defaults
-		$instance = wp_parse_args( (array) $instance, 
-			array( 
-				'title' => 'Find Us On Facebook', 
-				'context' => 'site', 
+		$instance = wp_parse_args( (array) $instance,
+			array(
+				'title' => 'Find Us On Facebook',
+				'context' => 'site',
 			)
 		);
 
