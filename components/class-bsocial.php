@@ -101,6 +101,17 @@ class bSocial
 		return $this->admin;
 	}
 
+	public function test()
+	{
+		if ( ! isset( $this->test ))
+		{
+			require_once __DIR__ . '/class-bsocial-test.php';
+			$this->test = new bSocial_Test;
+		}
+
+		return $this->admin;
+	}
+
 	public function url_to_blogid( $url )
 	{
 		if( ! is_multisite() )

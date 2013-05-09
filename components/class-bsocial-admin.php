@@ -12,6 +12,12 @@ class bSocial_Admin extends bSocial
 	public function admin_init()
 	{
 		register_setting( 'bsocial-options', 'bsocial-options', array( $this, 'sanitize_options' ) );
+
+		// load the test suite if the user has permissions
+		if( current_user_can( 'activate_plugins' ))
+		{
+			$this->test();
+		}
 	}
 
 	public function admin_menu()
@@ -81,5 +87,11 @@ class bSocial_Admin extends bSocial
 	{
 		$options = get_option( 'bsocial-options' );
 		require __DIR__ . '/templates/admin.php';
+
+		// load the links to the test suite if the user has permissions
+		if( current_user_can( 'activate_plugins' ) )
+		{
+			require __DIR__ . '/templates/test.php';
+		}
 	}
 }

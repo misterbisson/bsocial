@@ -11,7 +11,7 @@
  * bSocial_Twitter_User_Stream class
  * 
  * Get the public Twitter history for a given user
- * Example: $twitter_search->search ( array( 'q' => 'search phrase' )) 
+ * Example: $twitter_search->stream ( array( 'screen_name' => 'gigaom', 'count' => 2 ) )
  * 
  * Available query args: https://dev.twitter.com/docs/api/1/get/statuses/user_timeline
  *
