@@ -3,7 +3,7 @@
  * Twitter rest API glue
  * 
  * Don't include this file or directly call it's methods.
- * See new_twitter_user_stream() instead.
+ * See bsocial()->new_twitter_user_stream() instead.
  *
  */
 

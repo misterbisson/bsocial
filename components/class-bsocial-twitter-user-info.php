@@ -3,7 +3,7 @@
  * Twitter rest API glue
  * 
  * Don't include this file or directly call it's methods.
- * See bsocial_twitter_user_info() instead.
+ * See bsocial()->twitter_user_info() instead.
  *
  */
 

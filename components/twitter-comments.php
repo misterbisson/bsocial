@@ -29,29 +29,26 @@ function ingest_twitter_comments()
 		if( ! isset( $tweet->from_user->name))
 			continue; // give up if the username lookup failed
 
-		if( comment_id_by_meta( $tweet->id_str, 'tweet_id' ))
+		if( bsocial()->comment_id_by_meta( $tweet->id_str, 'tweet_id' ))
 			continue; // skip the tweet if we've already imported it
 		
 		// map the URLs in the tweet to local posts
 		// a tweet with links to multiple posts will only be added as a comment to the post with the highest post_id
 		$found_post_ids = array();
-		foreach( (array) find_urls( $tweet->text ) as $url )
+		foreach( (array) bsocial()->find_urls( $tweet->text ) as $url )
 		{
 			// resolve the URL to its final destination 
-			$url = follow_url( $url );
+			$url = bsocial()->follow_url( $url );
 
 			// try to resolve the URL to a post id
-			$post_id = url_to_postid( follow_url( $url )); // returns 0 if no match
+			$post_id = url_to_postid( bsocial()->follow_url( $url )); // returns 0 if no match
 
 			// some links to the blog don't resolve to post IDs, think of the home or tag pages.
 			// hackish: those tweets get inserted against post id 0
 
 			// make a list of the matching post IDs
 			// check if the URL is part of this blog
-			if(
-				( function_exists( 'url_to_blogid' ) && ( (int) $wpdb->blogid == (int) url_to_blogid( $url ))) // if we have the function to map links to blog IDs _and_ the link is for this blog
-				|| ! function_exists( 'url_to_blogid' ) // or, if we don't have that function, just continue 
-			)
+			if( (int) $wpdb->blogid == (int) bsocial()->url_to_blogid( $url )) // if we have the function to map links to blog IDs _and_ the link is for this blog
 			{
 				$found_post_ids[] = (int) $post_id;
 			}
@@ -82,7 +79,7 @@ function ingest_twitter_comments()
 		$comment_id = wp_insert_comment( $comment );
 		add_comment_meta( $comment_id , 'tweet_id' , $tweet->id_str ); // record the ID of the tweet
 		add_comment_meta( $comment_id , 'tweet_rank' , $tweet->from_user->followers_count ); // get the follower count of the twitter user as a means to sort tweets by rank of the user
-		comment_id_by_meta_update_cache( $comment_id , $tweet->id_str , 'tweet_id' );
+		bsocial()->comment_id_by_meta_update_cache( $comment_id , $tweet->id_str , 'tweet_id' );
 
 		// update the comment count
 		if( 0 < $post_id )

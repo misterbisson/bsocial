@@ -51,7 +51,7 @@ class bSocial_FacebookComments
 		// get the link ID for this post URL
 		$url = $api_root . urlencode( 'SELECT comments_fbid FROM link_stat WHERE url="' . get_permalink( $post_id )) .'"&format=json';
 		$response = $this->fb_api_fetch( $url , $post_id );
-		$comments_fbid = json_decode( json_int_to_string( $response ));
+		$comments_fbid = json_decode( bsocial()->json_int_to_string( $response ));
 		$comments_fbid = $comments_fbid[0]->comments_fbid;
 	
 		// Who are you? FB doesn't know about this URL
@@ -64,12 +64,12 @@ class bSocial_FacebookComments
 		// get the top-level comments on this post	
 		$comment_query = 'SELECT post_fbid , fromid , time , text , id , username FROM comment WHERE object_id = "' . $comments_fbid .'" ORDER BY time DESC LIMIT '. $comment_limit;
 		$response = $this->fb_api_fetch( $api_root . urlencode( $comment_query ) .'&format=json' , $post_id );
-		$fb_comments = json_decode( json_int_to_string( $response ));	
+		$fb_comments = json_decode( bsocial()->json_int_to_string( $response ));	
 	
 		// get replies to those comments
 		$reply_query = 'SELECT fromid , time , text , id , username FROM comment WHERE object_id in (SELECT post_fbid FROM comment WHERE object_id = "' . $comments_fbid . '" ORDER BY time DESC LIMIT '. $comment_limit .')';
 		$response = $this->fb_api_fetch( $api_root . urlencode( $reply_query ) .'&format=json' , $post_id );
-		$replies = json_decode( json_int_to_string( $response ));
+		$replies = json_decode( bsocial()->json_int_to_string( $response ));
 	
 		// merge the comments and replies
 		if( is_array( $replies ))
@@ -93,7 +93,7 @@ class bSocial_FacebookComments
 				'&uids=' . $uids .
 				'&format=json&fields=name,pic_square';
 		$response = $this->fb_api_fetch( $url , $post_id );
-		$names = json_decode( json_int_to_string( $response ));
+		$names = json_decode( bsocial()->json_int_to_string( $response ));
 	
 		// make a happy array that maps user ID to details
 		foreach( (array) $names as $name )
@@ -126,11 +126,11 @@ class bSocial_FacebookComments
 	
 				// add the db comment id meta
 				add_comment_meta( $comment_id, 'fb_comment_id', $fb_comment->id );
-				comment_id_by_meta_update_cache( $comment_id , $fb_comment->id , 'fb_comment_id' );
+				bsocial()->comment_id_by_meta_update_cache( $comment_id , $fb_comment->id , 'fb_comment_id' );
 	
 				// add the fb comment post id meta, allows relating child comments to their parents
 				add_comment_meta( $comment_id, 'fb_comment_post_id', $fb_comment->post_fbid );
-				comment_id_by_meta_update_cache( $comment_id , $fb_comment->post_fbid , 'fb_comment_post_id' );
+				bsocial()->comment_id_by_meta_update_cache( $comment_id , $fb_comment->post_fbid , 'fb_comment_post_id' );
 	
 				if ( get_option('comments_notify') )
 					wp_notify_postauthor( $comment_id , 'comment' ); //hardcoded to type 'comment'

@@ -50,12 +50,6 @@ class bSocial
 			$featured_comments->use_comment_date = $this->options['featured-comments-commentdate'];
 			$featured_comments->add_to_waterfall = $this->options['featured-comments-waterfall'];
 		}
-
-		// Components shared by both Twitter API and Facebook Comments
-		if ( $this->options['twitter-api'] || $this->options['facebook-comments'] )
-		{
-			require_once __DIR__ .'/functions.php';
-		}
 		
 		// Twitter components
 		if ( $this->options['twitter-api'] )
@@ -167,7 +161,7 @@ class bSocial
 
 				if( 0 === stripos( $header , 'Location' ))
 				{
-					$destination = array_pop( find_urls( $header ));
+					$destination = array_pop( $this->find_urls( $header ));
 				}
 			}
 
@@ -243,15 +237,14 @@ class bSocial
 		return new bSocial_Twitter_User_Stream;
 	}
 
-	public function bsocial_twitter_user_info()
+	public function twitter_user_info()
 	{
-		global $bsocial_twitter_user_info;
-		if( ! $bsocial_twitter_user_info )
+		if( ! $this->twitter_user_info )
 		{
 			require_once __DIR__ .'/class-bsocial-twitter-user-info.php';
-			$bsocial_twitter_user_info = new bSocial_Twitter_User_Info;
+			$this->twitter_user_info = new bSocial_Twitter_User_Info;
 		}
-		return $bsocial_twitter_user_info;
+		return $this->twitter_user_info;
 	}
 
 	// Show cron array for debugging

@@ -582,7 +582,7 @@ function bsuite_sa_map_tweets_from_search( $search )
 
 	$bsa = bsuite_sa();
 
-	$twitter_search = new_twitter_search();
+	$twitter_search = bsocial()->new_twitter_search();
 	$twitter_search->get_user_info = FALSE; // suppress user lookups to avoid rate limits
 	$twitter_search->search( array( 
 		'q' => urlencode( $search ) , 
@@ -601,12 +601,12 @@ function bsuite_sa_map_tweets_from_search( $search )
 		{
 			foreach( (array) $tweet->entities->urls as $url )
 			{
-				// allow some time for each URL (follow_url() can be time-consuming)
+				// allow some time for each URL (bsocial()->follow_url() can be time-consuming)
 				set_time_limit( 30 );
 
 				if( ! empty( $url->url ))
 				{
-					$resolved_url = follow_url( $url->url );
+					$resolved_url = bsocial()->follow_url( $url->url );
 					if( ! empty( $resolved_url ))
 						$bsa->map_insert( $tweet->from_user_id_str .'@twitter.id' , $tweet->created_at , $resolved_url );
 				}
@@ -653,7 +653,7 @@ function bsuite_sa_map_tweets_from_user( $screenname )
 		add_option( 'bsa-stream-'. $screenname , '' , '' , 'no' ); // add an empty option with the autoload disabled
 
 	$bsa = bsuite_sa();
-	$twitter_feed = new_twitter_user_stream();
+	$twitter_feed = bsocial()->new_twitter_user_stream();
 
 	$twitter_feed->stream( array( 
 		'screen_name' => urlencode( $screenname ) , 
@@ -667,7 +667,7 @@ function bsuite_sa_map_tweets_from_user( $screenname )
 		if( isset( $tweet->error ))
 			return FALSE;
 
-		// allow some time for each URL (follow_url() can be time-consuming)
+		// allow some time for each URL (bsocial()->follow_url() can be time-consuming)
 		set_time_limit( 30 );
 
 		// iterate over each url in the tweet, if any
@@ -677,7 +677,7 @@ function bsuite_sa_map_tweets_from_user( $screenname )
 			{
 				if( ! empty( $url->url ))
 				{
-					$resolved_url = follow_url( $url->url );
+					$resolved_url = bsocial()->follow_url( $url->url );
 					if( ! empty( $resolved_url ))
 						$bsa->map_insert( $tweet->user->id_str .'@twitter.id' , $tweet->created_at , $resolved_url );
 				}
