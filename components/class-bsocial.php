@@ -109,7 +109,7 @@ class bSocial
 			$this->test = new bSocial_Test;
 		}
 
-		return $this->admin;
+		return $this->test;
 	}
 
 	public function url_to_blogid( $url )
