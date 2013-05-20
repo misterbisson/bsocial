@@ -34,7 +34,7 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 	public function update( $new_instance, $old_instance )
 	{
 		$instance = $old_instance;
-		$instance['title'] = wp_kses( $new_instance['title'] );
+		$instance['title'] = wp_kses( $new_instance['title'], array() );
 		$instance['comments'] = absint( $new_instance['comments'] );
 		$instance['width'] = absint( $new_instance['width'] );
 		$instance['colorscheme'] = in_array( $new_instance['colorscheme'], array( 'light', 'dark' )) ? $new_instance['colorscheme'] : 'dark';
@@ -104,7 +104,7 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 	public function update( $new_instance, $old_instance )
 	{
 		$instance = $old_instance;
-		$instance['title'] = wp_kses( $new_instance['title'] );
+		$instance['title'] = wp_kses( $new_instance['title'], array() );
 
 		return $instance;
 	}
@@ -176,7 +176,7 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 	public function update( $new_instance, $old_instance )
 	{
 		$instance = $old_instance;
-		$instance['title'] = wp_kses( $new_instance['title'] );
+		$instance['title'] = wp_kses( $new_instance['title'], array() );
 		$instance['context'] = in_array( $new_instance['context'], array( 'site', 'page' )) ? $new_instance['context'] : 'site';
 
 		return $instance;
