@@ -117,7 +117,7 @@ function opengraph_default_image( $image = '' )
 		has_post_thumbnail( $wp_query->queried_object_id ) // only set the meta if we have a thumbnail
 	)
 	{
-		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $wp_query->queried_object_id ), 'post-thumbnail');
+		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $wp_query->queried_object_id ), 'large');
 		if ($thumbnail)
 		{
 			$image = $thumbnail[0];
