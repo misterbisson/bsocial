@@ -350,6 +350,11 @@ class bSocial_FeaturedComments
 	{
 		$comment_id = intval( $_REQUEST['comment_id'] );
 
+		if ( ! current_user_can( 'moderate_comments' ) )
+		{
+			return FALSE;
+		}
+
 		if ( ! check_ajax_referer( 'bsocial-featuredcomment-save', '_bsocial_featuredcomment_nonce' ) )
 		{
 			return;
