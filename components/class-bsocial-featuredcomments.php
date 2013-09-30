@@ -54,10 +54,18 @@ class bSocial_FeaturedComments
 		if( $this->add_to_waterfall && ! is_admin() && $query->is_main_query() )
 		{
 
+			$other = array();
+
+			if ( $query->query_vars['attachment'] )
+			{
+				$other[] = 'attachment';
+			}
+
 			$post_types = array_merge( 
 				(array) $query->query_vars['post_type'] , 
 				array( is_singular() && isset( $query->queried_object->post_type ) ? $query->queried_object->post_type : 'post' ), 
-				array( $this->post_type_name )
+				array( $this->post_type_name ),
+				$other
 			);
 
 			$query->set( 'post_type', $post_types );
