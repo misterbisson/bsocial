@@ -1,7 +1,7 @@
 <?php
 /*
  * Twitter rest API glue
- * 
+ *
  * Don't include this file or directly call it's methods.
  * See bsocial()->new_twitter_user_stream() instead.
  *
@@ -9,11 +9,12 @@
 
 /*
  * bSocial_Twitter_User_Stream class
- * 
+ *
  * Get the public Twitter history for a given user
  * Example: $twitter_search->stream ( array( 'screen_name' => 'gigaom', 'count' => 2 ) )
- * 
- * Available query args: https://dev.twitter.com/docs/api/1/get/statuses/user_timeline
+ *
+ * Available query args:
+ *   https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
  *
  * @author Casey Bisson
  */
@@ -21,31 +22,41 @@ class bSocial_Twitter_User_Stream
 {
 	function tweets()
 	{
-		if( ! empty( $this->api_response ))
-			return $this->api_response;
-		else
+		if ( empty( $this->api_response ) )
+		{
 			return FALSE;
-	}
+		}
+
+		return $this->api_response;
+	}//END tweets
 
 	function next()
 	{
-		if( ! empty( $this->api_response ))
-			return $this->stream( $this->args , 'next' );
-		else
+		if ( empty( $this->api_response ) )
+		{
 			return FALSE;
-	}
+		}
+
+		return $this->stream( $this->args , 'next' );
+	}//END next
 
 	function refresh()
 	{
-		if( ! empty( $this->api_response ))
-			return $this->stream( $this->args , 'refresh' );
-		else
+		if( empty( $this->api_response ) )
+		{
 			return FALSE;
-	}
+		}
 
-	function stream( $args , $method = 'stream' )
+		return $this->stream( $this->args , 'refresh' );
+	}//END refresh
+
+	/**
+	 * @param $connection TwitterOAuth object
+	 * @param $args 
+	 * @param $method
+	 */
+	function stream( $connection, $args , $method = 'stream' )
 	{
-
 		switch( $method )
 		{
 			case 'next':
@@ -53,59 +64,45 @@ class bSocial_Twitter_User_Stream
 				$args['max_id'] = $this->api_response[ count( $this->api_response ) -1 ]->id_str;
 				unset( $this->api_response );
 				break;
-			
+
 			case 'refresh':
 				$args['since_id'] = $this->api_response[0]->id_str;
 				unset( $this->api_response );
 				break;
-		}
+		}//END switch
 
 		$defaults = array(
-			'user_id' => FALSE,
-			'screen_name' => FALSE,
-			'since_id' => FALSE,
-			'max_id' => FALSE,
+			'user_id' => NULL,
+			'screen_name' => NULL,
+			'since_id' => NULL,
 			'count' => 10,
-			'page' => FALSE,
+			'max_id' => NULL,
 			'trim_user' => 'true',
-			'contributor_details' => 'false',
-			'include_entities' => 'true',
 			'exclude_replies' => 'false',
+			'contributor_details' => 'false',
 			'include_rts' => 'true',
 		);
-		$args = wp_parse_args( $args, $defaults );
 
-		// save the args
-		$this->args = $args;
+		$this->args = array_filter( wp_parse_args( $args, $defaults ) );
 
-		$query_url = add_query_arg( $args , 'http://api.twitter.com/1/statuses/user_timeline.json' );
+		$this->api_response = $connection->get( 'statuses/user_timeline', $this->args );
 
-		$temp_results = wp_remote_get( $query_url );
-		if ( is_wp_error( $temp_results ))
+		if( ! empty( $this->api_response->errors ) )
 		{
-			$this->error = $temp_results; 
-			return FALSE;
-		}
-
-		// fetch that stuff
-		$this->api_response = json_decode( wp_remote_retrieve_body( $temp_results ));
-		$this->api_response_headers = wp_remote_retrieve_headers( $temp_results );
-		unset( $temp_results );
-
-		if( ! empty( $this->api_response->error ))
-		{
-			$this->error = $this->api_response; 
+			$this->error = $this->api_response;
 			unset( $this->api_response );
 			return FALSE;
 		}
 
-		// set the max and min ids
+		// set the max and min ids. note that the tweets are sorted in
+		// desc ID/time order
 		$this->max_id = $this->api_response[0]->id;
 		$this->max_id_str = $this->api_response[0]->id_str;
-		$this->min_id = $this->api_response[ count( $this->api_response ) -1 ]->id;
-		$this->min_id_str = $this->api_response[ count( $this->api_response ) -1 ]->id_str;
 
-		// return that stuff
+		$min_id_idx = 1 < count( $this->api_response ) ? count( $this->api_response ) - 1 : 0;
+		$this->min_id = $this->api_response[ $min_id_idx ]->id;
+		$this->min_id_str = $this->api_response[ $min_id_idx ]->id_str;
+
 		return $this->api_response;
-	}
-}
+	}//END stream
+}//END class

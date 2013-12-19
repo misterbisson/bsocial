@@ -1,0 +1,3 @@
+[submodule "components/external/twitteroauth"]
+	path = components/external/twitteroauth
+	url = https://github.com/abraham/twitteroauth.git
