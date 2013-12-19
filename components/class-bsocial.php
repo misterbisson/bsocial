@@ -105,8 +105,8 @@ class bSocial
 	{
 		if ( ! isset( $this->test ))
 		{
-			require_once __DIR__ . '/class-bsocial-test.php';
-			$this->test = new bSocial_Test;
+			require_once __DIR__ . '/class-bsocial-twitter-test.php';
+			$this->test = new bSocialTwitter_Test();
 		}
 
 		return $this->test;

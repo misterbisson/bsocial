@@ -18,7 +18,12 @@
  *
  * @author Casey Bisson
  */
-class bSocial_Twitter_User_Stream
+if ( ! class_exists( 'bSocial_Twitter' ) )
+{
+	require __DIR__ .'/class-bsocial-twitter.php';
+}
+
+class bSocial_Twitter_User_Stream extends bSocial_Twitter
 {
 	function tweets()
 	{
@@ -51,11 +56,10 @@ class bSocial_Twitter_User_Stream
 	}//END refresh
 
 	/**
-	 * @param $connection TwitterOAuth object
 	 * @param $args 
 	 * @param $method
 	 */
-	function stream( $connection, $args , $method = 'stream' )
+	function stream( $args , $method = 'stream' )
 	{
 		switch( $method )
 		{
@@ -85,7 +89,7 @@ class bSocial_Twitter_User_Stream
 
 		$this->args = array_filter( wp_parse_args( $args, $defaults ) );
 
-		$this->api_response = $connection->get( 'statuses/user_timeline', $this->args );
+		$this->api_response = $this->get_http( 'statuses/user_timeline', $this->args );
 
 		if( ! empty( $this->api_response->errors ) )
 		{

@@ -18,9 +18,13 @@
  *
  * @author Casey Bisson
  */
-class bSocial_Twitter_Search
+if ( ! class_exists( 'bSocial_Twitter' ) )
 {
-	var $connection = NULL;
+	require __DIR__ .'/class-bsocial-twitter.php';
+}
+
+class bSocial_Twitter_Search extends bSocial_Twitter
+{
 	var $get_user_info = NULL;
 
 	function tweets()
@@ -53,10 +57,8 @@ class bSocial_Twitter_Search
 		return $this->search( $this->args , 'refresh' );
 	}//END refresh
 
-	function search( $connection, $args , $method = 'search' )
+	function search( $args , $method = 'search' )
 	{
-		$this->connection = $connection;
-
 		// parse the method
 		switch( $method )
 		{
@@ -98,7 +100,7 @@ class bSocial_Twitter_Search
 				$query_url = 'search/tweets';
 		}//END switch
 
-		$this->api_response = $this->connection->get( $query_url, $this->args );
+		$this->api_response = $this->get_http( $query_url, $this->args );
 
 		if( ! empty( $this->api_response->errors ) )
 		{

@@ -7,24 +7,28 @@
  *
  */
 
+if ( ! class_exists( 'bSocial_Twitter' ) )
+{
+	require __DIR__ .'/class-bsocial-twitter.php';
+}
+
 /*
  * bSocial_Twitter_User_Info class
  * 
  * Get the public information for a given user
  *
- * Example: bsocial_twitter_user_info()->get( $connection, 'misterbisson' ) 
+ * Example: bsocial_twitter_user_info()->get( 'misterbisson' ) 
  * 
  * @author Casey Bisson
  */
 
-class bSocial_Twitter_User_Info
+class bSocial_Twitter_User_Info extends bSocial_Twitter
 {
 	/**
-	 * @param $connection TwitterOAuth object
 	 * @param $screen_name user screen name or id
 	 * @param $by 'screen_name' or 'id'
 	 */
-	function get( $connection, $screen_name, $by = 'screen_name' )
+	function get( $screen_name, $by = 'screen_name' )
 	{
 		// Look up info about the twitter user by their screen name or ID
 		// Note: the ID here is not compatible with the user ID returned from the search API. This is a Twitter limitation.
@@ -38,7 +42,7 @@ class bSocial_Twitter_User_Info
 		if ( ! $user = wp_cache_get( (string) $screen_name, 'twitter_' . $by ) )
 		{
 			// check Twitter for the user info
-			$user = $connection->get( 'users/show', array( $by => $screen_name ) );
+			$user = $this->get_http( 'users/show', array( $by => $screen_name ) );
 
 			if ( is_wp_error( $user ) )
 			{
@@ -50,7 +54,7 @@ class bSocial_Twitter_User_Info
 				wp_cache_set( (string) $screen_name, $user, 'twitter_screen_name', 604801 ); // cache for 7 days
 			}
 		}//END if
-	
+
 		return $user;
 	}//END get
 }//END class
