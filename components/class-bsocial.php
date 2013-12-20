@@ -2,6 +2,10 @@
 
 class bSocial
 {
+	public $twitter_user_info = NULL;
+	public $linkedin_user_info = NULL;
+	public $linkedin_user_stream = NULL;
+
 	public function __construct()
 	{
 		// activate the sub-components
@@ -101,16 +105,21 @@ class bSocial
 		return $this->admin;
 	}
 
-	public function test()
+	public function tests()
 	{
-		if ( ! isset( $this->test ))
+		if ( ! isset( $this->tests ) )
 		{
+			$this->tests = array();
+
 			require_once __DIR__ . '/class-bsocial-twitter-test.php';
-			$this->test = new bSocialTwitter_Test();
+			$this->tests[] = new bSocialTwitter_Test();
+
+			require_once __DIR__ . '/class-bsocial-linkedin-test.php';
+			$this->tests[] = new bSocialLinkedIn_Test();
 		}
 
-		return $this->test;
-	}
+		return $this->tests;
+	}//END tests
 
 	public function url_to_blogid( $url )
 	{
@@ -258,6 +267,26 @@ class bSocial
 		return $this->twitter_user_info;
 	}
 
+	public function linkedin_user_info()
+	{
+		if( ! $this->linkedin_user_info )
+		{
+			require_once __DIR__ .'/class-bsocial-linkedin-user-info.php';
+			$this->linkedin_user_info = new bSocial_LinkedIn_User_Info;
+		}
+		return $this->linkedin_user_info;
+	}//END linkedin_user_info
+
+	public function linkedin_user_stream()
+	{
+		if( ! $this->linkedin_user_stream )
+		{
+			require_once __DIR__ .'/class-bsocial-linkedin-user-stream.php';
+			$this->linkedin_user_stream = new bSocial_LinkedIn_User_Stream;
+		}
+		return $this->linkedin_user_stream;
+	}//END linkedin_user_stream
+
 	// Show cron array for debugging
 	public function show_cron()
 	{
@@ -267,8 +296,7 @@ class bSocial
 		};
 		exit; 
 	}
-
-}
+}//END class
 
 function bsocial()
 {
@@ -280,4 +308,4 @@ function bsocial()
 	}
 
 	return $bsocial;
-}
+}//END bsocial

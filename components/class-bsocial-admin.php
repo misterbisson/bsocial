@@ -16,7 +16,7 @@ class bSocial_Admin extends bSocial
 		// load the test suite if the user has permissions
 		if( current_user_can( 'activate_plugins' ))
 		{
-			$this->test();
+			$this->tests();
 		}
 	}
 

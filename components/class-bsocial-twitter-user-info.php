@@ -48,7 +48,7 @@ class bSocial_Twitter_User_Info extends bSocial_Twitter
 			{
 				return FALSE;
 			}
-	
+
 			if ( empty( $user->errors ) )
 			{
 				wp_cache_set( (string) $screen_name, $user, 'twitter_screen_name', 604801 ); // cache for 7 days
