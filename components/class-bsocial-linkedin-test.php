@@ -41,6 +41,8 @@ class bSocialLinkedIn_Test extends bSocial
 		<pre>print_r( bsocial()->linkedin_user_stream()->get_updates( 'http://www.linkedin.com/in/razazaidi', 'url' ) );</pre>
 		<pre><?php print_r( bsocial()->linkedin_user_stream()->get_updates( 'http://www.linkedin.com/in/razazaidi', 'url', 2 ) ); ?></pre>
 
+
+		<h3>(LinkedIn has different search api calls for jobs, companies and people. We may implement some of them once we know what we want to do with LinkedIn search.)</h3>
 <?php
 		die;
 	}//END bsocial_test_linkedin_api_ajax
