@@ -5,6 +5,8 @@ class bSocial
 	public $twitter_user_info = NULL;
 	public $linkedin_user_info = NULL;
 	public $linkedin_user_stream = NULL;
+	public $facebook_user_info = NULL;
+	public $facebook_user_stream = NULL;
 
 	public function __construct()
 	{
@@ -116,7 +118,10 @@ class bSocial
 
 			require_once __DIR__ . '/class-bsocial-linkedin-test.php';
 			$this->tests[] = new bSocialLinkedIn_Test();
-		}
+
+			require_once __DIR__ . '/class-bsocial-facebook-test.php';
+			$this->tests[] = new bSocialFacebook_Test();
+		}//END if
 
 		return $this->tests;
 	}//END tests
@@ -286,6 +291,26 @@ class bSocial
 		}
 		return $this->linkedin_user_stream;
 	}//END linkedin_user_stream
+
+	public function facebook_user_info()
+	{
+		if( ! $this->facebook_user_info )
+		{
+			require_once __DIR__ .'/class-bsocial-facebook-user-info.php';
+			$this->facebook_user_info = new bSocial_Facebook_User_Info;
+		}
+		return $this->facebook_user_info;
+	}//END facebook_user_info
+
+	public function facebook_user_stream()
+	{
+		if( ! $this->facebook_user_stream )
+		{
+			require_once __DIR__ .'/class-bsocial-facebook-user-stream.php';
+			$this->facebook_user_stream = new bSocial_Facebook_User_Stream;
+		}
+		return $this->facebook_user_stream;
+	}//END facebook_user_stream
 
 	// Show cron array for debugging
 	public function show_cron()
