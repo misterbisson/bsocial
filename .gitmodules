@@ -1,6 +1,3 @@
-[submodule "components/external/twitteroauth"]
-	path = components/external/twitteroauth
-	url = git@github.com:abraham/twitteroauth.git
 [submodule "components/external/facebook-php-sdk"]
 	path = components/external/facebook-php-sdk
 	url = git://github.com/facebook/facebook-php-sdk.git

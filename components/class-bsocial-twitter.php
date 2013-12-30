@@ -1,25 +1,45 @@
 <?php
 
-class bSocial_Twitter
+if ( ! class_exists( 'bSocial_OAuth' ) )
 {
-	public $connection = NULL;
+	require __DIR__ . '/class-bsocial-oauth.php';
+}
 
+class bSocial_Twitter extends bSocial_OAuth
+{
 	public function __construct()
 	{
-		if ( ! class_exists( 'TwitterOAuth' ) )
+		// check if we can pass in the user token and secret or not
+		if ( defined( 'GOAUTH_TWITTER_ACCESS_TOKEN' ) && defined( 'GOAUTH_TWITTER_ACCESS_TOKEN_SECRET' ) )
 		{
-			require __DIR__ . '/external/twitteroauth/twitteroauth/twitteroauth.php';
+			parent::__construct( GOAUTH_TWITTER_CONSUMER_KEY, GOAUTH_TWITTER_CONSUMER_SECRET, GOAUTH_TWITTER_ACCESS_TOKEN, GOAUTH_TWITTER_ACCESS_TOKEN_SECRET );
 		}
-		$this->connection = new TwitterOAuth(
-			GOAUTH_TWITTER_CONSUMER_KEY,
-			GOAUTH_TWITTER_CONSUMER_SECRET,
-			GOAUTH_TWITTER_ACCESS_TOKEN,
-			GOAUTH_TWITTER_ACCESS_TOKEN_SECRET
-		);
+		else
+		{
+			parent::__construct( GOAUTH_TWITTER_CONSUMER_KEY, GOAUTH_TWITTER_CONSUMER_SECRET);
+		}
 	}//END __construct
 
-	public function get_http( $query_url, $parameters )
+	public function get_http( $query_url, $parameters = array() )
 	{
-		return $this->connection->get( $query_url, $parameters );
+		// prepend the twitter api url if $query_url is not absolute
+		if (
+			0 !== strpos( $query_url, 'http://' ) &&
+			0 !== strpos( $query_url, 'https://' )
+		)
+		{
+			$query_url = 'https://api.twitter.com/1.1/' . $query_url;
+
+			if ( ! isset( $parameters['format'] ) )
+			{
+				$query_url .= '.json';
+			}
+			else
+			{
+				$query_url .= '.' . $parameters['format'];
+			}
+		}
+
+		return parent::get_http( $query_url, $parameters );
 	}
 }//END class
