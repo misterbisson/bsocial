@@ -10,7 +10,7 @@ class bSocialLinkedIn_Test extends bSocial
 	public function bsocial_test_linkedin_api_ajax()
 	{
 		// permissions check
-		if( ! current_user_can( 'activate_plugins' ))
+		if ( ! current_user_can( 'activate_plugins' ) )
 		{
 			wp_die( "please don't even try to be sneaky!" );
 		}

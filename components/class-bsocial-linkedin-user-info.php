@@ -69,7 +69,7 @@ class bSocial_LinkedIn_User_Info extends bSocial_LinkedIn
 		}//END if
 
 		return $user;
-	}//END get_by_url
+	}//END get
 
 	/**
 	 * @fields (string) fields to request for
@@ -84,6 +84,6 @@ class bSocial_LinkedIn_User_Info extends bSocial_LinkedIn
 		}
 
 		return $this->get_http( $url );
-	}//END get
+	}//END get_own_profile
 
 }//END class
