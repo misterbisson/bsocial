@@ -16,7 +16,7 @@ function ingest_twitter_comments()
 	$tz_offset = get_option('gmt_offset'); // get the timezone offset
 
 	// get a new search object
-	$twitter_search = new_twitter_search();
+	$twitter_search = bsocial()->new_twitter_search();
 	$home_url = preg_replace( '|https?://|' , '' , home_url() );
 
 	// run with it
