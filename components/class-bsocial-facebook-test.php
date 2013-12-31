@@ -20,10 +20,13 @@ class bSocialFacebook_Test extends bSocial
 		<pre>print_r( bsocial()->facebook_user_info()->get_own_profile() );</pre>
 		<pre><?php print_r( bsocial()->facebook_user_info()->get_own_profile() ); ?></pre>
 
-		<h2>Getting public posts from the application user's wall</h2>
+		<h2>Getting profile of a public page</h2>
+		<pre>print_r( bsocial()->facebook_user_info()->get_page_profile( '/GigaOM' ) );</pre>
+		<pre><?php print_r( bsocial()->facebook_user_info()->get_page_profile( '/GigaOM' ) ); ?></pre>
+
+		<h2>Getting posts from the application user's wall</h2>
 		<pre>print_r( bsocial()->facebook_user_stream()->get_posts( 3 ) );</pre>
 		<pre><?php print_r( bsocial()->facebook_user_stream()->get_posts( 3 ) ); ?></pre>
-
 
 <?php
 		die;

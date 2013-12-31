@@ -54,4 +54,17 @@ class bSocial_Facebook_User_Info extends bSocial_Facebook
 
 		return $this->get_user_profile( $user_id );
 	}//END get_own_profile
+
+	/**
+	 * get profile of a facebook 'page'. if the page is public then
+	 * we won't need to authenticate the user.
+	 */
+	public function get_page_profile( $page_name )
+	{
+		if ( 0 !== strpos( $page_name, '/' ) )
+		{
+			$page_name = '/' . $page_name;
+		}
+		return $this->facebook->api( $page_name, 'GET' );
+	}//END get_page_profile
 }//END class
