@@ -3,6 +3,7 @@
 class bSocial
 {
 	public $twitter_user_info = NULL;
+	public $twitter_user_post_status = NULL;
 	public $linkedin_user_info = NULL;
 	public $linkedin_user_stream = NULL;
 	public $facebook_user_info = NULL;
@@ -271,6 +272,16 @@ class bSocial
 		}
 		return $this->twitter_user_info;
 	}
+
+	public function twitter_user_post_status()
+	{
+		if( ! $this->twitter_user_post_status )
+		{
+			require_once __DIR__ .'/class-bsocial-twitter-user-post-status.php';
+			$this->twitter_user_post_status = new bSocial_Twitter_User_Post_Status;
+		}
+		return $this->twitter_user_post_status;
+	}//END twitter_user_post_status
 
 	public function linkedin_user_info()
 	{

@@ -35,17 +35,27 @@ class bSocial_OAuth
 
 	public function get_http( $query_url, $parameters = array() )
 	{
+		return $this->oauth_http( $query_url, 'GET', $parameters );
+	}//END get_http
+
+	public function post_http( $query_url, $parameters = array() )
+	{
+		return $this->oauth_http( $query_url, 'POST', $parameters );
+	}//END post_http
+
+	public function oauth_http( $query_url, $method, $parameters = array() )
+	{
 		if ( ! isset( $parameters['format'] ) )
 		{
 			$parameters['format'] = 'json';
 		}
 
-		$request = OAuthRequest::from_consumer_and_token( $this->consumer, $this->token, 'GET', $query_url, $parameters );
+		$request = OAuthRequest::from_consumer_and_token( $this->consumer, $this->token, $method, $query_url, $parameters );
 
 		$request->sign_request( $this->sha1_method, $this->consumer, $this->token );
 
-		return json_decode( $this->http( $request->to_url(), 'GET' ) );
-	}
+		return json_decode( $this->http( $request->to_url(), $method, $parameters ) );
+	}//END oauth_http
 
 	// from twitteroauth library. this is the low-level curl implementation
 	// see https://github.com/abraham/twitteroauth

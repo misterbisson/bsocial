@@ -44,11 +44,6 @@ class bSocial_Twitter_User_Info extends bSocial_Twitter
 			// check Twitter for the user info
 			$user = $this->get_http( 'users/show', array( $by => $screen_name ) );
 
-			if ( is_wp_error( $user ) )
-			{
-				return FALSE;
-			}
-
 			if ( empty( $user->errors ) )
 			{
 				wp_cache_set( (string) $screen_name, $user, 'twitter_screen_name', 604801 ); // cache for 7 days

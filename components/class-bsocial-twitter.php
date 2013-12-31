@@ -20,9 +20,9 @@ class bSocial_Twitter extends bSocial_OAuth
 		}
 	}//END __construct
 
-	public function get_http( $query_url, $parameters = array() )
+	// prepend the twitter api url if $query_url is not absolute
+	public function validate_query_url( $query_url, $parameters )
 	{
-		// prepend the twitter api url if $query_url is not absolute
 		if (
 			0 !== strpos( $query_url, 'http://' ) &&
 			0 !== strpos( $query_url, 'https://' )
@@ -38,8 +38,18 @@ class bSocial_Twitter extends bSocial_OAuth
 			{
 				$query_url .= '.' . $parameters['format'];
 			}
-		}
+		}//END if
 
-		return parent::get_http( $query_url, $parameters );
-	}
+		return $query_url;
+	}//END validate_query_url
+
+	public function get_http( $query_url, $parameters = array() )
+	{
+		return parent::get_http( $this->validate_query_url( $query_url, $parameters ), $parameters );
+	}//END get_http
+
+	public function post_http( $query_url, $parameters = array() )
+	{
+		return parent::post_http( $this->validate_query_url( $query_url, $parameters ), $parameters );
+	}//END post_http
 }//END class

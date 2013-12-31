@@ -5,6 +5,7 @@ class bSocialTwitter_Test extends bSocial
 	public function __construct()
 	{
 		add_action( 'wp_ajax_bsocial-test-twitter-api', array( $this, 'bsocial_test_twitter_api_ajax' ) );
+		add_action( 'wp_ajax_bsocial-test-post-twitter-api', array( $this, 'bsocial_test_post_twitter_api_ajax' ) );
 	}//END __construct
 
 	public function bsocial_test_twitter_api_ajax()
@@ -64,9 +65,29 @@ print_r( $twitter_search->tweets() );
 			)
 		);
 		print_r( $twitter_search->tweets() );
-		?></pre>
 
+		?>
+<p>
+<a href="<?php echo admin_url( 'admin-ajax.php?action=bsocial-test-post-twitter-api', 'https' ); ?>">tweet something</a>
+</p>
+		</pre>
 		<?php
 		die;
-	}//END twitter_api
+	}//END bsocial_test_twitter_api_ajax
+
+	/**
+	 * tweet something to the current test account. we have to append
+	 * a generated string (timestamp) with each tweet since twitter
+	 * won't allow consecutively duplicate tweets.
+	 */
+	public function bsocial_test_post_twitter_api_ajax()
+	{
+?>
+		<h2>Tweet a test update to the authenticated user's account</h2>
+<pre>print_r( bsocial()->twitter_user_post_status()->post( 'test from gigaom! ' . date( DATE_RFC2822 ) ) );
+<?php print_r( bsocial()->twitter_user_post_status()->post( 'test from gigaom! ' . date( DATE_RFC2822 ) ) ); ?>
+</pre>
+<?php
+		die;
+	}//END bsocial_test_post_twitter_api_ajax
 }//END class
