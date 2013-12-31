@@ -1,7 +1,7 @@
 <?php
 /*
  * LinkedIn rest API glue
- * 
+ *
  * Don't include this file or directly call it's methods.
  * See bsocial()->linkedin_user_info() instead.
  *
@@ -14,10 +14,10 @@ if ( ! class_exists( 'bSocial_LinkedIn' ) )
 
 /*
  * bSocial_LinkedIn_User_Info class
- * 
+ *
  * Get the public information for a given user
  *
- * Example: bsocial_linkedin_user_info()->get( 'user_token', 'token' ) 
+ * Example: bsocial_linkedin_user_info()->get( 'user_token', 'token' )
  */
 class bSocial_LinkedIn_User_Info extends bSocial_LinkedIn
 {
@@ -31,7 +31,7 @@ class bSocial_LinkedIn_User_Info extends bSocial_LinkedIn
 	 *  token does not work on out-of-network users.
 	 * @fields (string) fields to request for
 	 */
-	function get( $user_id, $by, $fields=NULL )
+	public function get( $user_id, $by, $fields = NULL )
 	{
 		switch( $by )
 		{
@@ -74,7 +74,7 @@ class bSocial_LinkedIn_User_Info extends bSocial_LinkedIn
 	/**
 	 * @fields (string) fields to request for
 	 */
-	function get_own_profile( $fields=NULL )
+	public function get_own_profile( $fields = NULL )
 	{
 		$url = 'http://api.linkedin.com/v1/people/~';
 
@@ -85,5 +85,4 @@ class bSocial_LinkedIn_User_Info extends bSocial_LinkedIn
 
 		return $this->get_http( $url );
 	}//END get_own_profile
-
 }//END class

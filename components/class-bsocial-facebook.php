@@ -27,7 +27,7 @@ class bSocial_Facebook
 					'allowSignedRequest' => FALSE, // optional but should be set to false for non-canvas apps
 				)
 			);
-		}
+		}//END if
 	}//END __construct
 
 	/**

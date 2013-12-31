@@ -25,7 +25,7 @@ class bSocial_LinkedIn_User_Stream extends bSocial_LinkedIn
 	 * @param $by 'token' or 'url' 
 	 * @param $count how many updates to fetch
 	 */
-	function get_updates( $user_id, $by='token', $count=25 )
+	public function get_updates( $user_id, $by = 'token', $count = 25 )
 	{
 		$url = 'http://api.linkedin.com/v1/people/';
 
@@ -51,5 +51,5 @@ class bSocial_LinkedIn_User_Stream extends bSocial_LinkedIn
 		);
 
 		return $this->get_http( $url, $params );
-	}//END stream
+	}//END get_updates
 }//END class

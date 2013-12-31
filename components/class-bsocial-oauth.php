@@ -104,6 +104,7 @@ class bSocial_OAuth
 
 	/**
 	 * store header info
+	 * see https://github.com/abraham/twitteroauth
 	 */
 	public function getHeader( $ch, $header )
 	{

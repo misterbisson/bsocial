@@ -1,7 +1,7 @@
 <?php
 /*
  * Twitter rest API glue
- * 
+ *
  * Don't include this file or directly call it's methods.
  * See bsocial()->new_twitter_search() instead.
  *
@@ -9,10 +9,10 @@
 
 /*
  * Twitter_Search class
- * 
+ *
  * Search Twitter with a given term or phrase
  * Example: $twitter_search->search ( array( 'q' => 'search phrase' ))
- * 
+ *
  * Available query args:
  *   https://dev.twitter.com/docs/api/1.1/get/search/tweets
  *
@@ -25,9 +25,9 @@ if ( ! class_exists( 'bSocial_Twitter' ) )
 
 class bSocial_Twitter_Search extends bSocial_Twitter
 {
-	var $get_user_info = NULL;
+	public $get_user_info = NULL;
 
-	function tweets()
+	public function tweets()
 	{
 		if ( empty( $this->api_response->statuses ) )
 		{
@@ -37,27 +37,27 @@ class bSocial_Twitter_Search extends bSocial_Twitter
 		return $this->api_response->statuses;
 	}//END tweets
 
-	function next()
+	public function next()
 	{
 		if ( empty( $this->api_response->search_metadata->next_results ) )
 		{
 			return FALSE;
 		}
 
-		return $this->search( $this->args , 'next' );
+		return $this->search( $this->args, 'next' );
 	}//END next
 
-	function refresh()
+	public function refresh()
 	{
 		if( empty( $this->api_response->search_metadata->refresh_url ) )
 		{
 			return FALSE;
 		}
 
-		return $this->search( $this->args , 'refresh' );
+		return $this->search( $this->args, 'refresh' );
 	}//END refresh
 
-	function search( $args , $method = 'search' )
+	public function search( $args, $method = 'search' )
 	{
 		// parse the method
 		switch( $method )

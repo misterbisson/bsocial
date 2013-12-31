@@ -38,8 +38,8 @@ print_r( $twitter_feed->tweets() );
 		$twitter_feed = bsocial()->new_twitter_user_stream();
 		$twitter_feed->stream(
 			array(
-				'screen_name' => 'gigaom' , 
-				'count' => 2 ,
+				'screen_name' => 'gigaom',
+				'count' => 2,
 			)
 		);
 		print_r( $twitter_feed->tweets() );

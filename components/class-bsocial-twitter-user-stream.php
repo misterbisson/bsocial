@@ -25,7 +25,7 @@ if ( ! class_exists( 'bSocial_Twitter' ) )
 
 class bSocial_Twitter_User_Stream extends bSocial_Twitter
 {
-	function tweets()
+	public function tweets()
 	{
 		if ( empty( $this->api_response ) )
 		{
@@ -35,31 +35,31 @@ class bSocial_Twitter_User_Stream extends bSocial_Twitter
 		return $this->api_response;
 	}//END tweets
 
-	function next()
+	public function next()
 	{
 		if ( empty( $this->api_response ) )
 		{
 			return FALSE;
 		}
 
-		return $this->stream( $this->args , 'next' );
+		return $this->stream( $this->args, 'next' );
 	}//END next
 
-	function refresh()
+	public function refresh()
 	{
 		if( empty( $this->api_response ) )
 		{
 			return FALSE;
 		}
 
-		return $this->stream( $this->args , 'refresh' );
+		return $this->stream( $this->args, 'refresh' );
 	}//END refresh
 
 	/**
 	 * @param $args 
 	 * @param $method
 	 */
-	function stream( $args , $method = 'stream' )
+	public function stream( $args, $method = 'stream' )
 	{
 		switch( $method )
 		{

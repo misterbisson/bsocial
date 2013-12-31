@@ -1,7 +1,7 @@
 <?php
 /*
  * Twitter rest API glue
- * 
+ *
  * Don't include this file or directly call it's methods.
  * See bsocial()->twitter_user_info() instead.
  *
@@ -14,11 +14,11 @@ if ( ! class_exists( 'bSocial_Twitter' ) )
 
 /*
  * bSocial_Twitter_User_Info class
- * 
+ *
  * Get the public information for a given user
  *
- * Example: bsocial_twitter_user_info()->get( 'misterbisson' ) 
- * 
+ * Example: bsocial_twitter_user_info()->get( 'misterbisson' )
+ *
  * @author Casey Bisson
  */
 
@@ -28,12 +28,12 @@ class bSocial_Twitter_User_Info extends bSocial_Twitter
 	 * @param $screen_name user screen name or id
 	 * @param $by 'screen_name' or 'id'
 	 */
-	function get( $screen_name, $by = 'screen_name' )
+	public function get( $screen_name, $by = 'screen_name' )
 	{
 		// Look up info about the twitter user by their screen name or ID
 		// Note: the ID here is not compatible with the user ID returned from the search API. This is a Twitter limitation.
 		// method docs: https://dev.twitter.com/docs/api/1.1/get/users/show
-		// useful: $user->name, $user->screen_name, $user->id_str, $user->followers_count 
+		// useful: $user->name, $user->screen_name, $user->id_str, $user->followers_count
 
 		// are we searching by screen name or ID?
 		$by = in_array( $by, array( 'screen_name', 'id' )) ? $by : 'screen_name';

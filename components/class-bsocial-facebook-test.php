@@ -30,5 +30,5 @@ class bSocialFacebook_Test extends bSocial
 
 <?php
 		die;
-	}//END bsocial_test_linkedin_api_ajax
+	}//END bsocial_test_facebook_api_ajax
 }//END class
