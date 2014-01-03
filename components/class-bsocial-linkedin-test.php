@@ -5,6 +5,7 @@ class bSocialLinkedIn_Test extends bSocial
 	public function __construct()
 	{
 		add_action( 'wp_ajax_bsocial-test-linkedin-api', array( $this, 'bsocial_test_linkedin_api_ajax' ) );
+		add_action( 'wp_ajax_bsocial-test-post-linked-api', array( $this, 'bsocial_test_post_linkedin_api_ajax' ) );
 	}//END __construct
 
 	public function bsocial_test_linkedin_api_ajax()
@@ -44,21 +45,40 @@ class bSocialLinkedIn_Test extends bSocial
 
 		<h3>(LinkedIn has different search api calls for jobs, companies and people. We may implement some of them once we know what we want to do with LinkedIn search.)</h3>
 
-		<h2>Share something in the user's feed</h2>
+		<h2>post to a linkedin feed</h2>
+		<a href="<?php echo admin_url( 'admin-ajax.php?action=bsocial-test-post-linked-api', 'https' ); ?>">share something in a user's feed</a>
+		<p/>
 <?php
+		die;
+	}//END bsocial_test_linkedin_api_ajax
+
+
+	public function bsocial_test_post_linkedin_api_ajax()
+	{
+		$params = array(
+			'comment' => 'yet another test of linedin\'s "share" api. ' . date( DATE_RFC2822 ),
+			'title' => 'camper van beethoven',
+			'description' => 'sweethearts',
+			'submitted-url' => 'http://tabs.ultimate-guitar.com/c/camper_van_beethoven/sweethearts_tab.htm',
+			'submitted-image-url' => 'http://upload.wikimedia.org/wikipedia/en/1/1e/Camper_Van_Beethoven_Key_Lime_Pie.jpg',
+			'visibility' => 'anyone',
+		);
+?>
+		<pre>
 $params = array(
-	'comment' => 'yet another test of linedin\'s "share" api',
+	'comment' => 'yet another test of linedin\'s "share" api. ' . date( DATE_RFC2822 ),
 	'title' => 'camper van beethoven',
 	'description' => 'sweethearts',
 	'submitted-url' => 'http://tabs.ultimate-guitar.com/c/camper_van_beethoven/sweethearts_tab.htm',
 	'submitted-image-url' => 'http://upload.wikimedia.org/wikipedia/en/1/1e/Camper_Van_Beethoven_Key_Lime_Pie.jpg',
 	'visibility' => 'anyone',
 );
-?>
-		<pre>print_r( bsocial()->linkedin_user_stream()->share( $params ) );</pre>
-		<pre><?php print_r( bsocial()->linkedin_user_stream()->share( $params ) ); ?></pre>
+
+print_r( bsocial()->linkedin_user_stream()->share( $params ) );</pre>
+
+<pre><?php print_r( bsocial()->linkedin_user_stream()->share( $params ) ); ?></pre>
 
 <?php
 		die;
-	}//END bsocial_test_linkedin_api_ajax
+	}//END bsocial_test_post_linkedin_api_ajax
 }//END class
