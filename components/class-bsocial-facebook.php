@@ -32,8 +32,12 @@ class bSocial_Facebook
 
 	/**
 	 * get the id of the current authenticated user
+	 *
+	 * @param $scope an array of permissions to request. the list of
+	 *        permissions can be found here:
+	 *        https://developers.facebook.com/docs/reference/login/
 	 */
-	public function get_user_id()
+	public function get_user_id( $scope = NULL )
 	{
 		if ( ! $this->facebook )
 		{
@@ -45,6 +49,10 @@ class bSocial_Facebook
 		if ( ! $user_id )
 		{
 			$login_url = $this->facebook->getLoginUrl();
+			if ( $scope )
+			{
+				$login_url .= '&scope=' . implode( ',', $scope );
+			}
 			return new WP_Error( 'facebook auth error', 'user not logged in. Please <a href="' . $login_url . '">login</a> and try again.' );
 		}
 
