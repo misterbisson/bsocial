@@ -43,6 +43,21 @@ class bSocialLinkedIn_Test extends bSocial
 
 
 		<h3>(LinkedIn has different search api calls for jobs, companies and people. We may implement some of them once we know what we want to do with LinkedIn search.)</h3>
+
+		<h2>Share something in the user's feed</h2>
+<?php
+$params = array(
+	'comment' => 'yet another test of linedin\'s "share" api',
+	'title' => 'camper van beethoven',
+	'description' => 'sweethearts',
+	'submitted-url' => 'http://tabs.ultimate-guitar.com/c/camper_van_beethoven/sweethearts_tab.htm',
+	'submitted-image-url' => 'http://upload.wikimedia.org/wikipedia/en/1/1e/Camper_Van_Beethoven_Key_Lime_Pie.jpg',
+	'visibility' => 'anyone',
+);
+?>
+		<pre>print_r( bsocial()->linkedin_user_stream()->share( $params ) );</pre>
+		<pre><?php print_r( bsocial()->linkedin_user_stream()->share( $params ) ); ?></pre>
+
 <?php
 		die;
 	}//END bsocial_test_linkedin_api_ajax

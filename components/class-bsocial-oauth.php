@@ -38,6 +38,14 @@ class bSocial_OAuth
 		return $this->oauth_http( $query_url, 'GET', $parameters );
 	}//END get_http
 
+	/**
+	 * execute an OAuth HTTP POST.
+	 *
+	 * to make a non-form-based post, where the data is not in the
+	 * key/var format, pass in a parameter of 'custom_post_type' with
+	 * the post data type ('json', 'xml', etc.) and we'll set up the
+	 * Content-type and Content-length headers.
+	 */
 	public function post_http( $query_url, $parameters = array() )
 	{
 		return $this->oauth_http( $query_url, 'POST', $parameters );
@@ -80,7 +88,22 @@ class bSocial_OAuth
 				curl_setopt($ci, CURLOPT_POST, TRUE);
 				if ( ! empty( $postfields ) )
 				{
-					curl_setopt( $ci, CURLOPT_POSTFIELDS, $postfields );
+					// check if we're posting a form or application content
+					if ( isset( $postfields['custom_post_type'] ) )
+					{
+						// not a normal form post
+						curl_setopt( $ci, CURLOPT_CUSTOMREQUEST, 'POST');
+						curl_setopt( $ci, CURLOPT_POSTFIELDS, $postfields['post_data'] );
+						curl_setopt( $ci, CURLOPT_RETURNTRANSFER, true);
+						curl_setopt( $ci, CURLOPT_HTTPHEADER, array(
+										 'Content-Type: application/' . $postfields['custom_post_type'],
+										 'Content-Length: ' . strlen( $postfields['post_data'] ),
+						) );
+					}
+					else
+					{
+						curl_setopt( $ci, CURLOPT_POSTFIELDS, $postfields );
+					}
 				}
 				break;
 
