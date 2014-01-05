@@ -3,7 +3,7 @@
 Plugin Name: bSocial Connected Blogging Tools
 Plugin URI: http://maisonbisson.com/bsuite/
 Description: Social widgets and connectivity.
-Version: 5.1
+Version: 5.2
 Author: Casey Bisson
 Author URI: http://maisonbisson.com/blog/
 */
