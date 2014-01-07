@@ -5,9 +5,9 @@
 class bSocial_LinkedIn
 {
 	public $oauth = NULL;
+	public $config = NULL;
 	public $base_url = 'http://api.linkedin.com/v1/people/';
 
-	// TODO: get the keys and secrets from go_config instead of wp-config
 	public function __construct()
 	{
 		if ( ! class_exists( 'bSocial_OAuth' ) )
@@ -15,21 +15,39 @@ class bSocial_LinkedIn
 			require __DIR__ . '/class-bsocial-oauth.php';
 		}
 
+		// get our keys and secrets from the config
+		$this->config = apply_filters(
+			'go_config',
+			array(
+				'linkedin' => array(
+					'consumer_key' => NULL,
+					'consumer_secret' => NULL,
+					'user_token' => NULL,
+					'user_secret' => NULL,
+				),
+			),
+			'bsocial'
+		);
+		if ( isset( $this->config['linkedin'] ) )
+		{
+			$this->config = $this->config['linkedin'];
+		}
+
 		// check if we can pass in the user token and secret or not
-		if ( defined( 'GOAUTH_LINKEDIN_USER_TOKEN' ) && defined( 'GOAUTH_LINKEDIN_USER_SECRET' ) )
+		if ( ! empty( $this->config['user_token'] ) && ! empty( $this->config['user_secret'] ) )
 		{
 			$this->oauth = new bSocial_OAuth(
-				GOAUTH_LINKEDIN_CONSUMER_KEY,
-				GOAUTH_LINKEDIN_CONSUMER_SECRET,
-				GOAUTH_LINKEDIN_USER_TOKEN,
-				GOAUTH_LINKEDIN_USER_SECRET
+				$this->config['consumer_key'],
+				$this->config['consumer_secret'],
+				$this->config['user_token'],
+				$this->config['user_secret']
 			);
 		}
 		else
 		{
 			$this->oauth = new bSocial_OAuth(
-				GOAUTH_LINKEDIN_CONSUMER_KEY,
-				GOAUTH_LINKEDIN_CONSUMER_SECRET
+				$this->config['consumer_key'],
+				$this->config['consumer_secret']
 			);
 		}
 	}//END __construct

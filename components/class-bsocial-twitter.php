@@ -5,10 +5,10 @@
 class bSocial_Twitter
 {
 	public $oauth = NULL;
+	public $config = NULL;
 	public $search = NULL;
 	public $user_stream = NULL;
 
-	// TODO: get the keys and secrets from go_config instead of wp-config
 	public function __construct()
 	{
 		if ( ! class_exists( 'bSocial_OAuth' ) )
@@ -16,21 +16,39 @@ class bSocial_Twitter
 			require __DIR__ . '/class-bsocial-oauth.php';
 		}
 
+		// get our keys and secrets from the config
+		$this->config = apply_filters(
+			'go_config',
+			array(
+				'twitter' => array(
+					'consumer_key' => NULL,
+					'consumer_secret' => NULL,
+					'access_token' => NULL,
+					'access_secret' => NULL,
+				),
+			),
+			'bsocial'
+		);
+		if ( isset( $this->config['twitter'] ) )
+		{
+			$this->config = $this->config['twitter'];
+		}
+
 		// check if we have the user token and secret or not
-		if ( defined( 'GOAUTH_TWITTER_ACCESS_TOKEN' ) && defined( 'GOAUTH_TWITTER_ACCESS_TOKEN_SECRET' ) )
+		if ( ! empty( $this->config['access_token'] ) && ! empty( $this->config['access_secret'] ) )
 		{
 			$this->oauth = new bSocial_OAuth(
-				GOAUTH_TWITTER_CONSUMER_KEY,
-				GOAUTH_TWITTER_CONSUMER_SECRET,
-				GOAUTH_TWITTER_ACCESS_TOKEN,
-				GOAUTH_TWITTER_ACCESS_TOKEN_SECRET
+				$this->config['consumer_key'],
+				$this->config['consumer_secret'],
+				$this->config['access_token'],
+				$this->config['access_secret']
 			);
 		}
 		else
 		{
 			$this->oauth = new bSocial_OAuth(
-				GOAUTH_TWITTER_CONSUMER_KEY,
-				GOAUTH_TWITTER_CONSUMER_SECRET
+				$this->config['consumer_key'],
+				$this->config['consumer_secret']
 			);
 		}
 	}//END __construct

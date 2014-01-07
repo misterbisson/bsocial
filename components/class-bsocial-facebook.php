@@ -5,10 +5,9 @@
 class bSocial_Facebook
 {
 	public $facebook = NULL;
+	public $config = NULL;
 	public $user_stream = NULL;
 
-
-	// TODO: get the keys and secrets from go_config instead of wp-config
 	public function __construct()
 	{
 		if ( ! $this->facebook )
@@ -17,10 +16,27 @@ class bSocial_Facebook
 			{
 				require __DIR__ . '/external/facebook-php-sdk/src/facebook.php';
 			}
+
+			// get our keys and secrets from the config
+			$this->config = apply_filters(
+				'go_config',
+				array(
+					'facebook' => array(
+						'consumer_key' => NULL,
+						'consumer_secret' => NULL,
+					),
+				),
+				'bsocial'
+			);
+			if ( isset( $this->config['facebook'] ) )
+			{
+				$this->config = $this->config['facebook'];
+			}
+
 			$this->facebook = new Facebook(
 				array(
-					'appId' => GOAUTH_FACEBOOK_CONSUMER_KEY,
-					'secret' => GOAUTH_FACEBOOK_CONSUMER_SECRET,
+					'appId' => $this->config['consumer_key'],
+					'secret' => $this->config['consumer_secret'],
 					'fileUpload' => FALSE,         // optional
 					'allowSignedRequest' => FALSE, // optional but should be set to false for non-canvas apps
 				)
