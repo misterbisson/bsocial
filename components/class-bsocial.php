@@ -269,25 +269,21 @@ class bSocial
 		return $this->twitter;
 	}//END twitter
 
-	public function linkedin_user_info()
+	/**
+	 * return our handle to our linkedin client object
+	 */
+	public function linkedin()
 	{
-		if( ! $this->linkedin_user_info )
+		if ( ! $this->linkedin )
 		{
-			require_once __DIR__ .'/class-bsocial-linkedin-user-info.php';
-			$this->linkedin_user_info = new bSocial_LinkedIn_User_Info;
+			if ( ! class_exists( 'bSocial_LinkedIn' ) )
+			{
+				require __DIR__ .'/class-bsocial-linkedin.php';
+			}
+			$this->linkedin = new bSocial_LinkedIn();
 		}
-		return $this->linkedin_user_info;
-	}//END linkedin_user_info
-
-	public function linkedin_user_stream()
-	{
-		if( ! $this->linkedin_user_stream )
-		{
-			require_once __DIR__ .'/class-bsocial-linkedin-user-stream.php';
-			$this->linkedin_user_stream = new bSocial_LinkedIn_User_Stream;
-		}
-		return $this->linkedin_user_stream;
-	}//END linkedin_user_stream
+		return $this->linkedin;
+	}//END linkedin
 
 	public function facebook_user_info()
 	{

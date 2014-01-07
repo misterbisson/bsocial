@@ -19,28 +19,28 @@ class bSocialLinkedIn_Test extends bSocial
 
 		<h2>Getting user info by url for <a href="http://www.linkedin.com/pub/christopher-stream/b/139/282">Christopher Stream</a></h2>
 		(The user url used is from a public/anonymous search result.)<br/>
-		<pre>print_r( bsocial()->linkedin_user_info()->get( 'http://www.linkedin.com/pub/christopher-stream/b/139/282', 'url', '(id,first-name,last-name,headline,industry)' ) );</pre>
-		<pre><?php print_r( bsocial()->linkedin_user_info()->get( 'http://www.linkedin.com/pub/christopher-stream/b/139/282', 'url', '(id,first-name,last-name,headline,industry,siteStandardProfileRequest)' ) ); ?></pre>
+		<pre>print_r( bsocial()->linkedin()->get_user_info( 'http://www.linkedin.com/pub/christopher-stream/b/139/282', 'url', '(id,first-name,last-name,headline,industry)' ) );</pre>
+		<pre><?php print_r( bsocial()->linkedin()->get_user_info( 'http://www.linkedin.com/pub/christopher-stream/b/139/282', 'url', '(id,first-name,last-name,headline,industry,siteStandardProfileRequest)' ) ); ?></pre>
 
 
 		<h2>Getting user info by member id/token for <a href="http://www.linkedin.com/in/jeremyjbornstein">Jeremy Bornstein</a></h2>
-		<pre>print_r( bsocial()->linkedin_user_info()->get( 'cKzpmcXNzb', 'token', '(id,first-name,last-name,headline,industry,siteStandardProfileRequest)' ) );</pre>
-		<pre><?php print_r( bsocial()->linkedin_user_info()->get( 'cKzpmcXNzb', 'token', '(id,first-name,last-name,headline,industry,siteStandardProfileRequest)' ) ); ?></pre>
+		<pre>print_r( bsocial()->linkedin()->get_user_info( 'cKzpmcXNzb', 'token', '(id,first-name,last-name,headline,industry,siteStandardProfileRequest)' ) );</pre>
+		<pre><?php print_r( bsocial()->linkedin()->get_user_info( 'cKzpmcXNzb', 'token', '(id,first-name,last-name,headline,industry,siteStandardProfileRequest)' ) ); ?></pre>
 
 
 		<h2>Getting application user's own info</h2>
-		<pre>print_r( bsocial()->linkedin_user_info()->get_own_profile() );</pre>
-		<pre><?php print_r( bsocial()->linkedin_user_info()->get_own_profile( '(id,first-name,last-name,headline,industry,siteStandardProfileRequest)' ) ); ?></pre>
+		<pre>print_r( bsocial()->linkedin()->get_user_info( NULL, 'self', '(id,first-name,last-name,headline,industry,siteStandardProfileRequest)' ) );</pre>
+		<pre><?php print_r( bsocial()->linkedin()->get_user_info( NULL, 'self', '(id,first-name,last-name,headline,industry,siteStandardProfileRequest)' ) ); ?></pre>
 
 
 		<h2>Getting a member's updates (feed/stream) that's not shared</h2>
-		<pre>print_r( bsocial()->linkedin_user_stream()->get_updates( 'cKzpmcXNzb', 'token' ) );</pre>
-		<pre><?php print_r( bsocial()->linkedin_user_stream()->get_updates( 'cKzpmcXNzb', 'token', 2 ) ); ?></pre>
+		<pre>print_r( bsocial()->linkedin()->get_updates( 'cKzpmcXNzb', 'token' ) );</pre>
+		<pre><?php print_r( bsocial()->linkedin()->get_updates( 'cKzpmcXNzb', 'token', 2 ) ); ?></pre>
 
 
 		<h2>Getting a member's updates (feed/stream)</h2>
-		<pre>print_r( bsocial()->linkedin_user_stream()->get_updates( 'http://www.linkedin.com/in/razazaidi', 'url' ) );</pre>
-		<pre><?php print_r( bsocial()->linkedin_user_stream()->get_updates( 'http://www.linkedin.com/in/razazaidi', 'url', 2 ) ); ?></pre>
+		<pre>print_r( bsocial()->linkedin()->->get_updates( 'http://www.linkedin.com/in/razazaidi', 'url' ) );</pre>
+		<pre><?php print_r( bsocial()->linkedin()->get_updates( 'http://www.linkedin.com/in/razazaidi', 'url', 2 ) ); ?></pre>
 
 
 		<h3>(LinkedIn has different search api calls for jobs, companies and people. We may implement some of them once we know what we want to do with LinkedIn search.)</h3>
@@ -74,9 +74,9 @@ $params = array(
 	'visibility' => 'anyone',
 );
 
-print_r( bsocial()->linkedin_user_stream()->share( $params ) );</pre>
+print_r( bsocial()->linkedin()->share( $params ) );</pre>
 
-<pre><?php print_r( bsocial()->linkedin_user_stream()->share( $params ) ); ?></pre>
+<pre><?php print_r( bsocial()->linkedin()->share( $params ) ); ?></pre>
 
 <?php
 		die;
