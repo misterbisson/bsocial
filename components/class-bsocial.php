@@ -6,11 +6,6 @@ class bSocial
 	public $linkedin = NULL;
 	public $facebook = NULL;
 
-	public $linkedin_user_info = NULL;
-	public $linkedin_user_stream = NULL;
-	public $facebook_user_info = NULL;
-	public $facebook_user_stream = NULL;
-
 	public function __construct()
 	{
 		// activate the sub-components
@@ -285,25 +280,21 @@ class bSocial
 		return $this->linkedin;
 	}//END linkedin
 
-	public function facebook_user_info()
+	/**
+	 * return our handle to our facebook client object
+	 */
+	public function facebook()
 	{
-		if( ! $this->facebook_user_info )
+		if ( ! $this->facebook )
 		{
-			require_once __DIR__ .'/class-bsocial-facebook-user-info.php';
-			$this->facebook_user_info = new bSocial_Facebook_User_Info;
+			if ( ! class_exists( 'bSocial_Facebook' ) )
+			{
+				require __DIR__ .'/class-bsocial-facebook.php';
+			}
+			$this->facebook = new bSocial_Facebook();
 		}
-		return $this->facebook_user_info;
-	}//END facebook_user_info
-
-	public function facebook_user_stream()
-	{
-		if( ! $this->facebook_user_stream )
-		{
-			require_once __DIR__ .'/class-bsocial-facebook-user-stream.php';
-			$this->facebook_user_stream = new bSocial_Facebook_User_Stream;
-		}
-		return $this->facebook_user_stream;
-	}//END facebook_user_stream
+		return $this->facebook;
+	}//END facebook
 
 	// Show cron array for debugging
 	public function show_cron()

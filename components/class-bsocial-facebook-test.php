@@ -17,17 +17,17 @@ class bSocialFacebook_Test extends bSocial
 		}
 ?>
 
-		<h2>Getting application user info</h2>
-		<pre>print_r( bsocial()->facebook_user_info()->get_own_profile() );</pre>
-		<pre><?php print_r( bsocial()->facebook_user_info()->get_own_profile() ); ?></pre>
+		<h2>Getting application's own user info</h2>
+		<pre>print_r( bsocial()->facebook()->get_profile() );</pre>
+		<pre><?php print_r( bsocial()->facebook()->get_profile() ); ?></pre>
 
 		<h2>Getting profile of a public page</h2>
-		<pre>print_r( bsocial()->facebook_user_info()->get_page_profile( '/GigaOM' ) );</pre>
-		<pre><?php print_r( bsocial()->facebook_user_info()->get_page_profile( '/GigaOM' ) ); ?></pre>
+		<pre>print_r( bsocial()->facebook()->get_profile( '/GigaOM' ) );</pre>
+		<pre><?php print_r( bsocial()->facebook()->get_profile( '/GigaOM' ) ); ?></pre>
 
 		<h2>Getting posts from the application user's wall</h2>
-		<pre>print_r( bsocial()->facebook_user_stream()->get_posts( 3 ) );</pre>
-		<pre><?php print_r( bsocial()->facebook_user_stream()->get_posts( 3 ) ); ?></pre>
+		<pre>print_r( bsocial()->facebook()->user_stream()->get_posts( 3 ) );</pre>
+		<pre><?php print_r( bsocial()->facebook()->user_stream()->get_posts( 3 ) ); ?></pre>
 
 <p>
 <h2>Post a status update to the user's own wall</h2>
@@ -42,8 +42,8 @@ class bSocialFacebook_Test extends bSocial
 	{
 ?>
 		<h2>Post a status update to the authenticated user's wall</h2>
-<pre>print_r( bsocial()->facebook_user_stream()->post( '"bunny chocolac!" ' . date( DATE_RFC2822 ) ) );
-<?php print_r( bsocial()->facebook_user_stream()->post( '"bunny chocolac!" ' . date( DATE_RFC2822 ) ) ); ?>
+		<pre>print_r( bsocial()->facebook()->post_status( '"bunny chocolac!" ' . date( DATE_RFC2822 ) ) );
+		<?php print_r( bsocial()->facebook()->post_status( '"bunny chocolac!" ' . date( DATE_RFC2822 ) ) ); ?>
 </pre>
 
 <?php
