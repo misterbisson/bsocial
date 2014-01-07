@@ -1,22 +1,37 @@
 <?php
-
-if ( ! class_exists( 'bSocial_OAuth' ) )
+/**
+ * wrapper for our connection to the twitter services
+ */
+class bSocial_Twitter
 {
-	require __DIR__ . '/class-bsocial-oauth.php';
-}
+	public $oauth = NULL;
+	public $search = NULL;
+	public $user_stream = NULL;
 
-class bSocial_Twitter extends bSocial_OAuth
-{
+	// TODO: get the keys and secrets from go_config instead of wp-config
 	public function __construct()
 	{
-		// check if we can pass in the user token and secret or not
+		if ( ! class_exists( 'bSocial_OAuth' ) )
+		{
+			require __DIR__ . '/class-bsocial-oauth.php';
+		}
+
+		// check if we have the user token and secret or not
 		if ( defined( 'GOAUTH_TWITTER_ACCESS_TOKEN' ) && defined( 'GOAUTH_TWITTER_ACCESS_TOKEN_SECRET' ) )
 		{
-			parent::__construct( GOAUTH_TWITTER_CONSUMER_KEY, GOAUTH_TWITTER_CONSUMER_SECRET, GOAUTH_TWITTER_ACCESS_TOKEN, GOAUTH_TWITTER_ACCESS_TOKEN_SECRET );
+			$this->oauth = new bSocial_OAuth(
+				GOAUTH_TWITTER_CONSUMER_KEY,
+				GOAUTH_TWITTER_CONSUMER_SECRET,
+				GOAUTH_TWITTER_ACCESS_TOKEN,
+				GOAUTH_TWITTER_ACCESS_TOKEN_SECRET
+			);
 		}
 		else
 		{
-			parent::__construct( GOAUTH_TWITTER_CONSUMER_KEY, GOAUTH_TWITTER_CONSUMER_SECRET);
+			$this->oauth = new bSocial_OAuth(
+				GOAUTH_TWITTER_CONSUMER_KEY,
+				GOAUTH_TWITTER_CONSUMER_SECRET
+			);
 		}
 	}//END __construct
 
@@ -45,11 +60,91 @@ class bSocial_Twitter extends bSocial_OAuth
 
 	public function get_http( $query_url, $parameters = array() )
 	{
-		return parent::get_http( $this->validate_query_url( $query_url, $parameters ), $parameters );
+		return $this->oauth->get_http(
+			$this->validate_query_url( $query_url, $parameters ),
+			$parameters
+		);
 	}//END get_http
 
 	public function post_http( $query_url, $parameters = array() )
 	{
-		return parent::post_http( $this->validate_query_url( $query_url, $parameters ), $parameters );
+		return $this->oauth->post_http(
+			$this->validate_query_url( $query_url, $parameters ),
+			$parameters
+		);
 	}//END post_http
+
+	/**
+	 * return the twitter search object
+	 */
+	public function search()
+	{
+		if ( ! $this->search )
+		{
+			if ( ! class_exists( 'bSocial_Twitter_Search' ) )
+			{
+				require __DIR__ .'/class-bsocial-twitter-search.php';
+			}
+
+			$this->search = new bSocial_Twitter_Search( $this );
+		}//END if
+
+		return $this->search;
+	}//END search
+
+	public function user_stream()
+	{
+		if ( ! $this->user_stream )
+		{
+			if ( ! class_exists( 'bSocial_Twitter_User_Stream' ) )
+			{
+				require __DIR__ .'/class-bsocial-twitter-user-stream.php';
+			}
+
+			$this->user_stream = new bSocial_Twitter_User_Stream( $this );
+		}//END if
+
+		return $this->user_stream;
+	}//END user_stream
+
+	/**
+	 * Look up info about the twitter user by their screen name or ID
+	 * Note: the ID here is not compatible with the user ID returned from
+	 * the search API. This is a Twitter limitation.
+	 *
+	 * method docs: https://dev.twitter.com/docs/api/1.1/get/users/show
+	 * useful: $user->name, $user->screen_name, $user->id_str,
+	 *         $user->followers_count
+	 *
+	 * @param $screen_name user screen name or id
+	 * @param $by 'screen_name' or 'id'
+	 */
+	public function get_user_info( $screen_name, $by = 'screen_name' )
+	{
+		// are we searching by screen name or ID?
+		$by = in_array( $by, array( 'screen_name', 'id' )) ? $by : 'screen_name';
+
+		// check the cache for the user info
+		if ( ! $user = wp_cache_get( (string) $screen_name, 'twitter_' . $by ) )
+		{
+			// check Twitter for the user info
+			$user = $this->get_http( 'users/show', array( $by => $screen_name ) );
+
+			if ( empty( $user->errors ) )
+			{
+				wp_cache_set( (string) $screen_name, $user, 'twitter_screen_name', 604801 ); // cache for 7 days
+			}
+		}//END if
+
+		return $user;
+	}//END get_user_info
+
+	/**
+	 * @param $message the message to tweet
+	 */
+	public function post_tweet( $message )
+	{
+		return $this->post_http( 'statuses/update', array( 'status' => $message ) );
+	}//END post_tweet
+	
 }//END class

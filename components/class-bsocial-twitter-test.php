@@ -18,14 +18,14 @@ class bSocialTwitter_Test extends bSocial
 
 		?>
 		<h2>Getting user info for <a href="https://twitter.com/misterbisson">@misterbisson</a></h2>
-		<pre>print_r( bsocial()->twitter_user_info()->get( 'misterbisson' ) );</pre>
-		<pre><?php print_r( bsocial()->twitter_user_info()->get( 'misterbisson' ) ); ?></pre>
+		<pre>print_r( bsocial()->twitter()->get_user_info( 'misterbisson' ) );</pre>
+		<pre><?php print_r( bsocial()->twitter()->get_user_info( 'misterbisson' ) ); ?></pre>
 
 
 		<h2>Getting tweet stream for <a href="https://twitter.com/Gigaom">@gigaom</a></h2>
 		<pre>
-$twitter_feed = bsocial()->new_twitter_user_stream();
-$twitter_feed->stream(
+$twitter_feed = bsocial()->twitter()->user_stream();
+$twitter_feed->get_stream(
 	array(
 		'screen_name' => 'gigaom',
 		'count' => 2,
@@ -35,8 +35,8 @@ print_r( $twitter_feed->tweets() );
 		</pre>
 
 		<pre><?php
-		$twitter_feed = bsocial()->new_twitter_user_stream();
-		$twitter_feed->stream(
+		$twitter_feed = bsocial()->twitter()->user_stream();
+		$twitter_feed->get_stream(
 			array(
 				'screen_name' => 'gigaom',
 				'count' => 2,
@@ -47,25 +47,22 @@ print_r( $twitter_feed->tweets() );
 
 		<h2>Searching for tweets matching <a href="https://twitter.com/search?q=gigaom.com%20-from%3Agigaom">gigaom.com -from:gigaom</a></h2>
 		<pre>
-$twitter_search = bsocial()->new_twitter_search();
-$twitter_search->search(
+bsocial()->twitter()->search()->search(
 	array(
 		'q' => 'gigaom.com%20-from%3Agigaom',
-		'count' => 5,
+		'count' => 2,
 	)
 );
-print_r( $twitter_search->tweets() );
+print_r( bsocial()->twitter()->search()->tweets() );
 		</pre>
 		<pre><?php
-		$twitter_search = bsocial()->new_twitter_search();
-		$twitter_search->search(
+			bsocial()->twitter()->search()->search(
 			array(
 				'q' => 'gigaom.com%20-from%3Agigaom',
 				'count' => 2,
 			)
 		);
-		print_r( $twitter_search->tweets() );
-
+		print_r( bsocial()->twitter()->search()->tweets() );
 		?>
 <p>
 <a href="<?php echo admin_url( 'admin-ajax.php?action=bsocial-test-post-twitter-api', 'https' ); ?>">tweet something</a>
@@ -84,8 +81,8 @@ print_r( $twitter_search->tweets() );
 	{
 ?>
 		<h2>Tweet a test update to the authenticated user's account</h2>
-<pre>print_r( bsocial()->twitter_user_post_status()->post( 'test from gigaom! ' . date( DATE_RFC2822 ) ) );
-<?php print_r( bsocial()->twitter_user_post_status()->post( 'test from gigaom! ' . date( DATE_RFC2822 ) ) ); ?>
+<pre>print_r( bsocial()->twitter()->post_tweet( 'test from gigaom! ' . date( DATE_RFC2822 ) ) );
+<?php print_r( bsocial()->twitter()->post_tweet( 'test from gigaom! ' . date( DATE_RFC2822 ) ) ); ?>
 </pre>
 <?php
 		die;

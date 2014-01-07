@@ -1,30 +1,29 @@
 <?php
 /*
- * Twitter rest API glue
- *
- * Don't include this file or directly call it's methods.
- * See bsocial()->new_twitter_user_stream() instead.
- *
- */
-
-/*
  * bSocial_Twitter_User_Stream class
  *
+ * Don't include this file or directly call it's methods.
+ * Use bsocial()->twitter()->user_stream() instead.
+ *
  * Get the public Twitter history for a given user
- * Example: $twitter_search->stream ( array( 'screen_name' => 'gigaom', 'count' => 2 ) )
+ * Example: bsocial()->twitter()->user_stream( array( 'screen_name' => 'gigaom', 'count' => 2 ) )
  *
  * Available query args:
  *   https://dev.twitter.com/docs/api/1.1/get/statuses/user_timeline
  *
  * @author Casey Bisson
+ * @author will luo
  */
-if ( ! class_exists( 'bSocial_Twitter' ) )
+class bSocial_Twitter_User_Stream
 {
-	require __DIR__ .'/class-bsocial-twitter.php';
-}
+	public $twitter = NULL;      // handle to a bSocial_Twitter instance
+	public $api_response = NULL;
 
-class bSocial_Twitter_User_Stream extends bSocial_Twitter
-{
+	public function __construct( $twitter )
+	{
+		$this->twitter = $twitter;
+	}//END __construct
+
 	public function tweets()
 	{
 		if ( empty( $this->api_response ) )
@@ -56,10 +55,10 @@ class bSocial_Twitter_User_Stream extends bSocial_Twitter
 	}//END refresh
 
 	/**
-	 * @param $args 
-	 * @param $method
+	 * @param $args stream search args
+	 * @param $method which stream search results to get
 	 */
-	public function stream( $args, $method = 'stream' )
+	public function get_stream( $args, $method = 'stream' )
 	{
 		switch( $method )
 		{
@@ -89,7 +88,7 @@ class bSocial_Twitter_User_Stream extends bSocial_Twitter
 
 		$this->args = array_filter( wp_parse_args( $args, $defaults ) );
 
-		$this->api_response = $this->get_http( 'statuses/user_timeline', $this->args );
+		$this->api_response = $this->twitter->get_http( 'statuses/user_timeline', $this->args );
 
 		if( ! empty( $this->api_response->errors ) )
 		{

@@ -1,32 +1,32 @@
 <?php
 /*
- * Twitter rest API glue
- *
- * Don't include this file or directly call it's methods.
- * See bsocial()->new_twitter_search() instead.
- *
- */
-
-/*
  * Twitter_Search class
  *
+ * Don't include this file or directly call it's methods. Use
+ * bsocial()->twitter()->search() to get an insstance of this class instead.
+ *
  * Search Twitter with a given term or phrase
- * Example: $twitter_search->search ( array( 'q' => 'search phrase' ))
+ * Example: bsocial()->twitter->search()->search( array( 'q' => 'search phrase' ))
  *
  * Available query args:
  *   https://dev.twitter.com/docs/api/1.1/get/search/tweets
  *
  * @author Casey Bisson
+ * @author Will Luo
  */
-if ( ! class_exists( 'bSocial_Twitter' ) )
+class bSocial_Twitter_Search
 {
-	require __DIR__ .'/class-bsocial-twitter.php';
-}
+	public $twitter = NULL;      // handle to a bSocial_Twitter instance
+	public $api_response = NULL;
 
-class bSocial_Twitter_Search extends bSocial_Twitter
-{
-	public $get_user_info = NULL;
+	public function __construct( $twitter )
+	{
+		$this->twitter = $twitter;
+	}//END __construct
 
+	/**
+	 * get the latest search results
+	 */
 	public function tweets()
 	{
 		if ( empty( $this->api_response->statuses ) )
@@ -100,7 +100,7 @@ class bSocial_Twitter_Search extends bSocial_Twitter
 				$query_url = 'search/tweets';
 		}//END switch
 
-		$this->api_response = $this->get_http( $query_url, $this->args );
+		$this->api_response = $this->twitter->get_http( $query_url, $this->args );
 
 		if( ! empty( $this->api_response->errors ) )
 		{

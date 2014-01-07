@@ -2,8 +2,10 @@
 
 class bSocial
 {
-	public $twitter_user_info = NULL;
-	public $twitter_user_post_status = NULL;
+	public $twitter = NULL;
+	public $linkedin = NULL;
+	public $facebook = NULL;
+
 	public $linkedin_user_info = NULL;
 	public $linkedin_user_stream = NULL;
 	public $facebook_user_info = NULL;
@@ -251,37 +253,21 @@ class bSocial
 		return preg_replace( '/:(\d+)/' , ':"${1}"' , $string );
 	}
 
-	public function new_twitter_search()
+	/**
+	 * return our handle to our twitter client object
+	 */
+	public function twitter()
 	{
-		require_once __DIR__ .'/class-bsocial-twitter-search.php';
-		return new bSocial_Twitter_Search;
-	}
-
-	public function new_twitter_user_stream()
-	{
-		require_once __DIR__ .'/class-bsocial-twitter-user-stream.php';
-		return new bSocial_Twitter_User_Stream;
-	}
-
-	public function twitter_user_info()
-	{
-		if( ! $this->twitter_user_info )
+		if ( ! $this->twitter )
 		{
-			require_once __DIR__ .'/class-bsocial-twitter-user-info.php';
-			$this->twitter_user_info = new bSocial_Twitter_User_Info;
+			if ( ! class_exists( 'bSocial_Twitter' ) )
+			{
+				require __DIR__ .'/class-bsocial-twitter.php';
+			}
+			$this->twitter = new bSocial_Twitter();
 		}
-		return $this->twitter_user_info;
-	}
-
-	public function twitter_user_post_status()
-	{
-		if( ! $this->twitter_user_post_status )
-		{
-			require_once __DIR__ .'/class-bsocial-twitter-user-post-status.php';
-			$this->twitter_user_post_status = new bSocial_Twitter_User_Post_Status;
-		}
-		return $this->twitter_user_post_status;
-	}//END twitter_user_post_status
+		return $this->twitter;
+	}//END twitter
 
 	public function linkedin_user_info()
 	{
