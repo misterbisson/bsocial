@@ -19,7 +19,7 @@ class bSocial_Facebook_Comments
 		*/
 
 		add_action( 'init', array( $this, 'init' ) );
-	}
+	} // END __construct
 
 	public function init()
 	{
@@ -28,7 +28,7 @@ class bSocial_Facebook_Comments
 		add_action( 'wp_ajax_nopriv_new_fb_comment', array( $this, 'do_ajax' ) );
 		add_action( 'the_content', array( $this, 'check_comments' ) );
 		add_filter( 'admin_comment_types_dropdown', array( $this, 'admin_comment_types_dropdown' ) );
-	}
+	} // END init
 
 	public function ingest_comments( $post_id = NULL )
 	{
@@ -104,7 +104,7 @@ class bSocial_Facebook_Comments
 			$uids_to_names[ $name->uid ] = $name->name;
 
 		// iterate over all the comments and insert them
-		foreach( $fb_comments as $fb_comment )
+		foreach ( $fb_comments as $fb_comment )
 		{
 			if ( ! comment_id_by_meta( $fb_comment->id, 'fb_comment_id' ) )
 			{
@@ -138,19 +138,18 @@ class bSocial_Facebook_Comments
 
 				if ( get_option('comments_notify') )
 					wp_notify_postauthor( $comment_id, 'comment' ); //hardcoded to type 'comment'
-			}
-		}
+			} // END if
+		} // END foreach
 
 		// Vasken was here, buster
 		update_post_meta( $post_id, '_fb_comment_ingestion_last', time() );
 
 		// update the comment count
 		wp_update_comment_count( $post_id );
-	}
+	} // END ingest_comments
 
-	public function fb_api_fetch($url, $post_id)
+	public function fb_api_fetch( $url, $post_id )
 	{
-
 		$response = wp_remote_get( $url );
 
 		if ( is_wp_error( $response ) )
@@ -163,12 +162,14 @@ class bSocial_Facebook_Comments
 		{
 			return $response['body'];
 		}
-	}
+	} // END fb_api_fetch
 
 	public function do_ajax()
 	{
 		if ( empty( $_REQUEST['post_id'] ) )
+		{
 			return;
+		}
 
 		$post_id = (int) $_REQUEST['post_id'];
 
@@ -177,7 +178,7 @@ class bSocial_Facebook_Comments
 
 		echo 'Scheduled FB comment update for ' . $post_id;
 		die;
-	}
+	} // END do_ajax
 
 	public function check_comments( $content )
 	{
@@ -187,14 +188,16 @@ class bSocial_Facebook_Comments
 		// refresh the FB comments after 7 days
 		$last_check = get_post_meta( $post->ID, '_fb_comment_ingestion_last', TRUE );
 		if ( is_single() && ( 604801 < ( time() - $last_check ) ) )
+		{
 			wp_schedule_single_event( time() + 181, 'bsocial_fb_ingest_comments', array( $post->ID ) );
+		}
 
 		return $content;
-	}
+	} // check_comments
 
 	public function admin_comment_types_dropdown( $types )
 	{
 		$types['fbcomment'] = __( 'Facebook Comments' );
 		return $types;
-	}
+	} // END admin_comment_types_dropdown
 }

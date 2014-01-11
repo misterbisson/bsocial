@@ -16,7 +16,7 @@ class bSocial_Facebook_Meta
 		$this->options->add_like_button = FALSE;
 
 		add_action( 'init', array( $this, 'init' ) );
-	}
+	} // END __construct
 
 	public function init()
 	{
@@ -33,7 +33,7 @@ class bSocial_Facebook_Meta
 		{
 			add_filter( 'the_content', array( $this, 'inject_like_button' ) );
 		}
-	}
+	} // END init
 
 	public function opengraph_metadata( $properties )
 	{
@@ -41,14 +41,14 @@ class bSocial_Facebook_Meta
 		$properties['fb:app_id'] = $this->app_id;
 
 		return $properties;
-	}
+	} // END opengraph_metadata
 
 	public function add_namespace( $output )
 	{
 		$output .= ' xmlns:fb="'. esc_attr( $this->namespace ) .'"';
 
 		return $output;
-	}
+	} // END add_namespace
 
 	public function inject_js( $output )
 	{
@@ -67,12 +67,12 @@ class bSocial_Facebook_Meta
 			document.getElementById('fb-root').appendChild(e);
 		</script>
 <?php
-	}
+	} // END inject_js
 
 	public function inject_like_button( $content )
 	{
 		$button = '<p><fb:like href="'. get_permalink( get_the_ID() ) .'"></fb:like></p>';
 
 		return $button . $content . $button;
-	}
+	} // END inject_like_button
 }
