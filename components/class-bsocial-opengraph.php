@@ -131,7 +131,10 @@ class bSocial_Opengraph
 	 */
 	public function default_url( $url = '' )
 	{
-	    if ( ! empty( $url )) return $url;
+		if ( ! empty( $url ) )
+		{
+			return $url;
+		}
 
 		if ( is_singular() )
 		{
@@ -162,21 +165,21 @@ class bSocial_Opengraph
 	 */
 	public function default_description( $description = '' )
 	{
-	    if ( ! empty( $description ) )
-	    {
-		    return $description;
-	    }
+		if ( ! empty( $description ) )
+		{
+			return $description;
+		}
 
 		// get blog description as default
-	    $description = get_bloginfo( 'description' );
+		$description = get_bloginfo( 'description' );
 
 		// replace the description with a more specific one if available
-	    if ( is_singular() )
-	    {
+		if ( is_singular() )
+		{
 			$description = wp_kses( apply_filters( 'the_excerpt', empty( get_queried_object()->post_excerpt ) ? wp_trim_words( strip_shortcodes( get_queried_object()->post_content ) ) : get_queried_object()->post_excerpt ), array() );
-	    }
+		}
 
-	    return $description;
+		return $description;
 	}
 
 	/**
