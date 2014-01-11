@@ -15,8 +15,18 @@
 				<td><input name="bsocial-options[twitter-api]" type="checkbox" value="1" <?php checked( '1' , $options['twitter-api']); ?> /></td>
 			</tr>
 
+			<!-- twitter details -->
 			<tr valign="top"><th scope="row">Twitter application consumer key</th>
-				<td><input type="text" name="bsocial-options[twitter-app_id]" value="<?php echo esc_attr( $options['twitter-app_id'] ); ?>" /></td>
+				<td><input type="text" name="bsocial-options[twitter-consumer-key]" value="<?php echo esc_attr( $options['twitter-consumer-key'] ); ?>" /></td>
+			</tr>
+			<tr valign="top"><th scope="row">Twitter application consumer secret</th>
+				<td><input type="text" name="bsocial-options[twitter-consumer-secret]" value="<?php echo esc_attr( $options['twitter-consumer-secret'] ); ?>" /></td>
+			</tr>
+			<tr valign="top"><th scope="row">Twitter application access token</th>
+				<td><input type="text" name="bsocial-options[twitter-access-token]" value="<?php echo esc_attr( $options['twitter-access-token'] ); ?>" /></td>
+			</tr>
+			<tr valign="top"><th scope="row">Twitter application access secret</th>
+				<td><input type="text" name="bsocial-options[twitter-access-secret]" value="<?php echo esc_attr( $options['twitter-access-secret'] ); ?>" /></td>
 			</tr>
 
 			<tr valign="top"><th scope="row">Twitter @username for site</th>

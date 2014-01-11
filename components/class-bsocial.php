@@ -2,6 +2,7 @@
 
 class bSocial
 {
+	public $id_base = 'bsocial';
 	public $twitter = NULL;
 	public $linkedin = NULL;
 	public $facebook = NULL;
@@ -31,7 +32,10 @@ class bSocial
 			'featured-comments-waterfall' => 1,
 			'twitter-meta' => 1,
 			'twitter-comments' => 1,
-			'twitter-app_id' => '',
+			'twitter-consumer-key' => '',
+			'twitter-consumer-secret' => '',
+			'twitter-access-token' => '',
+			'twitter-access-secret' => '',
 			'facebook-meta' => 1,
 			'facebook-add_button' => 1,
 			'facebook-comments' => 0,
@@ -60,7 +64,7 @@ class bSocial
 		{
 			require_once __DIR__ .'/class-bsocial-twitter-meta.php';
 			$twitter_meta = new bSocial_Twitter_Meta;
-			$twitter_meta->app_id = $this->options['twitter-app_id'];
+			$twitter_meta->app_id = $this->options['twitter-consumer-key'];
 
 			if ( $this->options['twitter-card_site'] )
 			{
@@ -85,7 +89,7 @@ class bSocial
 
 			require_once __DIR__ .'/widgets-facebook.php';
 
-			if( $this->options['facebook-comments'] && $this->options['facebook-secret'])
+			if ( $this->options['facebook-comments'] && $this->options['facebook-secret'])
 			{
 				require_once __DIR__ .'/class-bsocial-facebook-comments.php';
 				$facebook_comments = new bSocial_Facebook_Comments;
@@ -95,6 +99,10 @@ class bSocial
 		}
 	}
 
+
+	/**
+	 * object accessors
+	 */
 	public function admin()
 	{
 		if ( ! isset( $this->admin ) )
@@ -106,28 +114,113 @@ class bSocial
 		return $this->admin;
 	}
 
-	public function tests()
+	public function facebook()
 	{
-		if ( ! isset( $this->tests ) )
+		if ( ! $this->facebook )
 		{
-			$this->tests = array();
+			if ( ! class_exists( 'bSocial_Facebook' ) )
+			{
+				require __DIR__ .'/class-bsocial-facebook.php';
+			}
+			$this->facebook = new bSocial_Facebook();
+		}
+		return $this->facebook;
+	}//END facebook
 
-			require_once __DIR__ . '/class-bsocial-twitter-test.php';
-			$this->tests[] = new bSocialTwitter_Test();
+	public function linkedin()
+	{
+		if ( ! $this->linkedin )
+		{
+			if ( ! class_exists( 'bSocial_LinkedIn' ) )
+			{
+				require __DIR__ .'/class-bsocial-linkedin.php';
+			}
+			$this->linkedin = new bSocial_LinkedIn();
+		}
+		return $this->linkedin;
+	}//END linkedin
 
-			require_once __DIR__ . '/class-bsocial-linkedin-test.php';
-			$this->tests[] = new bSocialLinkedIn_Test();
+	public function twitter()
+	{
+		if ( ! $this->twitter )
+		{
+			if ( ! class_exists( 'bSocial_Twitter' ) )
+			{
+				require __DIR__ .'/class-bsocial-twitter.php';
+			}
+			$this->twitter = new bSocial_Twitter();
+		}
+		return $this->twitter;
+	}//END twitter
 
-			require_once __DIR__ . '/class-bsocial-facebook-test.php';
-			$this->tests[] = new bSocialFacebook_Test();
-		}//END if
+	/**
+	 * plugin options getter
+	 */
+	public function options()
+	{
+		if ( ! $this->options )
+		{
+			$this->options = (object) apply_filters(
+				'go_config',
+				wp_parse_args( (array) get_option( 'bsocial-options' ), array(
 
-		return $this->tests;
-	}//END tests
+					// social network integrations
+					'facebook' => (object) array(
+						'enable' => 1,
 
+						'app_id' => '',
+						'secret' => '',
+
+						'add_button' => 1,
+						'comments' => 0,
+						'admins' => array(),
+					),
+					'linkedin' => (object) array(
+						'enable' => 1,
+
+						'consumer-key' => '',
+						'consumer-secret' => '',
+						'access-token' => '',
+						'access-secret' => '',
+
+						'meta' => 1,
+					),
+					'twitter' => (object) array(
+						'enable' => 1,
+
+						'consumer_key' => '',
+						'consumer_secret' => '',
+						'access_token' => '',
+						'access_secret' => '',
+
+						'meta' => 1,
+						'comments' => 1,
+					),
+
+					// features
+					'featured-comments' => (object) array(
+						'enable' => 1,
+
+						'use_commentdate' => 1,
+						'add_to_waterfall' => 1,
+					),
+					'opengraph' => (object) array(
+						'enable' => 1,
+					),
+				) ),
+				$this->id_base
+			);
+		}
+
+		return $this->options;
+	} // END options
+
+	/**
+	 * utility methods used by other components
+	 */
 	public function url_to_blogid( $url )
 	{
-		if( ! is_multisite() )
+		if ( ! is_multisite() )
 		{
 			return FALSE;
 		}
@@ -139,13 +232,13 @@ class bSocial
 		{
 			return get_blog_id_from_url( $url['host'], '/' );
 		}
-		elseif( ! empty( $url['path'] ) )
+		elseif ( ! empty( $url['path'] ) )
 		{
 			// get the likely blog path
 			$path = explode( '/', ltrim( substr( $url['path'], strlen( $base ) ), '/' ) );
 			$path = empty( $path[0] ) ? '/' : '/'. $path[0] .'/';
 			// get all blog paths for this domain
-			if( ! $paths = wp_cache_get( $url['host'], 'paths-for-domain' ) )
+			if ( ! $paths = wp_cache_get( $url['host'], 'paths-for-domain' ) )
 			{
 				$paths = $wpdb->get_col( "SELECT path FROM $wpdb->blogs WHERE domain = '". $wpdb->escape( $url['host'] ) ."' /* url_to_blogid */" );
 				wp_cache_set( $url['host'], $paths, 'paths-for-domain', 3607 ); // cache it for an hour
@@ -189,7 +282,7 @@ class bSocial
 				}
 			}
 
-			wp_cache_set( (string) $location, $trail, 'follow_url', 3607); // cache for an hour
+			wp_cache_set( (string) $location, $trail, 'follow_url', 3607 ); // cache for an hour
 		}
 
 		if( $verbose )
@@ -249,60 +342,13 @@ class bSocial
 		return preg_replace( '/:(\d+)/', ':"${1}"', $string );
 	}
 
-	/**
-	 * return our handle to our twitter client object
-	 */
-	public function twitter()
-	{
-		if ( ! $this->twitter )
-		{
-			if ( ! class_exists( 'bSocial_Twitter' ) )
-			{
-				require __DIR__ .'/class-bsocial-twitter.php';
-			}
-			$this->twitter = new bSocial_Twitter();
-		}
-		return $this->twitter;
-	}//END twitter
-
-	/**
-	 * return our handle to our linkedin client object
-	 */
-	public function linkedin()
-	{
-		if ( ! $this->linkedin )
-		{
-			if ( ! class_exists( 'bSocial_LinkedIn' ) )
-			{
-				require __DIR__ .'/class-bsocial-linkedin.php';
-			}
-			$this->linkedin = new bSocial_LinkedIn();
-		}
-		return $this->linkedin;
-	}//END linkedin
-
-	/**
-	 * return our handle to our facebook client object
-	 */
-	public function facebook()
-	{
-		if ( ! $this->facebook )
-		{
-			if ( ! class_exists( 'bSocial_Facebook' ) )
-			{
-				require __DIR__ .'/class-bsocial-facebook.php';
-			}
-			$this->facebook = new bSocial_Facebook();
-		}
-		return $this->facebook;
-	}//END facebook
 
 	// Show cron array for debugging
 	public function show_cron()
 	{
-		if (current_user_can('manage_options') )
+		if ( current_user_can( 'manage_options' ) )
 		{
-			echo '<pre>' .  print_r(_get_cron_array(), true) . '</pre>';
+			echo '<pre>' .  print_r( _get_cron_array(), TRUE ) . '</pre>';
 		};
 		exit;
 	}

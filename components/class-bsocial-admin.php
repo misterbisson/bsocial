@@ -1,7 +1,9 @@
 <?php
 
-class bSocial_Admin extends bSocial
+class bSocial_Admin
 {
+	public $tests_loaded = FALSE;
+
 	public function __construct()
 	{
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
@@ -14,30 +16,30 @@ class bSocial_Admin extends bSocial
 		register_setting( 'bsocial-options', 'bsocial-options', array( $this, 'sanitize_options' ) );
 
 		// load the test suite if the user has permissions
-		if( current_user_can( 'activate_plugins' ))
+		if( current_user_can( 'activate_plugins' ) )
 		{
-			$this->tests();
+			$this->tests_loader();
 		}
 	}
 
 	public function admin_menu()
 	{
-		add_submenu_page( 'plugins.php' , __('bSocial Configuration') , __('bSocial Configuration') , 'manage_options' , 'bsocial-options' , array( $this, 'options' ));
+		add_submenu_page( 'plugins.php' , 'bSocial Configuration' , 'bSocial Configuration' , 'manage_options' , 'bsocial-options' , array( $this, 'options' ) );
 	}
 
 	public function plugin_action_links( $links, $file )
 	{
-		if ( $file == plugin_basename( dirname(__FILE__) .'/bsocial.php' ))
+		if ( $file == plugin_basename( __DIR__ .'/bsocial.php' ) )
 		{
-			$links[] = '<a href="plugins.php?page=bsocial-options">'. __('Settings') .'</a>';
+			$links[] = '<a href="plugins.php?page=bsocial-options">'. 'Settings' .'</a>';
 		}
-	
+
 		return $links;
 	}
 
 	public function sanitize_options( $input )
 	{
-	
+
 		// filter the values so we only store known items
 		$input = wp_parse_args( (array) $input , array(
 			'open-graph' => 0,
@@ -52,8 +54,8 @@ class bSocial_Admin extends bSocial
 			'facebook-admins' => '',
 			'facebook-app_id' => '',
 			'facebook-secret' => '',
-		));
-	
+		) );
+
 		// sanitize the integer values
 		foreach ( array(
 			'open-graph',
@@ -67,7 +69,7 @@ class bSocial_Admin extends bSocial
 		{
 			$input[ $key ] = absint( $input[ $key ] );
 		}
-	
+
 		// sanitize the text values
 		foreach ( array(
 			'twitter-app_id',
@@ -79,9 +81,32 @@ class bSocial_Admin extends bSocial
 		{
 			$input[ $key ] = wp_kses( $input[ $key ], array() );
 		}
-	
+
 		return $input;
 	}
+
+	/**
+	 * some rudimentary tests for the various social network integrations are included
+	 * these are available on the settings page in the admin dashboard
+	 */
+	public function tests_loader()
+	{
+		if ( $this->tests_loaded )
+		{
+			return;
+		}
+
+		require_once __DIR__ . '/class-bsocial-twitter-test.php';
+		new bSocialTwitter_Test();
+
+		require_once __DIR__ . '/class-bsocial-linkedin-test.php';
+		new bSocialLinkedIn_Test();
+
+		require_once __DIR__ . '/class-bsocial-facebook-test.php';
+		new bSocialFacebook_Test();
+
+		$this->tests_loaded = TRUE;
+	}//END test_loaded
 
 	public function options()
 	{
