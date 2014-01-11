@@ -25,7 +25,7 @@ class bSocial
 
 		// get options with defaults
 		$this->options = apply_filters( 'go_config', wp_parse_args( (array) get_option( 'bsocial-options' ), array(
-			'open-graph' => 1,
+			'opengraph' => 1,
 			'featured-comments' => 1,
 			'featured-comments-commentdate' => 1,
 			'featured-comments-waterfall' => 1,
@@ -41,9 +41,9 @@ class bSocial
 		) ), 'bsocial' );
 
 		// Better describe your content to social sites
-		if ( $this->options['open-graph'] )
+		if ( $this->options['opengraph'] )
 		{
-			require_once __DIR__ .'/open-graph.php';
+			require_once __DIR__ .'/class-bsocial-opengraph.php';
 		}
 
 		// Feature your comments
