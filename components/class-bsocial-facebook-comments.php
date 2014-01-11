@@ -11,12 +11,14 @@ class bSocial_Facebook_Comments
 {
 	public function __construct()
 	{
-
-		/*
-		* be sure to set the app ID and secret after instantiating the object
-		* $this->app_id = FBJS_APP_ID;
-		* $this->app_secret = FBJS_APP_SECRET;
-		*/
+		// this requires the app_id and secret be set in the bsocial options
+		if (
+			! bsocial()->options()->facebook->app_id ||
+			! bsocial()->options()->facebook->secret
+		)
+		{
+			return;
+		}
 
 		add_action( 'init', array( $this, 'init' ) );
 	} // END __construct
@@ -45,8 +47,8 @@ class bSocial_Facebook_Comments
 		$comment_limit = 25;
 
 		// get the access token
-		$url = 'https://graph.facebook.com/oauth/access_token?client_id=' . $this->app_id .
-				'&client_secret=' . $this->app_secret .
+		$url = 'https://graph.facebook.com/oauth/access_token?client_id=' . bsocial()->options()->facebook->app_id .
+				'&client_secret=' . bsocial()->options()->facebook->secret .
 				'&grant_type=client_credentials';
 		$token = $this->fb_api_fetch( $url, $post_id );
 

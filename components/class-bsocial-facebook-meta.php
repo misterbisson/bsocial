@@ -25,11 +25,18 @@ class bSocial_Facebook_Meta
 			return;
 		}
 
+		// add opengraph filters
 		add_filter( 'opengraph_metadata', array( $this, 'opengraph_metadata' ) );
 		add_filter( 'language_attributes', array( $this, 'add_namespace' ) );
-		add_action( 'print_footer_scripts', array( $this, 'inject_js' ) );
 
-		if ( $this->options->add_like_button )
+		// conditionally add js
+		if ( bsocial()->options()->facebook->js )
+		{
+			add_action( 'print_footer_scripts', array( $this, 'inject_js' ) );
+		}
+
+		// conditionally insert like buttons everywhere
+		if ( bsocial()->options()->facebook->add_button )
 		{
 			add_filter( 'the_content', array( $this, 'inject_like_button' ) );
 		}
@@ -37,8 +44,8 @@ class bSocial_Facebook_Meta
 
 	public function opengraph_metadata( $properties )
 	{
-		$properties['fb:admins'] = $this->admins;
-		$properties['fb:app_id'] = $this->app_id;
+		$properties['fb:admins'] = bsocial()->options()->facebook->admins;
+		$properties['fb:app_id'] = bsocial()->options()->facebook->app_id;
 
 		return $properties;
 	} // END opengraph_metadata
@@ -57,7 +64,7 @@ class bSocial_Facebook_Meta
 		<div id="fb-root"></div>
 		<script>
 			window.fbAsyncInit = function() {
-				FB.init({appId: <?php echo $this->app_id; ?>, status: true, cookie: true, xfbml: true});
+				FB.init({appId: <?php echo bsocial()->options()->facebook->app_id; ?>, status: true, cookie: true, xfbml: true});
 			};
 
 			var e = document.createElement('script');

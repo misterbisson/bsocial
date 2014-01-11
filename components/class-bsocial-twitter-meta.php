@@ -15,11 +15,6 @@ class bSocial_Twitter_Meta
 
 	public function __construct()
 	{
-		/*
-		* be sure to set the app ID after instantiating the object
-		* $this->app_id = TWTTR_APP_ID;
-		*/
-
 		add_action( 'init', array( $this, 'init' ) );
 	} // END __construct
 
@@ -31,11 +26,6 @@ class bSocial_Twitter_Meta
 			return;
 		}
 
-		if ( $this->load_js )
-		{
-			// inject the JS include
-			add_action( 'print_footer_scripts', array( $this, 'inject_js' ) );
-		}// end if
 
 		// twitter card metadata
 		add_action( 'wp_head', array( $this, 'head' ) );
@@ -43,6 +33,12 @@ class bSocial_Twitter_Meta
 		// defaults
 		add_filter( 'twittercard_card', array( $this, 'default_card' ), 5 );
 		add_filter( 'twittercard_site', array( $this, 'default_site' ), 5 );
+
+		// optionally load js
+		if ( bsocial()->options()->twitter->js )
+		{
+			add_action( 'print_footer_scripts', array( $this, 'inject_js' ) );
+		}// end if
 	} // END init
 
 	public function default_card( $type = '' )
@@ -67,7 +63,7 @@ class bSocial_Twitter_Meta
 		// default, unless something else is set
 		if ( empty( $twitteruser ) )
 		{
-			return $this->card_site;
+			return bsocial()->options()->twitter->username;
 		}
 
 		return $twitteruser;
@@ -112,7 +108,7 @@ class bSocial_Twitter_Meta
 		foreach ( $properties as $property )
 		{
 			$filter = 'twittercard_' . $property;
-			$metadata["twitter:$property"] = apply_filters( $filter, '' );
+			$metadata[ "twitter:$property" ] = apply_filters( $filter, '' );
 		}
 
 		return apply_filters( 'twittercard_metadata', $metadata );
@@ -120,27 +116,14 @@ class bSocial_Twitter_Meta
 
 	public function inject_js()
 	{
-?>
+		?>
 		<script type="text/javascript">
-<?php
-		if ( ! empty( $this->app_id ) )
-		{
-?>
-			setTimeout(function() {
-				var bstwittera = document.createElement('script'); bstwittera.type = 'text/javascript'; bstwittera.async = true;
-				bstwittera.src = 'http://platform.twitter.com/anywhere.js?id=<?php echo $this->app_id ; ?>&v=1';
-				var z = document.getElementsByTagName('script')[0]; z.parentNode.insertBefore(bstwittera, z);
-			}, 1);
-
-<?php
-		}// end if
-?>
 			setTimeout(function() {
 				var bstwitterb = document.createElement('script'); bstwitterb.type = 'text/javascript'; bstwitterb.async = true;
 				bstwitterb.src = 'http://platform.twitter.com/widgets.js';
 				var z = document.getElementsByTagName('script')[0]; z.parentNode.insertBefore(bstwitterb, z);
 			}, 1);
 		</script>
-<?php
+		<?php
 	} // END inject_js
 }

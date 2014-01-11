@@ -3,99 +3,92 @@
 class bSocial
 {
 	public $id_base = 'bsocial';
-	public $twitter = NULL;
-	public $linkedin = NULL;
+
 	public $facebook = NULL;
+	public $featuredcomments = NULL;
+	public $linkedin = NULL;
+	public $opengraph = NULL;
+	public $twitter = NULL;
 
 	public function __construct()
 	{
-		// activate the sub-components
-		$this->activate();
+		// activate components
+		add_action( 'init', array( $this, 'init' ), 1 );
 
+		// hooks for methods in this class
 		add_action( 'wp_ajax_show_cron', array( $this, 'show_cron' ) );
 		add_action( 'delete_comment', array( $this, 'comment_id_by_meta_delete_cache' ) );
 	}
 
-	public function activate()
+	public function init()
 	{
+		$options = $this->options();
+
+		if ( $options->facebook->enable )
+		{
+			if (
+				$options->facebook->meta ||
+				$options->facebook->js
+			)
+			{
+				$this->opengraph();
+//				$this->facebook()->meta();
+			}
+
+			if ( $options->facebook->comments )
+			{
+//				$this->facebook()->comments();
+			}
+
+			// if facebook is enabled, the widgets are enabled
+			require_once __DIR__ .'/widgets-facebook.php';
+		}
+
+		if ( $options->linkedin->enable )
+		{
+			if (
+				$options->linkedin->meta ||
+				$options->linkedin->js
+			)
+			{
+				$this->opengraph();
+//				$this->linkedin()->meta();
+			}
+		}
+
+		if ( $options->twitter->enable )
+		{
+			if (
+				$options->twitter->meta ||
+				$options->twitter->js
+			)
+			{
+				$this->opengraph();
+//				$this->twitter()->meta();
+			}
+
+			if ( $options->twitter->comments )
+			{
+//				$this->twitter()->comments();
+			}
+		}
+
+		// featured comments
+		if ( $options->featuredcomments->enable )
+		{
+			$this->featuredcomments();
+		}
+
+		// opengraph (though it was probably loaded above)
+		if ( ! $this->opengraph && $options->opengraph->enable )
+		{
+			$this->opengraph();
+		}
+
 		// the admin settings page
 		if ( is_admin() )
 		{
 			$this->admin();
-		}
-
-		// get options with defaults
-		$this->optionss = apply_filters( 'go_config', wp_parse_args( (array) get_option( 'bsocial-options' ), array(
-			'opengraph' => 1,
-			'featured-comments' => 1,
-			'featured-comments-commentdate' => 1,
-			'featured-comments-waterfall' => 1,
-			'twitter-meta' => 1,
-			'twitter-comments' => 1,
-			'twitter-consumer-key' => '',
-			'twitter-consumer-secret' => '',
-			'twitter-access-token' => '',
-			'twitter-access-secret' => '',
-			'facebook-meta' => 1,
-			'facebook-add_button' => 1,
-			'facebook-comments' => 0,
-			'facebook-admins' => '',
-			'facebook-app_id' => '',
-			'facebook-secret' => '',
-		) ), 'bsocial' );
-
-		// Better describe your content to social sites
-		if ( $this->optionss['opengraph'] )
-		{
-			require_once __DIR__ .'/class-bsocial-opengraph.php';
-		}
-
-		// Feature your comments
-		if ( $this->optionss['featured-comments'] )
-		{
-			require_once __DIR__ .'/class-bsocial-featuredcomments.php';
-			$featured_comments = new bSocial_FeaturedComments;
-			$featured_comments->use_comment_date = $this->optionss['featured-comments-commentdate'];
-			$featured_comments->add_to_waterfall = $this->optionss['featured-comments-waterfall'];
-		}
-
-		// Twitter components
-		if ( $this->optionss['twitter-meta'] )
-		{
-			require_once __DIR__ .'/class-bsocial-twitter-meta.php';
-			$twitter_meta = new bSocial_Twitter_Meta;
-			$twitter_meta->app_id = $this->optionss['twitter-consumer-key'];
-
-			if ( $this->optionss['twitter-card_site'] )
-			{
-				$twitter_meta->card_site = $this->optionss['twitter-card_site'];
-			}
-
-			if ( $this->optionss['twitter-comments'] )
-			{
-				require_once __DIR__ .'/class-bsocial-twitter-comments.php';
-				$twitter_comments = new bSocial_Twitter_Comments;
-			}
-		}
-
-		// Facebook components
-		if ( $this->optionss['facebook-meta'] && $this->optionss['facebook-app_id'] )
-		{
-			require_once __DIR__ .'/class-bsocial-facebook-meta.php';
-			$facebook_meta = new bSocial_Facebook_Meta;
-			$facebook_meta->options->add_like_button = $this->optionss['facebook-add_button'];
-			$facebook_meta->admins = $this->optionss['facebook-admins'];
-			$facebook_meta->app_id = $this->optionss['facebook-app_id'];
-
-			require_once __DIR__ .'/widgets-facebook.php';
-
-			if ( $this->optionss['facebook-comments'] && $this->optionss['facebook-secret'])
-			{
-				require_once __DIR__ .'/class-bsocial-facebook-comments.php';
-				$facebook_comments = new bSocial_Facebook_Comments;
-				$facebook_comments->app_id = $this->optionss['facebook-app_id'];
-				$facebook_comments->app_secret = $this->optionss['facebook-secret'];
-			}
 		}
 	}
 
@@ -127,6 +120,19 @@ class bSocial
 		return $this->facebook;
 	}//END facebook
 
+	public function featuredcomments()
+	{
+		if ( ! $this->featuredcomments )
+		{
+			if ( ! class_exists( 'bSocial_Featuredcomments' ) )
+			{
+				require __DIR__ .'/class-bsocial-featuredcomments.php';
+			}
+			$this->featuredcomments = new bSocial_Featuredcomments();
+		}
+		return $this->featuredcomments;
+	}//END featuredcomments
+
 	public function linkedin()
 	{
 		if ( ! $this->linkedin )
@@ -139,6 +145,19 @@ class bSocial
 		}
 		return $this->linkedin;
 	}//END linkedin
+
+	public function opengraph()
+	{
+		if ( ! $this->opengraph )
+		{
+			if ( ! class_exists( 'bSocial_Opengraph' ) )
+			{
+				require __DIR__ .'/class-bsocial-opengraph.php';
+			}
+			$this->opengraph = new bSocial_Opengraph();
+		}
+		return $this->opengraph;
+	}//END opengraph
 
 	public function twitter()
 	{
