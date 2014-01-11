@@ -9,7 +9,7 @@
  Text Domain: opengraph
  */
 
-define('OPENGRAPH_NS_URI', 'http://ogp.me/ns#');
+define( 'OPENGRAPH_NS_URI', 'http://ogp.me/ns#' );
 $opengraph_ns_set = false;
 
 
@@ -21,10 +21,10 @@ function opengraph_add_namespace( $output )
 	global $opengraph_ns_set;
 	$opengraph_ns_set = true;
 
-	$output .= ' prefix="og: ' . esc_attr(OPENGRAPH_NS_URI) . '"';
+	$output .= ' prefix="og: ' . esc_attr( OPENGRAPH_NS_URI ) . '"';
 	return $output;
 }
-add_filter('language_attributes', 'opengraph_add_namespace');
+add_filter( 'language_attributes', 'opengraph_add_namespace' );
 
 
 /**
@@ -53,13 +53,13 @@ function opengraph_metadata()
 		'email', 'phone_number', 'fax_number',
 	);
 
-	foreach ($properties as $property)
+	foreach ( $properties as $property )
 	{
 		$filter = 'opengraph_' . $property;
-		$metadata["og:$property"] = apply_filters($filter, '');
+		$metadata["og:$property"] = apply_filters( $filter, '' );
 	}
 
-	return apply_filters('opengraph_metadata', $metadata);
+	return apply_filters( 'opengraph_metadata', $metadata );
 }
 
 
@@ -68,15 +68,15 @@ function opengraph_metadata()
  */
 function opengraph_default_metadata()
 {
-	add_filter('opengraph_title', 'opengraph_default_title', 5);
-	add_filter('opengraph_type', 'opengraph_default_type', 5);
-	add_filter('opengraph_image', 'opengraph_default_image', 5);
-	add_filter('opengraph_url', 'opengraph_default_url', 5);
+	add_filter( 'opengraph_title', 'opengraph_default_title', 5 );
+	add_filter( 'opengraph_type', 'opengraph_default_type', 5 );
+	add_filter( 'opengraph_image', 'opengraph_default_image', 5 );
+	add_filter( 'opengraph_url', 'opengraph_default_url', 5 );
 
-	add_filter('opengraph_site_name', 'opengraph_default_sitename', 5);
-	add_filter('opengraph_description', 'opengraph_default_description', 5);
+	add_filter( 'opengraph_site_name', 'opengraph_default_sitename', 5 );
+	add_filter( 'opengraph_description', 'opengraph_default_description', 5 );
 }
-add_filter('wp', 'opengraph_default_metadata');
+add_filter( 'wp', 'opengraph_default_metadata' );
 
 
 /**
@@ -84,10 +84,10 @@ add_filter('wp', 'opengraph_default_metadata');
  */
 function opengraph_default_title( $title = '' )
 {
-	if ( is_singular() && empty($title) )
+	if ( is_singular() && empty( $title ) )
 	{
 		global $wp_query;
-		$title = $wp_query->queried_object->post_title;
+		$title = get_queried_object()->post_title;
 	}
 
 	return $title;
@@ -99,7 +99,11 @@ function opengraph_default_title( $title = '' )
  */
 function opengraph_default_type( $type = '' )
 {
-	if ( empty($type) ) $type = 'blog';
+	if ( empty( $type ) )
+	{
+		$type = 'blog';
+	}
+
 	return $type;
 }
 
@@ -114,15 +118,15 @@ function opengraph_default_image( $image = '' )
 		is_singular() && // only operate on single posts or pages, not the front page of the site
 		empty( $image ) && // don't replace the image if one is already set
 		current_theme_supports( 'post-thumbnails' ) && // only attempt to get the post thumbnail if the theme supports them
-		has_post_thumbnail( $wp_query->queried_object_id ) // only set the meta if we have a thumbnail
+		has_post_thumbnail( get_queried_object_id() ) // only set the meta if we have a thumbnail
 	)
 	{
-		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $wp_query->queried_object_id ), 'large');
-		if ($thumbnail)
+		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( get_queried_object_id() ), 'large');
+		if ( $thumbnai l)
 		{
 			$image = $thumbnail[0];
 		}
-	}
+	} // END if
 
 	return $image;
 }
@@ -138,11 +142,11 @@ function opengraph_default_url( $url = '' )
 	if ( is_singular() )
 	{
 		global $wp_query;
-		$url = get_permalink($wp_query->queried_object_id);
+		$url = get_permalink( get_queried_object_id() );
 	}
 	else
 	{
-		$url = trailingslashit( get_bloginfo('url' ));
+		$url = trailingslashit( get_bloginfo( 'url' ) );
 	}
 
 	return $url;
@@ -154,7 +158,10 @@ function opengraph_default_url( $url = '' )
  */
 function opengraph_default_sitename( $name = '' )
 {
-	if ( empty($name) ) $name = get_bloginfo('name');
+	if ( empty( $name ) )
+	{
+		$name = get_bloginfo( 'name' );
+	}
 	return $name;
 }
 
@@ -164,15 +171,20 @@ function opengraph_default_sitename( $name = '' )
  */
 function opengraph_default_description( $description = '' )
 {
-    if ( !empty($description) ) return $description;
+    if ( ! empty( $description ) )
+    {
+	    return $description;
+    }
 
 	// get blog description as default
-    $description = get_bloginfo('description');
+    $description = get_bloginfo( 'description' );
 
 	// replace the description with a more specific one if available
     global $wp_query;
     if ( is_singular() )
-		$description = wp_kses( apply_filters( 'the_excerpt', empty( $wp_query->queried_object->post_excerpt ) ? wp_trim_words( strip_shortcodes( $wp_query->queried_object->post_content )) : $wp_query->queried_object->post_excerpt ), array() );
+    {
+		$description = wp_kses( apply_filters( 'the_excerpt', empty( get_queried_object()->post_excerpt ) ? wp_trim_words( strip_shortcodes( get_queried_object()->post_content )) : get_queried_object()->post_excerpt ), array() );
+    }
 
     return $description;
 }
@@ -187,13 +199,19 @@ function opengraph_meta_tags()
 
 	$xml_ns = '';
 	if ( !$opengraph_ns_set )
-		$xml_ns = 'xmlns:og="' . esc_attr(OPENGRAPH_NS_URI) . '" ';
+	{
+		$xml_ns = 'xmlns:og="' . esc_attr( OPENGRAPH_NS_URI ) . '" ';
+	}
 
 	$metadata = opengraph_metadata();
 	foreach ( $metadata as $key => $value )
 	{
-		if ( empty($key) || empty($value) ) continue;
+		if ( empty( $key ) || empty( $value ) )
+		{
+			continue;
+		}
+
 		echo '<meta ' . $xml_ns . 'property="' . esc_attr($key) . '" content="' . esc_attr($value) . '" />' . "\n";
-	}
+	} // END foreach
 }
-add_action('wp_head', 'opengraph_meta_tags');
+add_action('wp_head', 'opengraph_meta_tags' );
