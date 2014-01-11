@@ -6,7 +6,7 @@
  * Puts Twitter card meta in the head, https://dev.twitter.com/docs/cards
  */
 
-class bSocial_TwitterApi
+class bSocial_Twitter_Meta
 {
 	/**
 	 * boolean to determine if the JS should be loaded

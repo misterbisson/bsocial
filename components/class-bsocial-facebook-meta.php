@@ -1,6 +1,6 @@
 <?php
 
-class bSocial_FacebookApi
+class bSocial_Facebook_Meta
 {
 
 	function __construct()

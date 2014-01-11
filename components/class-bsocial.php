@@ -32,7 +32,7 @@ class bSocial
 			'twitter-api' => 1,
 			'twitter-comments' => 1,
 			'twitter-app_id' => '',
-			'facebook-api' => 1,
+			'facebook-meta' => 1,
 			'facebook-add_button' => 1,
 			'facebook-comments' => 0,
 			'facebook-admins' => '',
@@ -58,36 +58,37 @@ class bSocial
 		// Twitter components
 		if ( $this->options['twitter-api'] )
 		{
-			require_once __DIR__ .'/twitter-api.php';
-			$twitter_api = new bSocial_TwitterApi;
-			$twitter_api->app_id = $this->options['twitter-app_id'];
+			require_once __DIR__ .'/class-bsocial-twitter-meta.php';
+			$twitter_meta = new bSocial_Twitter_Meta;
+			$twitter_meta->app_id = $this->options['twitter-app_id'];
 		
 			if ( $this->options['twitter-card_site'] )
 			{
-				$twitter_api->card_site = $this->options['twitter-card_site'];
+				$twitter_meta->card_site = $this->options['twitter-card_site'];
 			}
 		
 			if ( $this->options['twitter-comments'] )
 			{
-				require_once __DIR__ .'/twitter-comments.php';
+				require_once __DIR__ .'/class-bsocial-twitter-comments.php';
+				$twitter_comments = new bSocial_Twitter_Comments;
 			}
 		}	
 		
 		// Facebook components
-		if ( $this->options['facebook-api'] && $this->options['facebook-app_id'] )
+		if ( $this->options['facebook-meta'] && $this->options['facebook-app_id'] )
 		{
-			require_once __DIR__ .'/class-bsocial-facebook-api.php';
-			$facebook_api = new bSocial_FacebookApi;
-			$facebook_api->options->add_like_button = $this->options['facebook-add_button'];
-			$facebook_api->admins = $this->options['facebook-admins'];
-			$facebook_api->app_id = $this->options['facebook-app_id'];
+			require_once __DIR__ .'/class-bsocial-facebook-meta.php';
+			$facebook_meta = new bSocial_Facebook_Meta;
+			$facebook_meta->options->add_like_button = $this->options['facebook-add_button'];
+			$facebook_meta->admins = $this->options['facebook-admins'];
+			$facebook_meta->app_id = $this->options['facebook-app_id'];
 		
 			require_once __DIR__ .'/widgets-facebook.php';
 		
 			if( $this->options['facebook-comments'] && $this->options['facebook-secret'])
 			{
 				require_once __DIR__ .'/class-bsocial-facebook-comments.php';
-				$facebook_comments = new bSocial_FacebookComments;
+				$facebook_comments = new bSocial_Facebook_Comments;
 				$facebook_comments->app_id = $this->options['facebook-app_id'];
 				$facebook_comments->app_secret = $this->options['facebook-secret'];
 			}

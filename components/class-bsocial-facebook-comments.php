@@ -7,7 +7,7 @@
  * Author: Casey Bisson, Vasken Hauri
  */
 
-class bSocial_FacebookComments
+class bSocial_Facebook_Comments
 {
 	function __construct()
 	{
