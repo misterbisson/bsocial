@@ -20,7 +20,7 @@ class bSocial_Test extends bSocial
 		<pre>print_r( bsocial()->twitter_user_info()->get( 'misterbisson' ) );</pre>
 		<pre><?php print_r( bsocial()->twitter_user_info()->get( 'misterbisson' ) ); ?></pre>
 
-		<h2>Getting tweet stream for <a href="https://twitter.com/GigaOM">@GigaOM</a></h2>
+		<h2>Getting tweet stream for <a href="https://twitter.com/Gigaom">@Gigaom</a></h2>
 		<pre>
 $twitter_feed = bsocial()->new_twitter_user_stream();
 $twitter_feed->stream( array( 

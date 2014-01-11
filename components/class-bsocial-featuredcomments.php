@@ -252,7 +252,7 @@ class bSocial_FeaturedComments
 
 	function footer_js()
 	{
-		// this JS code originated by Mark Jaquith, http://coveredwebservices.com/ , for GigaOM, http://gigaom.com/
+		// this JS code originated by Mark Jaquith, http://coveredwebservices.com/ , for Gigaom, http://gigaom.com/
 
 		?>
 		<script type="text/javascript">
