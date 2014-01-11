@@ -25,7 +25,7 @@ class bSocial
 		}
 
 		// get options with defaults
-		$this->options = apply_filters( 'go_config', wp_parse_args( (array) get_option( 'bsocial-options' ), array(
+		$this->optionss = apply_filters( 'go_config', wp_parse_args( (array) get_option( 'bsocial-options' ), array(
 			'opengraph' => 1,
 			'featured-comments' => 1,
 			'featured-comments-commentdate' => 1,
@@ -45,33 +45,33 @@ class bSocial
 		) ), 'bsocial' );
 
 		// Better describe your content to social sites
-		if ( $this->options['opengraph'] )
+		if ( $this->optionss['opengraph'] )
 		{
 			require_once __DIR__ .'/class-bsocial-opengraph.php';
 		}
 
 		// Feature your comments
-		if ( $this->options['featured-comments'] )
+		if ( $this->optionss['featured-comments'] )
 		{
 			require_once __DIR__ .'/class-bsocial-featuredcomments.php';
 			$featured_comments = new bSocial_FeaturedComments;
-			$featured_comments->use_comment_date = $this->options['featured-comments-commentdate'];
-			$featured_comments->add_to_waterfall = $this->options['featured-comments-waterfall'];
+			$featured_comments->use_comment_date = $this->optionss['featured-comments-commentdate'];
+			$featured_comments->add_to_waterfall = $this->optionss['featured-comments-waterfall'];
 		}
 
 		// Twitter components
-		if ( $this->options['twitter-meta'] )
+		if ( $this->optionss['twitter-meta'] )
 		{
 			require_once __DIR__ .'/class-bsocial-twitter-meta.php';
 			$twitter_meta = new bSocial_Twitter_Meta;
-			$twitter_meta->app_id = $this->options['twitter-consumer-key'];
+			$twitter_meta->app_id = $this->optionss['twitter-consumer-key'];
 
-			if ( $this->options['twitter-card_site'] )
+			if ( $this->optionss['twitter-card_site'] )
 			{
-				$twitter_meta->card_site = $this->options['twitter-card_site'];
+				$twitter_meta->card_site = $this->optionss['twitter-card_site'];
 			}
 
-			if ( $this->options['twitter-comments'] )
+			if ( $this->optionss['twitter-comments'] )
 			{
 				require_once __DIR__ .'/class-bsocial-twitter-comments.php';
 				$twitter_comments = new bSocial_Twitter_Comments;
@@ -79,22 +79,22 @@ class bSocial
 		}
 
 		// Facebook components
-		if ( $this->options['facebook-meta'] && $this->options['facebook-app_id'] )
+		if ( $this->optionss['facebook-meta'] && $this->optionss['facebook-app_id'] )
 		{
 			require_once __DIR__ .'/class-bsocial-facebook-meta.php';
 			$facebook_meta = new bSocial_Facebook_Meta;
-			$facebook_meta->options->add_like_button = $this->options['facebook-add_button'];
-			$facebook_meta->admins = $this->options['facebook-admins'];
-			$facebook_meta->app_id = $this->options['facebook-app_id'];
+			$facebook_meta->options->add_like_button = $this->optionss['facebook-add_button'];
+			$facebook_meta->admins = $this->optionss['facebook-admins'];
+			$facebook_meta->app_id = $this->optionss['facebook-app_id'];
 
 			require_once __DIR__ .'/widgets-facebook.php';
 
-			if ( $this->options['facebook-comments'] && $this->options['facebook-secret'])
+			if ( $this->optionss['facebook-comments'] && $this->optionss['facebook-secret'])
 			{
 				require_once __DIR__ .'/class-bsocial-facebook-comments.php';
 				$facebook_comments = new bSocial_Facebook_Comments;
-				$facebook_comments->app_id = $this->options['facebook-app_id'];
-				$facebook_comments->app_secret = $this->options['facebook-secret'];
+				$facebook_comments->app_id = $this->optionss['facebook-app_id'];
+				$facebook_comments->app_secret = $this->optionss['facebook-secret'];
 			}
 		}
 	}
@@ -162,11 +162,13 @@ class bSocial
 		{
 			$this->options = (object) apply_filters(
 				'go_config',
-				wp_parse_args( (array) get_option( 'bsocial-options' ), array(
+				wp_parse_args( (array) get_option( $this->id_base ), array(
 
 					// social network integrations
 					'facebook' => (object) array(
 						'enable' => 1,
+						'meta' => 1,
+						'js' => 1,
 
 						'app_id' => '',
 						'secret' => '',
@@ -177,28 +179,30 @@ class bSocial
 					),
 					'linkedin' => (object) array(
 						'enable' => 1,
+						'meta' => 1,
+						'js' => 1,
 
 						'consumer-key' => '',
 						'consumer-secret' => '',
 						'access-token' => '',
 						'access-secret' => '',
-
-						'meta' => 1,
 					),
 					'twitter' => (object) array(
 						'enable' => 1,
+						'meta' => 1,
+						'js' => 1,
 
 						'consumer_key' => '',
 						'consumer_secret' => '',
 						'access_token' => '',
 						'access_secret' => '',
 
-						'meta' => 1,
+						'username' => '',
 						'comments' => 1,
 					),
 
 					// features
-					'featured-comments' => (object) array(
+					'featuredcomments' => (object) array(
 						'enable' => 1,
 
 						'use_commentdate' => 1,
@@ -206,6 +210,14 @@ class bSocial
 					),
 					'opengraph' => (object) array(
 						'enable' => 1,
+					),
+
+					// supressed options (hides them from options page)
+					'suppress' => array(
+						// commented out because it's useful as an explanation, but not as a default
+						// 'facebook' => array(
+						// 	'subcomponent' => '', // only top level components are supported for now, so this is aspirational
+						// )
 					),
 				) ),
 				$this->id_base

@@ -13,10 +13,10 @@ class bSocial_Admin
 
 	public function admin_init()
 	{
-		register_setting( 'bsocial-options', 'bsocial-options', array( $this, 'sanitize_options' ) );
+		register_setting( bsocial()->id_base, bsocial()->id_base, array( $this, 'sanitize_options' ) );
 
 		// load the test suite if the user has permissions
-		if( current_user_can( 'activate_plugins' ) )
+		if( current_user_can( 'manage_options' ) )
 		{
 			$this->tests_loader();
 		}
@@ -37,8 +37,41 @@ class bSocial_Admin
 		return $links;
 	}
 
+	public function nonce_field()
+	{
+		wp_nonce_field( plugin_basename( __FILE__ ) , bsocial()->id_base .'-nonce' );
+	}
+
+	public function verify_nonce()
+	{
+		return wp_verify_nonce( $_POST[ bsocial()->id_base .'-nonce' ] , plugin_basename( __FILE__ ) );
+	}
+
+	public function get_field_name( $field_name )
+	{
+		if ( is_array( $field_name ) )
+		{
+			$field_name = implode( '][', $field_name );
+		}
+
+		return bsocial()->id_base . '[' . $field_name . ']';
+	}
+
+	public function get_field_id( $field_name )
+	{
+		if ( is_array( $field_name ) )
+		{
+			$field_name = implode( '-', $field_name );
+		}
+
+		return bsocial()->id_base . '-' . $field_name;
+	}
+
 	public function sanitize_options( $input )
 	{
+
+print_r( $input );
+die;
 
 		// filter the values so we only store known items
 		$input = wp_parse_args( (array) $input , array(
@@ -85,6 +118,46 @@ class bSocial_Admin
 		return $input;
 	}
 
+
+	public function suppress_option( $field_name )
+	{
+		if ( ! $this->suppress )
+		{
+			$this->suppress = (array) bsocial()->options()->suppress;
+		}
+
+		// if nothing is marked for supression, then...
+		if ( ! count( $this->suppress ) )
+		{
+			return FALSE;
+		}
+
+		// strings can only refer to top-level settings
+		if ( is_string( $field_name ) )
+		{
+			return isset( $this->suppress[ $field_name ] );
+		}
+
+		$test = $this->suppress;
+		foreach ( (array) $field_name as $key )
+		{
+			// we have a match at this section, se reset the text for the next section
+			if ( isset( $test[ $key ] ) )
+			{
+				$test = (array) $test[ $key ];
+				continue;
+			}
+
+			// no match was found, this setting is not suppressed
+			return FALSE;
+		}
+
+		// if the above foreach contues to completion, it means
+		// the input field name array was found among the suppressed fields
+		return FALSE;
+
+	}
+
 	/**
 	 * some rudimentary tests for the various social network integrations are included
 	 * these are available on the settings page in the admin dashboard
@@ -110,11 +183,13 @@ class bSocial_Admin
 
 	public function options()
 	{
-		$options = get_option( 'bsocial-options' );
+
+		wp_enqueue_script( 'jquery-ui-accordion' );
+
 		require __DIR__ . '/templates/admin.php';
 
 		// load the links to the test suite if the user has permissions
-		if( current_user_can( 'activate_plugins' ) )
+		if( current_user_can( 'manage_options' ) )
 		{
 			require __DIR__ . '/templates/test.php';
 		}
