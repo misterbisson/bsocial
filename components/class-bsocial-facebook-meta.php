@@ -3,7 +3,7 @@
 class bSocial_Facebook_Meta
 {
 
-	function __construct()
+	public function __construct()
 	{
 		/*
 		* be sure to set the app ID and admins after instantiating the object
@@ -15,38 +15,42 @@ class bSocial_Facebook_Meta
 
 		$this->options->add_like_button = FALSE;
 
-		add_action( 'init' , array( $this , 'init' ));
+		add_action( 'init', array( $this, 'init' ) );
 	}
 
-	function init()
+	public function init()
 	{
-		if( is_admin() )
+		if ( is_admin() )
+		{
 			return;
+		}
 
-		add_filter( 'opengraph_metadata' , array( $this , 'opengraph_metadata' ));
-		add_filter( 'language_attributes' , array( $this , 'add_namespace' ));
-		add_action( 'print_footer_scripts' , array( $this , 'inject_js' ));
+		add_filter( 'opengraph_metadata', array( $this, 'opengraph_metadata' ) );
+		add_filter( 'language_attributes', array( $this, 'add_namespace' ) );
+		add_action( 'print_footer_scripts', array( $this, 'inject_js' ) );
 
-		if( $this->options->add_like_button )
-			add_filter( 'the_content' , array( $this , 'inject_like_button' ));
+		if ( $this->options->add_like_button )
+		{
+			add_filter( 'the_content', array( $this, 'inject_like_button' ) );
+		}
 	}
 
-	function opengraph_metadata( $properties )
+	public function opengraph_metadata( $properties )
 	{
 		$properties['fb:admins'] = $this->admins;
-		$properties['fb:app_id'] = $this->app_id; 
+		$properties['fb:app_id'] = $this->app_id;
 
 		return $properties;
 	}
 
-	function add_namespace( $output )
+	public function add_namespace( $output )
 	{
 		$output .= ' xmlns:fb="'. esc_attr( $this->namespace ) .'"';
 
 		return $output;
 	}
 
-	function inject_js( $output )
+	public function inject_js( $output )
 	{
 		global $post;
 ?>
@@ -65,7 +69,7 @@ class bSocial_Facebook_Meta
 <?php
 	}
 
-	function inject_like_button( $content )
+	public function inject_like_button( $content )
 	{
 		$button = '<p><fb:like href="'. get_permalink( get_the_ID() ) .'"></fb:like></p>';
 

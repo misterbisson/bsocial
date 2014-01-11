@@ -13,70 +13,81 @@ class bSocial_Twitter_Meta
 	 */
 	public $load_js = true;
 
-	function __construct()
+	public function __construct()
 	{
 		/*
 		* be sure to set the app ID after instantiating the object
 		* $this->app_id = TWTTR_APP_ID;
 		*/
 
-		add_action( 'init' , array( $this , 'init' ));
-	}
+		add_action( 'init', array( $this, 'init' ) );
+	} // END __construct
 
-	function init()
+	public function init()
 	{
 		// don't do anything to admin pages
-		if( is_admin() )
+		if ( is_admin() )
+		{
 			return;
+		}
 
 		if ( $this->load_js )
 		{
 			// inject the JS include
-			add_action( 'print_footer_scripts' , array( $this , 'inject_js' ));
+			add_action( 'print_footer_scripts', array( $this, 'inject_js' ) );
 		}// end if
 
 		// twitter card metadata
-		add_action( 'wp_head' , array( $this , 'head' ));
+		add_action( 'wp_head', array( $this, 'head' ) );
 
 		// defaults
-		add_filter( 'twittercard_card', array( $this , 'default_card' ) , 5 );
-		add_filter( 'twittercard_site', array( $this , 'default_site' ) , 5 );
-	}
+		add_filter( 'twittercard_card', array( $this, 'default_card' ), 5 );
+		add_filter( 'twittercard_site', array( $this, 'default_site' ), 5 );
+	} // END init
 
-	function default_card( $type = '' )
+	public function default_card( $type = '' )
 	{
 		// default to 'summary', unless something else is set
-		if( empty( $type ))
+		if ( empty( $type ) )
+		{
 			return 'summary';
+		}
 
 		return $type;
-	}
+	} // END default_card
 
-	function default_site( $twitteruser = '' )
+	public function default_site( $twitteruser = '' )
 	{
 		// can only move forward if we have a twitter username of our own
-		if( empty( $this->card_site ))
+		if ( empty( $this->card_site ) )
+		{
 			return $twitteruser;
+		}
 
 		// default, unless something else is set
-		if( empty( $twitteruser ))
+		if ( empty( $twitteruser ) )
+		{
 			return $this->card_site;
+		}
 
 		return $twitteruser;
-	}
+	} // END default_site
 
-	function head()
+	public function head()
 	{
 		$metadata = $this->metadata();
 		foreach ( $metadata as $key => $value )
 		{
-			if( empty( $key ) || empty( $value ))
+			if ( empty( $key ) || empty( $value ) )
+			{
 				continue;
+			}
+
 			echo '<meta name="'. esc_attr( $key ) .'" value="'. esc_attr($value) .'" />' . "\n";
 		}
-	}
+	} // END head
 
-	function metadata()
+	public function metadata()
 	{
 		$metadata = array();
 
@@ -98,21 +109,21 @@ class bSocial_Twitter_Meta
 			//'player', 'player:width', 'player:height', 'player:stream',
 		);
 
-		foreach ($properties as $property)
+		foreach ( $properties as $property )
 		{
 			$filter = 'twittercard_' . $property;
 			$metadata["twitter:$property"] = apply_filters( $filter, '' );
 		}
 
-		return apply_filters( 'twittercard_metadata' , $metadata );
-	}
+		return apply_filters( 'twittercard_metadata', $metadata );
+	} // END metadata
 
-	function inject_js()
+	public function inject_js()
 	{
 ?>
 		<script type="text/javascript">
 <?php
-		if( ! empty( $this->app_id ))
+		if ( ! empty( $this->app_id ) )
 		{
 ?>
 			setTimeout(function() {
@@ -122,7 +133,7 @@ class bSocial_Twitter_Meta
 			}, 1);
 
 <?php
-		}
+		}// end if
 ?>
 			setTimeout(function() {
 				var bstwitterb = document.createElement('script'); bstwitterb.type = 'text/javascript'; bstwitterb.async = true;
@@ -131,5 +142,5 @@ class bSocial_Twitter_Meta
 			}, 1);
 		</script>
 <?php
-	}
+	} // END inject_js
 }

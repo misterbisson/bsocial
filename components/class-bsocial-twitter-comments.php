@@ -3,20 +3,19 @@
 class bSocial_Twitter_Comments
 {
 
-	function __construct()
+	public function __construct()
 	{
-		add_action( 'init' , array( $this , 'init' ));
-	}
+		add_action( 'init', array( $this, 'init' ) );
+	} // END __construct
 
-	function init()
+	public function init()
 	{
-		add_action( 'ingest_twitter_comments' , array( $this, 'ingest_twitter_comments' ) );
-		add_action( 'admin_head' , array( $this, 'schedule_twitter_comments' ) );
-		add_filter( 'admin_comment_types_dropdown' , array( $this, 'twitter_comments_admin_comment_types_dropdown' ) );
+		add_action( 'ingest_twitter_comments', array( $this, 'ingest_twitter_comments' ) );
+		add_action( 'admin_head', array( $this, 'cron_register' ) );
+		add_filter( 'admin_comment_types_dropdown', array( $this, 'admin_comment_types_dropdown' ) );
+	} // END init
 
-	}
-
-	function ingest_twitter_comments()
+	public function ingest_twitter_comments()
 	{
 		global $wpdb;
 
@@ -28,22 +27,22 @@ class bSocial_Twitter_Comments
 		else
 		{
 			add_option( 'bsuite_twitter_comments', '', '', 'no' ); // add an empty option with the autoload disabled
-		}
+		} // END else
 
 		// prime HyperDB with a small write so we can make subsequent reads from the mast and avoid problems resulting from replication lag
-		add_comment_meta( 1 , 'bsuite_twitter_comments' , time() );
+		update_comment_meta( 1, 'bsuite_twitter_comments', time() );
 
-		$tz_offset = get_option('gmt_offset'); // get the timezone offset
+		$tz_offset = get_option( 'gmt_offset' ); // get the timezone offset
 
 		// get a new search object
 		$twitter_search = bsocial()->twitter()->search();
-		$home_url = preg_replace( '|https?://|' , '' , home_url() );
+		$home_url = preg_replace( '|https?://|', '', home_url() );
 
 		// run with it
 		foreach ( (array) $twitter_search->search ( array(
-			'q' => urlencode( $home_url ) ,
-			'rpp' => 100 ,
-			'since_id' => $most_recent_tweet ,
+			'q' => urlencode( $home_url ),
+			'rpp' => 100,
+			'since_id' => $most_recent_tweet,
 		) ) as $tweet )
 		{
 			if ( ! isset( $tweet->from_user->name ) )
@@ -51,7 +50,7 @@ class bSocial_Twitter_Comments
 				continue; // give up if the username lookup failed
 			}
 
-			if( bsocial()->comment_id_by_meta( $tweet->id_str, 'tweet_id' ) )
+			if ( bsocial()->comment_id_by_meta( $tweet->id_str, 'tweet_id' ) )
 			{
 				continue; // skip the tweet if we've already imported it
 			}
@@ -65,7 +64,7 @@ class bSocial_Twitter_Comments
 				$url = bsocial()->follow_url( $url );
 
 				// try to resolve the URL to a post id
-				$post_id = url_to_postid( bsocial()->follow_url( $url )); // returns 0 if no match
+				$post_id = url_to_postid( bsocial()->follow_url( $url ) ); // returns 0 if no match
 
 				// some links to the blog don't resolve to post IDs, think of the home or tag pages.
 				// hackish: those tweets get inserted against post id 0
@@ -76,7 +75,7 @@ class bSocial_Twitter_Comments
 				{
 					$found_post_ids[] = (int) $post_id;
 				}
-			}
+			} // END foreach
 
 			// do any of the links point to this blog?
 			if ( ! count( $found_post_ids ) )
@@ -97,15 +96,15 @@ class bSocial_Twitter_Comments
 				'comment_author_url' => 'http://twitter.com/'. $tweet->from_user->screen_name,
 				'comment_content' => $tweet->text,
 				'comment_type' => 'tweet',
-				'comment_date_gmt' => date('Y-m-d H:i:s', strtotime( $tweet->created_at )),
-				'comment_date' => date('Y-m-d H:i:s', strtotime( $tweet->created_at ) + (3600 * $tz_offset)),
+				'comment_date_gmt' => date('Y-m-d H:i:s', strtotime( $tweet->created_at ) ),
+				'comment_date' => date('Y-m-d H:i:s', strtotime( $tweet->created_at ) + (3600 * $tz_offset) ),
 			);
 
 			// insert the comment
 			$comment_id = wp_insert_comment( $comment );
-			add_comment_meta( $comment_id , 'tweet_id' , $tweet->id_str ); // record the ID of the tweet
-			add_comment_meta( $comment_id , 'tweet_rank' , $tweet->from_user->followers_count ); // get the follower count of the twitter user as a means to sort tweets by rank of the user
-			bsocial()->comment_id_by_meta_update_cache( $comment_id , $tweet->id_str , 'tweet_id' );
+			add_comment_meta( $comment_id, 'tweet_id', $tweet->id_str ); // record the ID of the tweet
+			add_comment_meta( $comment_id, 'tweet_rank', $tweet->from_user->followers_count ); // get the follower count of the twitter user as a means to sort tweets by rank of the user
+			bsocial()->comment_id_by_meta_update_cache( $comment_id, $tweet->id_str, 'tweet_id' );
 
 			// update the comment count
 			if ( 0 < $post_id )
@@ -115,32 +114,32 @@ class bSocial_Twitter_Comments
 
 			if ( get_option( 'comments_notify' ) )
 			{
-				wp_notify_postauthor( $comment_id , 'comment' ); // only works for comments, so we fudge
+				wp_notify_postauthor( $comment_id, 'comment' ); // only works for comments, so we fudge
 			}
 
 			// possibly useful for determining rank of a tweet:
 			// $tweet->metadata->recent_retweets & $tweet->from_user->followers_count
-		}
+		} // END foreach
 
 		// update the option with the last ingested tweet
-		update_option( 'bsuite_twitter_comments' , $twitter_search->api_response->max_id_str );
+		update_option( 'bsuite_twitter_comments', $twitter_search->api_response->max_id_str );
 
 		// delete the dummy comment meta we used to prime HyperDB earlier
-		delete_comment_meta( 1 , 'bsuite_twitter_comments' );
+		delete_comment_meta( 1, 'bsuite_twitter_comments' );
 
-	}
+	} // END ingest_twitter_comments
 
-	function schedule_twitter_comments()
+	public function cron_register()
 	{
 		if ( ! wp_next_scheduled( 'ingest_twitter_comments' ) )
 		{
-			wp_schedule_event( time() , 'hourly' , 'ingest_twitter_comments' );
+			wp_schedule_event( time(), 'hourly', 'ingest_twitter_comments' );
 		}
-	}
+	} // END cron_register
 
-	function twitter_comments_admin_comment_types_dropdown( $types )
+	public function admin_comment_types_dropdown( $types )
 	{
 		$types['tweet'] = 'Tweets';
 		return $types;
-	}
+	} // END admin_comment_types_dropdown
 }

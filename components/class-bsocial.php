@@ -9,7 +9,7 @@ class bSocial
 	public function __construct()
 	{
 		// activate the sub-components
-		$this->activate();			
+		$this->activate();
 
 		add_action( 'wp_ajax_show_cron', array( $this, 'show_cron' ) );
 		add_action( 'delete_comment', array( $this, 'comment_id_by_meta_delete_cache' ) );
@@ -20,16 +20,16 @@ class bSocial
 		// the admin settings page
 		if ( is_admin() )
 		{
-			$this->admin();			
+			$this->admin();
 		}
 
 		// get options with defaults
-		$this->options = apply_filters( 'go_config', wp_parse_args( (array) get_option( 'bsocial-options' ), array( 
+		$this->options = apply_filters( 'go_config', wp_parse_args( (array) get_option( 'bsocial-options' ), array(
 			'open-graph' => 1,
 			'featured-comments' => 1,
 			'featured-comments-commentdate' => 1,
 			'featured-comments-waterfall' => 1,
-			'twitter-api' => 1,
+			'twitter-meta' => 1,
 			'twitter-comments' => 1,
 			'twitter-app_id' => '',
 			'facebook-meta' => 1,
@@ -38,7 +38,7 @@ class bSocial
 			'facebook-admins' => '',
 			'facebook-app_id' => '',
 			'facebook-secret' => '',
-		)), 'bsocial' );
+		) ), 'bsocial' );
 
 		// Better describe your content to social sites
 		if ( $this->options['open-graph'] )
@@ -54,26 +54,26 @@ class bSocial
 			$featured_comments->use_comment_date = $this->options['featured-comments-commentdate'];
 			$featured_comments->add_to_waterfall = $this->options['featured-comments-waterfall'];
 		}
-		
+
 		// Twitter components
-		if ( $this->options['twitter-api'] )
+		if ( $this->options['twitter-meta'] )
 		{
 			require_once __DIR__ .'/class-bsocial-twitter-meta.php';
 			$twitter_meta = new bSocial_Twitter_Meta;
 			$twitter_meta->app_id = $this->options['twitter-app_id'];
-		
+
 			if ( $this->options['twitter-card_site'] )
 			{
 				$twitter_meta->card_site = $this->options['twitter-card_site'];
 			}
-		
+
 			if ( $this->options['twitter-comments'] )
 			{
 				require_once __DIR__ .'/class-bsocial-twitter-comments.php';
 				$twitter_comments = new bSocial_Twitter_Comments;
 			}
-		}	
-		
+		}
+
 		// Facebook components
 		if ( $this->options['facebook-meta'] && $this->options['facebook-app_id'] )
 		{
@@ -82,9 +82,9 @@ class bSocial
 			$facebook_meta->options->add_like_button = $this->options['facebook-add_button'];
 			$facebook_meta->admins = $this->options['facebook-admins'];
 			$facebook_meta->app_id = $this->options['facebook-app_id'];
-		
+
 			require_once __DIR__ .'/widgets-facebook.php';
-		
+
 			if( $this->options['facebook-comments'] && $this->options['facebook-secret'])
 			{
 				require_once __DIR__ .'/class-bsocial-facebook-comments.php';
@@ -97,7 +97,7 @@ class bSocial
 
 	public function admin()
 	{
-		if ( ! isset( $this->admin ))
+		if ( ! isset( $this->admin ) )
 		{
 			require_once __DIR__ . '/class-bsocial-admin.php';
 			$this->admin = new bSocial_Admin;
@@ -129,7 +129,7 @@ class bSocial
 	{
 		if( ! is_multisite() )
 		{
-			return FALSE;			
+			return FALSE;
 		}
 
 		global $wpdb, $base;
@@ -137,23 +137,23 @@ class bSocial
 		$url = parse_url( $url );
 		if ( is_subdomain_install() )
 		{
-			return get_blog_id_from_url( $url['host'] , '/' );
+			return get_blog_id_from_url( $url['host'], '/' );
 		}
 		elseif( ! empty( $url['path'] ) )
 		{
 			// get the likely blog path
-			$path = explode( '/' , ltrim( substr( $url['path'] , strlen( $base )) , '/' ));
+			$path = explode( '/', ltrim( substr( $url['path'], strlen( $base ) ), '/' ) );
 			$path = empty( $path[0] ) ? '/' : '/'. $path[0] .'/';
 			// get all blog paths for this domain
-			if( ! $paths = wp_cache_get( $url['host'] , 'paths-for-domain' ))
+			if( ! $paths = wp_cache_get( $url['host'], 'paths-for-domain' ) )
 			{
 				$paths = $wpdb->get_col( "SELECT path FROM $wpdb->blogs WHERE domain = '". $wpdb->escape( $url['host'] ) ."' /* url_to_blogid */" );
-				wp_cache_set( $url['host'] , $paths , 'paths-for-domain' , 3607 ); // cache it for an hour
+				wp_cache_set( $url['host'], $paths, 'paths-for-domain', 3607 ); // cache it for an hour
 			}
 			// chech if the given path is among the known paths
 			// allows us to differentiate between paths of the main blog and those of sub-blogs
-			$path = in_array( $path , $paths ) ? $path : '/';
-			return get_blog_id_from_url( $url['host'] , $path );
+			$path = in_array( $path, $paths ) ? $path : '/';
+			return get_blog_id_from_url( $url['host'], $path );
 		}
 
 		// cry uncle, return 1
@@ -163,33 +163,33 @@ class bSocial
 	public function find_urls( $text )
 	{
 		// nice regex thanks to John Gruber http://daringfireball.net/2010/07/improved_regex_for_matching_urls
-		preg_match_all( '#(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?гхрсту]))#', $text, $urls );
+		preg_match_all( '#(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\) ))*\) )+(?:\(([^\s()<>]+|(\([^\s()<>]+\) ))*\)|[^\s`!()\[\]{};:\'".,<>?гхрсту]) )#', $text, $urls );
 
 		return $urls[0];
 	}
 
-	public function follow_url( $location , $verbose = FALSE , $refresh = FALSE )
+	public function follow_url( $location, $verbose = FALSE, $refresh = FALSE )
 	{
-		if ( $refresh || ( ! $trail = wp_cache_get( (string) $location , 'follow_url' ) ) )
+		if ( $refresh || ( ! $trail = wp_cache_get( (string) $location, 'follow_url' ) ) )
 		{
 			$headers = get_headers( $location );
 			$trail = array();
 			$destination = $location;
 			foreach( (array) $headers as $header )
 			{
-				if ( 0 === stripos( $header , 'HTTP' ))
+				if ( 0 === stripos( $header, 'HTTP' ) )
 				{
-					preg_match( '/ [1-5][0-9][0-9] /' , $header , $matches );
-					$trail[] = array( 'location' => $destination , 'response' => trim( $matches[0] ));
+					preg_match( '/ [1-5][0-9][0-9] /', $header, $matches );
+					$trail[] = array( 'location' => $destination, 'response' => trim( $matches[0] ) );
 				}
 
-				if( 0 === stripos( $header , 'Location' ))
+				if( 0 === stripos( $header, 'Location' ) )
 				{
-					$destination = array_pop( $this->find_urls( $header ));
+					$destination = array_pop( $this->find_urls( $header ) );
 				}
 			}
 
-			wp_cache_set( (string) $location , $trail, 'follow_url' , 3607); // cache for an hour
+			wp_cache_set( (string) $location, $trail, 'follow_url', 3607); // cache for an hour
 		}
 
 		if( $verbose )
@@ -202,41 +202,41 @@ class bSocial
 		}
 	}
 
-	public function comment_id_by_meta( $metavalue , $metakey )
+	public function comment_id_by_meta( $metavalue, $metakey )
 	{
 		global $wpdb;
 
-		if ( ! $comment_id = wp_cache_get( (string) $metakey .':'. (string) $metavalue , 'comment_id_by_meta' ) )
+		if ( ! $comment_id = wp_cache_get( (string) $metakey .':'. (string) $metavalue, 'comment_id_by_meta' ) )
 		{
-			$comment_id = $wpdb->get_var( $wpdb->prepare( 'SELECT comment_id FROM ' . $wpdb->commentmeta . ' WHERE meta_key = %s AND meta_value = %s',  $metakey, $metavalue ));
-			wp_cache_set( (string) $metakey .':'. (string) $metavalue , $comment_id , 'comment_id_by_meta' );
+			$comment_id = $wpdb->get_var( $wpdb->prepare( 'SELECT comment_id FROM ' . $wpdb->commentmeta . ' WHERE meta_key = %s AND meta_value = %s',  $metakey, $metavalue ) );
+			wp_cache_set( (string) $metakey .':'. (string) $metavalue, $comment_id, 'comment_id_by_meta' );
 		}
 
-		return $comment_id; 
+		return $comment_id;
 	}
 
-	public function comment_id_by_meta_update_cache( $comment_id , $metavalue , $metakey )
+	public function comment_id_by_meta_update_cache( $comment_id, $metavalue, $metakey )
 	{
 		if ( 0 < $comment_id )
 		{
 			return;
 		}
 
-		if ( ( ! $metavalue ) || ( ! $metakey ))
+		if ( ( ! $metavalue ) || ( ! $metakey ) )
 		{
 			return;
 		}
 
-		wp_cache_set( (string) $metakey .':'. (string) $metavalue , (int) $comment_id , 'comment_id_by_meta' );
+		wp_cache_set( (string) $metakey .':'. (string) $metavalue, (int) $comment_id, 'comment_id_by_meta' );
 	}
 
 	public function comment_id_by_meta_delete_cache( $comment_id )
 	{
-		foreach ( (array) get_metadata( 'comment' , $comment_id ) as $metakey => $metavalues )
+		foreach ( (array) get_metadata( 'comment', $comment_id ) as $metakey => $metavalues )
 		{
 			foreach( $metavalues as $metavalue )
 			{
-				wp_cache_delete( (string) $metakey .':'. (string) $metavalue , 'comment_id_by_meta' );
+				wp_cache_delete( (string) $metakey .':'. (string) $metavalue, 'comment_id_by_meta' );
 			}
 		}
 	}
@@ -246,7 +246,7 @@ class bSocial
 		//32-bit PHP doesn't play nicely with the large ints FB returns, so we
 		//encapsulate large ints in double-quotes to force them to be strings
 		//http://stackoverflow.com/questions/2907806/handling-big-user-ids-returned-by-fql-in-php
-		return preg_replace( '/:(\d+)/' , ':"${1}"' , $string );
+		return preg_replace( '/:(\d+)/', ':"${1}"', $string );
 	}
 
 	/**
@@ -300,11 +300,11 @@ class bSocial
 	// Show cron array for debugging
 	public function show_cron()
 	{
-		if (current_user_can('manage_options'))
+		if (current_user_can('manage_options') )
 		{
-			echo '<pre>' .  print_r(_get_cron_array(), true) . '</pre>';  
+			echo '<pre>' .  print_r(_get_cron_array(), true) . '</pre>';
 		};
-		exit; 
+		exit;
 	}
 }//END class
 
