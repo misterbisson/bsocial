@@ -162,70 +162,78 @@ class bSocial
 		{
 			$this->options = (object) apply_filters(
 				'go_config',
-				wp_parse_args( (array) get_option( $this->id_base ), array(
-
-					// social network integrations
-					'facebook' => (object) array(
-						'enable' => 1,
-						'meta' => 1,
-						'js' => 1,
-
-						'app_id' => '',
-						'secret' => '',
-
-						'add_button' => 1,
-						'comments' => 0,
-						'admins' => array(),
-					),
-					'linkedin' => (object) array(
-						'enable' => 1,
-						'meta' => 1,
-						'js' => 1,
-
-						'consumer-key' => '',
-						'consumer-secret' => '',
-						'access-token' => '',
-						'access-secret' => '',
-					),
-					'twitter' => (object) array(
-						'enable' => 1,
-						'meta' => 1,
-						'js' => 1,
-
-						'consumer_key' => '',
-						'consumer_secret' => '',
-						'access_token' => '',
-						'access_secret' => '',
-
-						'username' => '',
-						'comments' => 1,
-					),
-
-					// features
-					'featuredcomments' => (object) array(
-						'enable' => 1,
-
-						'use_commentdate' => 1,
-						'add_to_waterfall' => 1,
-					),
-					'opengraph' => (object) array(
-						'enable' => 1,
-					),
-
-					// supressed options (hides them from options page)
-					'suppress' => array(
-						// commented out because it's useful as an explanation, but not as a default
-						// 'facebook' => array(
-						// 	'subcomponent' => '', // only top level components are supported for now, so this is aspirational
-						// )
-					),
-				) ),
+				wp_parse_args( (array) get_option( $this->id_base ), (array) $this->options_default() ),
 				$this->id_base
 			);
 		}
 
 		return $this->options;
 	} // END options
+
+	public function options_default()
+	{
+		// please note that most arrays are cooerced to objects
+		return (object) array(
+			// social network integrations
+			'facebook' => (object) array(
+				'enable' => 1,
+				'meta' => 1,
+				'js' => 1,
+
+				'app_id' => '',
+				'secret' => '',
+
+				'add_button' => 1,
+				'comments' => 0,
+				'admins' => '',
+			),
+			'linkedin' => (object) array(
+				'enable' => 1,
+				'meta' => 1,
+				'js' => 1,
+
+				'consumer_key' => '',
+				'consumer_secret' => '',
+				'access_token' => '',
+				'access_secret' => '',
+			),
+			'twitter' => (object) array(
+				'enable' => 1,
+				'meta' => 1,
+				'js' => 1,
+
+				'consumer_key' => '',
+				'consumer_secret' => '',
+				'access_token' => '',
+				'access_secret' => '',
+
+				'username' => '',
+				'comments' => 1,
+			),
+
+			// features
+			'featuredcomments' => (object) array(
+				'enable' => 1,
+
+				'use_commentdate' => 1,
+				'add_to_waterfall' => 1,
+			),
+			'opengraph' => (object) array(
+				'enable' => 1,
+			),
+
+			// supressed options (hides them from options page)
+			// this is only useful if the options are being set using a go_config filter
+			// it does not block somebody from setting options for these values
+			// note that these are not coerced to objects
+			'suppress' => array(
+				// commented out because it's useful as an explanation, but not as a default
+				// 'facebook' => array(
+				// 	'subcomponent' => '', // only top level components are supported for now, so this is aspirational
+				// )
+			),
+		);
+	} // END options_default
 
 	/**
 	 * utility methods used by other components
