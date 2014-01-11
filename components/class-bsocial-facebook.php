@@ -5,7 +5,9 @@
 class bSocial_Facebook
 {
 	public $facebook = NULL;
+	public $comments = NULL;
 	public $config = NULL;
+	public $meta = NULL;
 	public $user_stream = NULL;
 
 	public function __construct()
@@ -43,6 +45,36 @@ class bSocial_Facebook
 			);
 		}//END if
 	}//END __construct
+
+	public function meta()
+	{
+		if ( ! $this->meta )
+		{
+			if ( ! class_exists( 'bSocial_Facebook_Meta' ) )
+			{
+				require __DIR__ .'/class-bsocial-facebook-meta.php';
+			}
+
+			$this->meta = new bSocial_Facebook_Meta;
+		}//END if
+
+		return $this->meta;
+	}//END meta
+
+	public function comments()
+	{
+		if ( ! $this->comments )
+		{
+			if ( ! class_exists( 'bSocial_Facebook_Comments' ) )
+			{
+				require __DIR__ .'/class-bsocial-facebook-comments.php';
+			}
+
+			$this->comments = new bSocial_Facebook_Comments;
+		}//END if
+
+		return $this->comments;
+	}//END comments
 
 	/**
 	 * get an instance of bSocial_Facebook_User_Stream

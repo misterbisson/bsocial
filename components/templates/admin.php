@@ -131,8 +131,8 @@
 						<tr valign="top"><th scope="row">Date</th>
 							<td>
 								<select name="<?php echo bsocial()->admin()->get_field_name( array( 'featuredcomments', 'use_commentdate' ) ); ?>">
-									<option value="1" <?php selected( bsocial()->options()->featuredcomments->use_commentdate, 1 ); ?>>Feature comments using the original comment date</option>
-									<option value="0" <?php selected( bsocial()->options()->featuredcomments->use_commentdate, 0 ); ?>>Feature comments using the original post date</option>
+									<option value="1" <?php selected( bsocial()->options()->featuredcomments->use_commentdate, 1 ); ?>>Use the original comment date</option>
+									<option value="0" <?php selected( bsocial()->options()->featuredcomments->use_commentdate, 0 ); ?>>Use the date they were featured</option>
 								</select>
 							</td>
 						</tr>

@@ -5,7 +5,9 @@
 class bSocial_Twitter
 {
 	public $oauth = NULL;
+	public $comments = NULL;
 	public $config = NULL;
+	public $meta = NULL;
 	public $search = NULL;
 	public $user_stream = NULL;
 
@@ -91,6 +93,36 @@ class bSocial_Twitter
 			$parameters
 		);
 	}//END post_http
+
+	public function meta()
+	{
+		if ( ! $this->meta )
+		{
+			if ( ! class_exists( 'bSocial_Twitter_Meta' ) )
+			{
+				require __DIR__ .'/class-bsocial-twitter-meta.php';
+			}
+
+			$this->meta = new bSocial_Twitter_Meta;
+		}//END if
+
+		return $this->meta;
+	}//END meta
+
+	public function comments()
+	{
+		if ( ! $this->comments )
+		{
+			if ( ! class_exists( 'bSocial_Twitter_Comments' ) )
+			{
+				require __DIR__ .'/class-bsocial-twitter-comments.php';
+			}
+
+			$this->comments = new bSocial_Twitter_Comments;
+		}//END if
+
+		return $this->comments;
+	}//END comments
 
 	/**
 	 * return the twitter search object

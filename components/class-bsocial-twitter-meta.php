@@ -26,9 +26,8 @@ class bSocial_Twitter_Meta
 			return;
 		}
 
-
 		// twitter card metadata
-		add_action( 'wp_head', array( $this, 'head' ) );
+		add_action( 'wp_head', array( $this, 'wp_head' ) );
 
 		// defaults
 		add_filter( 'twittercard_card', array( $this, 'default_card' ), 5 );
@@ -69,8 +68,10 @@ class bSocial_Twitter_Meta
 		return $twitteruser;
 	} // END default_site
 
-	public function head()
+	public function wp_head()
 	{
+
+echo "THIS IS IT";
 		$metadata = $this->metadata();
 		foreach ( $metadata as $key => $value )
 		{
@@ -79,7 +80,7 @@ class bSocial_Twitter_Meta
 				continue;
 			}
 
-			echo '<meta name="'. esc_attr( $key ) .'" value="'. esc_attr($value) .'" />' . "\n";
+			echo '<meta name="'. esc_attr( $key ) .'" value="'. esc_attr( $value ) .'" />' . "\n";
 		}
 	} // END head
 

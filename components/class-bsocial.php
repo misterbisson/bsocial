@@ -32,12 +32,12 @@ class bSocial
 			)
 			{
 				$this->opengraph();
-//				$this->facebook()->meta();
+				$this->facebook()->meta();
 			}
 
 			if ( $options->facebook->comments )
 			{
-//				$this->facebook()->comments();
+				$this->facebook()->comments();
 			}
 
 			// if facebook is enabled, the widgets are enabled
@@ -64,12 +64,12 @@ class bSocial
 			)
 			{
 				$this->opengraph();
-//				$this->twitter()->meta();
+				$this->twitter()->meta();
 			}
 
 			if ( $options->twitter->comments )
 			{
-//				$this->twitter()->comments();
+				$this->twitter()->comments();
 			}
 		}
 
