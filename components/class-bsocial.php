@@ -146,6 +146,16 @@ class bSocial
 		return $this->linkedin;
 	}//END linkedin
 
+	public function new_oauth( $consumer_key, $consumer_secret, $access_token = NULL, $access_secret = NULL )
+	{
+		if ( ! class_exists( 'bSocial_OAuth' ) )
+		{
+			require __DIR__ . '/class-bsocial-oauth.php';
+		}
+
+		return new bSocial_OAuth( $consumer_key, $consumer_secret, $access_token, $access_secret );
+	}//END new_oauth
+
 	public function opengraph()
 	{
 		if ( ! $this->opengraph )
@@ -202,9 +212,11 @@ class bSocial
 				'app_id' => '',
 				'secret' => '',
 
+				'admins' => '',
+				'page' => '',
+
 				'add_button' => 1,
 				'comments' => 0,
-				'admins' => '',
 			),
 			'linkedin' => (object) array(
 				'enable' => 1,
@@ -239,6 +251,7 @@ class bSocial
 			),
 			'opengraph' => (object) array(
 				'enable' => 1,
+				'type' => 'blog',
 			),
 
 			// supressed options (hides them from options page)

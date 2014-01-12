@@ -14,9 +14,11 @@ class bSocial_Admin
 			'app_id' => 'wp_kses_data',
 			'secret' => 'wp_kses_data',
 
+			'admins' => 'wp_kses_data',
+			'page' => 'wp_kses_data',
+
 			'add_button' => 'absint',
 			'comments' => 'absint',
-			'admins' => 'wp_kses_data',
 		),
 		'linkedin' => array(
 			'enable' => 'absint',
@@ -51,6 +53,7 @@ class bSocial_Admin
 		),
 		'opengraph' => array(
 			'enable' => 'absint',
+			'type' => 'wp_kses_data',
 		),
 	);
 

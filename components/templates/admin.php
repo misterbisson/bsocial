@@ -22,6 +22,9 @@
 						<tr valign="top"><th scope="row">Facebook app admin IDs</th>
 							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'admins' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->admins ); ?>" /></td>
 						</tr>
+						<tr valign="top"><th scope="row">Facebook page for site</th>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'page' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->page ); ?>" /></td>
+						</tr>
 						<tr valign="top"><th scope="row">Enable Facebook JS</th>
 							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'js' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->js, 1 ); ?> /></td>
 						</tr>
@@ -111,6 +114,9 @@
 						<!-- opengraph -->
 						<tr valign="top"><th scope="row">Enable Open Graph metadata</th>
 							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'opengraph', 'enable' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->opengraph->enable, 1 ); ?> /></td>
+						</tr>
+						<tr valign="top"><th scope="row">Default open graph type for site</th>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'opengraph', 'type' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->opengraph->type ); ?>" /></td>
 						</tr>
 					</table>
 				</div>

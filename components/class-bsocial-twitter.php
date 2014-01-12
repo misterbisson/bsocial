@@ -13,44 +13,21 @@ class bSocial_Twitter
 
 	public function __construct()
 	{
-		if ( ! class_exists( 'bSocial_OAuth' ) )
-		{
-			require __DIR__ . '/class-bsocial-oauth.php';
-		}
-
-		// get our keys and secrets from the config
-		$this->config = apply_filters(
-			'go_config',
-			array(
-				'twitter' => array(
-					'consumer_key' => NULL,
-					'consumer_secret' => NULL,
-					'access_token' => NULL,
-					'access_secret' => NULL,
-				),
-			),
-			'bsocial'
-		);
-		if ( isset( $this->config['twitter'] ) )
-		{
-			$this->config = $this->config['twitter'];
-		}
-
 		// check if we have the user token and secret or not
-		if ( ! empty( $this->config['access_token'] ) && ! empty( $this->config['access_secret'] ) )
+		if ( ! empty( bsocial()->options()->twitter->access_token ) && ! empty( bsocial()->options()->twitter->access_secret ) )
 		{
-			$this->oauth = new bSocial_OAuth(
-				$this->config['consumer_key'],
-				$this->config['consumer_secret'],
-				$this->config['access_token'],
-				$this->config['access_secret']
+			$this->oauth = bsocial()->new_oauth(
+				bsocial()->options()->twitter->consumer_key,
+				bsocial()->options()->twitter->consumer_secret,
+				bsocial()->options()->twitter->access_token,
+				bsocial()->options()->twitter->access_secret
 			);
 		}
 		else
 		{
-			$this->oauth = new bSocial_OAuth(
-				$this->config['consumer_key'],
-				$this->config['consumer_secret']
+			$this->oauth = bsocial()->new_oauth(
+				bsocial()->options()->twitter->consumer_key,
+				bsocial()->options()->twitter->consumer_secret
 			);
 		}
 	}//END __construct

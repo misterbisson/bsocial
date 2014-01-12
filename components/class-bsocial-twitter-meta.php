@@ -70,8 +70,6 @@ class bSocial_Twitter_Meta
 
 	public function wp_head()
 	{
-
-echo "THIS IS IT";
 		$metadata = $this->metadata();
 		foreach ( $metadata as $key => $value )
 		{
