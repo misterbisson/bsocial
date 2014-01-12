@@ -15,22 +15,16 @@ class bSocial_Opengraph
 	public function __construct()
 	{
 		add_action( 'init', array( $this, 'init' ) );
-	} // END __construct
+	}// END __construct
 
 	public function init()
 	{
-		// actions and filters that interact with WP
 		add_filter( 'language_attributes', array( $this, 'language_attributes' ) );
 		add_action( 'wp_head', array( $this, 'wp_head' ) );
 
-		// filters for default opengraph metadata
-		add_filter( 'opengraph_title', array( $this, 'default_title' ), 5 );
-		add_filter( 'opengraph_type', array( $this, 'default_type' ), 5 );
-		add_filter( 'opengraph_image', array( $this, 'default_image' ), 5 );
-		add_filter( 'opengraph_url', array( $this, 'default_url' ), 5 );
-		add_filter( 'opengraph_site_name', array( $this, 'default_sitename' ), 5 );
-		add_filter( 'opengraph_description', array( $this, 'default_description' ), 5 );
-	} // END init
+		// disable jetpack's og features, because they conflict
+		add_filter( 'jetpack_enable_opengraph', '__return_false' );
+	}// END init
 
 	/**
 	 * Add Open Graph XML namespace to <html> element.
@@ -41,7 +35,45 @@ class bSocial_Opengraph
 
 		$output .= ' prefix="og: ' . esc_attr( $this->ns_uri ) . '"';
 		return $output;
-	}
+	}// END language_attributes
+
+	/**
+	 * Output <meta> tags in the page header.
+	 */
+	public function wp_head()
+	{
+		$xml_ns = '';
+		if ( ! $this->ns_set )
+		{
+			$xml_ns = 'xmlns:og="' . esc_attr( $this->ns_uri ) . '" ';
+		}
+
+		$metadata = $this->metadata();
+		foreach ( $metadata as $key => $value )
+		{
+			if ( empty( $key ) || empty( $value ) )
+			{
+				continue;
+			}
+
+			// support arrays
+			if ( is_array( $value ) )
+			{
+				foreach ( $value as $v )
+				{
+					if ( empty( $v ) )
+					{
+						continue;
+					}
+
+					echo '<meta ' . $xml_ns . 'property="' . esc_attr( $key ) . '" content="' . esc_attr( $v ) . '" />' . "\n";
+				}
+			}// END if
+
+			// default to single instances
+			echo '<meta ' . $xml_ns . 'property="' . esc_attr( $key ) . '" content="' . esc_attr( $value ) . '" />' . "\n";
+		} // END foreach
+	}// END wp_head
 
 	/**
 	 * Get the Open Graph metadata for the current page.
@@ -53,155 +85,226 @@ class bSocial_Opengraph
 	{
 		$metadata = array();
 
-	 	// defualt properties defined at http://opengraphprotocol.org/
+		// default properties defined at http://opengraphprotocol.org/
 		$properties = array(
 			// required
-			'title', 'type', 'image', 'url',
+			'og:title', 'og:type', 'og:image', 'og:url',
 
 			// optional
-			'site_name', 'description',
+			'og:site_name', 'og:description',
+
+			// optional, article-specific
+			'article:author', 'article:modified_time', 'article:published_time', 'article:publisher', 'article:section', 'article:tag',
+
+			// optional, book-specific
+			'books:author', 'books:canonical_name', 'books:isbn',
 
 			// location
-			'longitude', 'latitude', 'street-address', 'locality', 'region',
-			'postal-code', 'country-name',
+			'og:longitude', 'og:latitude', 'place:location:longitude', 'place:location:latitude', 'og:street-address', 'og:locality', 'og:region',
+			'og:postal-code', 'og:country-name',
 
 			// contact
-			'email', 'phone_number', 'fax_number',
+			'og:email', 'og:phone_number', 'og:fax_number',
 		);
+
+		$defaults = $this->defaults();
 
 		foreach ( $properties as $property )
 		{
-			$filter = 'opengraph_' . $property;
-			$metadata[ "og:$property" ] = apply_filters( $filter, '' );
+			$filter = 'opengraph_' . str_replace( 'og:', '', $property ) ;
+			$metadata[ $property ] = apply_filters( $filter, isset( $defaults[ $property ] ) ? $defaults[ $property ] : '' );
 		}
 
 		return apply_filters( 'opengraph_metadata', $metadata );
-	}
+	}// END metadata
 
 	/**
-	 * Default title property, using the page title.
+	 * Default values for common opengraph properties
 	 */
-	public function default_title( $title = '' )
+	public function defaults()
 	{
-		if ( is_singular() && empty( $title ) )
-		{
-			$title = get_queried_object()->post_title;
-		}
 
-		return $title;
-	}
+		// set the timezone to UTC for the later strtotime() call,
+		// preserve the old timezone so we can set it back when done
+		$old_tz = date_default_timezone_get();
+		date_default_timezone_set( 'UTC' );
+
+		if ( is_author() )
+		{
+			$author = get_queried_object();
+
+			$return['og:description']     = get_the_author_meta( 'description', $author->ID );
+			$return['og:image']           = $this->get_avatar( $author->user_email, 512 );
+			$return['og:title']           = get_the_author_meta( 'display_name', $author->ID );
+			$return['og:type']            = 'profile';
+			$return['og:url']             = get_author_posts_url( $author->ID );
+			$return['profile:first_name'] = get_the_author_meta( 'first_name', $author->ID );
+			$return['profile:last_name']  = get_the_author_meta( 'last_name', $author->ID );
+			$return['profile:username']   = get_the_author_meta( 'display_name', $author->ID );
+		}// END if
+		elseif ( is_singular() )
+		{
+			$post = get_queried_object();
+
+			// get article-specific data
+			$return['article:author'] = get_author_posts_url( $post->post_author );
+			$return['article:modified_time'] = date( 'c', strtotime( $post->post_modified_gmt ) );
+			$return['article:published_time'] = date( 'c', strtotime( $post->post_date_gmt ) );
+			$return['article:publisher'] = bsocial()->options()->facebook->page;
+			$return['article:tag'] = (array) wp_get_object_terms(
+				$post->ID,
+				(array) get_object_taxonomies( $post->post_type ),
+				array(
+					'orderby' => 'count',
+					'order' => 'DESC',
+					'fields' => 'names',
+				)
+			);
+
+			// description and image not shown for passworded posts
+			if ( post_password_required() )
+			{
+				$return['og:description'] = '';
+			}
+			else
+			{
+				$return['og:description'] = wp_kses(
+					apply_filters(
+						'the_excerpt',
+						empty( $post->post_excerpt ) ? wp_trim_words( strip_shortcodes( $post->post_content ) ) : $post->post_excerpt
+					),
+					array()
+				);
+
+				$return['og:image'] = $this->get_thumbnail( $post->ID, 'large' );
+			}// END else
+			$return['og:title'] = empty( $post->post_title ) ? ' ' : wp_kses( $post->post_title, array() ) ;
+			$return['og:type']  = 'article';
+			$return['og:url']   = get_permalink( $post->ID );
+		}// END elseif
+		else
+		{
+			$return['og:description'] = wp_kses( get_bloginfo( 'description' ), array() );
+			$return['og:title']       = wp_kses( get_bloginfo( 'name' ), array() );
+			$return['og:type']        = empty( bsocial()->options()->opengraph->type ) ? 'blog' : bsocial()->options()->opengraph->type;
+
+			// only attempt to expose a URL if on the front or home page
+			// (this default might be used for search or tag archive pages with less predictable URLs)
+			if ( is_home() || is_front_page() )
+			{
+				$return['og:url'] = home_url( '/' );
+			}
+		}// END else
+
+		// reset the timezone
+		date_default_timezone_set( $old_tz );
+
+		return $return;
+	}//END defaults
 
 	/**
-	 * Default type property.
+	 * get the post thumbnail, wrapper for wp_get_attachment_image_src()
 	 */
-	public function default_type( $type = '' )
-	{
-		if ( empty( $type ) )
-		{
-			$type = 'blog';
-		}
-
-		return $type;
-	}
-
-	/**
-	 * Default image property, using the post-thumbnail.
-	 */
-	public function default_image( $image = '' )
+	function get_thumbnail( $post_id, $size = 'large' )
 	{
 		if (
-			is_singular() && // only operate on single posts or pages, not the front page of the site
-			empty( $image ) && // don't replace the image if one is already set
 			current_theme_supports( 'post-thumbnails' ) && // only attempt to get the post thumbnail if the theme supports them
-			has_post_thumbnail( get_queried_object_id() ) // only set the meta if we have a thumbnail
+			has_post_thumbnail( $post_id ) // only set the meta if we have a thumbnail
 		)
 		{
-			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( get_queried_object_id() ), 'large');
-			if ( $thumbnai )
+			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), $size );
+			if ( $thumbnail )
 			{
 				$image = $thumbnail[0];
 			}
-		} // END if
-
-		return $image;
-	}
-
-	/**
-	 * Default url property, using the permalink for the page.
-	 */
-	public function default_url( $url = '' )
-	{
-		if ( ! empty( $url ) )
-		{
-			return $url;
 		}
 
-		if ( is_singular() )
+		return $image;
+	}// END get_thumbnail
+
+	/**
+	 * get author avatar
+	 *
+	 * this is derived from WP's core get_avatar() method, https://core.trac.wordpress.org/browser/tags/3.8/src/wp-includes/pluggable.php#L1669
+	 * unfortunately, that method is too messy and there's no other clean way to get a gravatar
+	 */
+	function get_avatar( $email, $size = 512, $ssl = FALSE )
+	{
+
+		if ( ! empty( $email ) )
 		{
-			$url = get_permalink( get_queried_object_id() );
+			$email_hash = md5( strtolower( trim( $email ) ) );
+		}
+
+		// set the host based on ssl
+		if ( $ssl )
+		{
+			$host = 'https://secure.gravatar.com';
 		}
 		else
 		{
-			$url = trailingslashit( get_bloginfo( 'url' ) );
-		}
-
-		return $url;
-	}
-
-	/**
-	 * Default site_name property, using the bloginfo name.
-	 */
-	public function default_sitename( $name = '' )
-	{
-		if ( empty( $name ) )
-		{
-			$name = get_bloginfo( 'name' );
-		}
-		return $name;
-	}
-
-	/**
-	 * Default description property, using the bloginfo description.
-	 */
-	public function default_description( $description = '' )
-	{
-		if ( ! empty( $description ) )
-		{
-			return $description;
-		}
-
-		// get blog description as default
-		$description = get_bloginfo( 'description' );
-
-		// replace the description with a more specific one if available
-		if ( is_singular() )
-		{
-			$description = wp_kses( apply_filters( 'the_excerpt', empty( get_queried_object()->post_excerpt ) ? wp_trim_words( strip_shortcodes( get_queried_object()->post_content ) ) : get_queried_object()->post_excerpt ), array() );
-		}
-
-		return $description;
-	}
-
-	/**
-	 * Output Open Graph <meta> tags in the page header.
-	 */
-	public function wp_head()
-	{
-		$xml_ns = '';
-		if ( ! $this->ns_set )
-		{
-			$xml_ns = 'xmlns:og="' . esc_attr( $this->ns_uri ) . '" ';
-		}
-
-		$metadata = metadata();
-		foreach ( $metadata as $key => $value )
-		{
-			if ( empty( $key ) || empty( $value ) )
+			if ( ! empty( $email ) )
 			{
-				continue;
+				$host = sprintf( "http://%d.gravatar.com", ( hexdec( $email_hash[0] ) % 2 ) );
+			}
+			else
+			{
+				$host = 'http://0.gravatar.com';
+			}
+		}// END else
+
+		// work out the default avatar type
+		$default = get_option( 'avatar_default' );
+		if ( empty( $default ) )
+		{
+			$default = 'identicon';
+		}
+
+		if ( 'mystery' == $default )
+		{
+			$default = "$host/avatar/ad516503a11cd5ca435acc9bb6523536?s={$size}"; // ad516503a11cd5ca435acc9bb6523536 == md5('unknown@gravatar.com')
+		}
+		elseif ( 'blank' == $default )
+		{
+			$default = $email ? 'blank' : includes_url( 'images/blank.gif' );
+		}
+		elseif ( ! empty( $email ) && 'gravatar_default' == $default )
+		{
+			$default = '';
+		}
+		elseif ( 'gravatar_default' == $default )
+		{
+			$default = "$host/avatar/?s={$size}";
+		}
+		elseif ( empty( $email ) )
+		{
+			$default = "$host/avatar/?d=$default&amp;s={$size}";
+		}
+		elseif ( 0 === strpos( $default, 'http://' ) )
+		{
+			$default = add_query_arg( 's', $size, $default );
+		}// END a bunch of elseifs
+
+		// return an avatar uri
+		if ( ! empty( $email ) )
+		{
+			$out = "$host/avatar/";
+			$out .= $email_hash;
+			$out .= '?s='.$size;
+			$out .= '&amp;d=' . urlencode( $default );
+
+			$rating = get_option( 'avatar_rating' );
+			if ( ! empty( $rating ) )
+			{
+				$out .= "&amp;r={$rating}";
 			}
 
-			echo '<meta ' . $xml_ns . 'property="' . esc_attr( $key ) . '" content="' . esc_attr( $value ) . '" />' . "\n";
-		} // END foreach
-	}
+			$out = str_replace( '&#038;', '&amp;', esc_url( $out ) );
+			return $out;
+		}// END if
+		else
+		{
+			return $default;
+		}// END else
+	}// END get_avatar
 }
