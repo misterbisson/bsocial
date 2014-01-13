@@ -1,11 +1,6 @@
 <?php
 class bSocial_FeaturedComments
 {
-
-	// options that can be changed (it's best to change them in the bootstrapper)
-	var $use_comment_date = TRUE;
-	var $add_to_waterfall = TRUE;
-
 	// don't mess with these
 	var $id_base = 'bsuite-fcomment';
 	var $post_type_name = 'bsuite-fcomment';
@@ -19,22 +14,22 @@ class bSocial_FeaturedComments
 
 		add_action( 'init' , array( $this, 'register_post_type' ) , 11 );
 		add_action( 'edit_comment' , array( $this, 'edit_comment' ) , 5 );
-		add_action( 'delete_comment' , array( $this, 'unfeature_comment' ));
-		add_action( 'wp_ajax_bsocial_feature_comment' , array( $this, 'ajax' ));
+		add_action( 'delete_comment' , array( $this, 'unfeature_comment' ) );
+		add_action( 'wp_ajax_bsocial_feature_comment' , array( $this, 'ajax' ) );
 
-		add_filter( 'quicktags_settings' , array( $this, 'quicktags_settings' ));
+		add_filter( 'quicktags_settings' , array( $this, 'quicktags_settings' ) );
 		add_filter( 'comment_row_actions' , array( $this , 'comment_row_actions' ) , 10 , 2 );
 
-		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ));
-		add_filter( 'post_class' , array( $this, 'filter_post_class' ));
-		add_filter( 'get_comment_text' , array( $this, 'filter_get_comment_text' ));
-		add_filter( 'the_author' , array( $this, 'filter_the_author' ));
-		add_filter( 'the_author_posts_link' , array( $this, 'filter_the_author_posts_link' ));
+		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
+		add_filter( 'post_class' , array( $this, 'filter_post_class' ) );
+		add_filter( 'get_comment_text' , array( $this, 'filter_get_comment_text' ) );
+		add_filter( 'the_author' , array( $this, 'filter_the_author' ) );
+		add_filter( 'the_author_posts_link' , array( $this, 'filter_the_author_posts_link' ) );
 		add_filter( 'post_type_link', array( $this , 'post_type_link' ), 11, 2 );
 
 /*
 
-@todo: 
+@TODO:
 
 + add metaboxes to the custom post type that show the comment text and connect to both the post and comment
 
@@ -51,17 +46,15 @@ class bSocial_FeaturedComments
 	function pre_get_posts( $query )
 	{
 
-		if( $this->add_to_waterfall && ! is_admin() && $query->is_main_query() )
+		if ( bsocial()->options()->featuredcomments->add_to_waterfall && ! is_admin() && $query->is_main_query() )
 		{
-
-			$post_types = array_merge( 
-				(array) $query->query_vars['post_type'] , 
-				array( is_singular() && isset( $query->queried_object->post_type ) ? $query->queried_object->post_type : 'post' ), 
+			$post_types = array_merge(
+				(array) $query->query_vars['post_type'] ,
+				array( is_singular() && isset( $query->queried_object->post_type ) ? $query->queried_object->post_type : 'post' ),
 				array( $this->post_type_name )
 			);
 
 			$query->set( 'post_type', $post_types );
-
 		}
 
 		return $query;
@@ -72,7 +65,7 @@ class bSocial_FeaturedComments
 		switch( $settings['id'] )
 		{
 			case 'content':
-				if( get_current_screen()->id !== 'comment' )
+				if ( get_current_screen()->id !== 'comment' )
 					return $settings;
 				// no break, so it continues to the case below
 			case 'replycontent':
@@ -88,7 +81,7 @@ class bSocial_FeaturedComments
 
 	function post_type_link( $permalink, $post )
 	{
-		if( $post->post_type == $this->post_type_name && ( $comment_id = get_post_meta( $post->ID , $this->meta_key .'-comment_id' , TRUE )))
+		if ( $post->post_type == $this->post_type_name && ( $comment_id = get_post_meta( $post->ID , $this->meta_key .'-comment_id' , TRUE ) ))
 			return get_comment_link( $comment_id );
 
 		return $permalink;
@@ -96,41 +89,55 @@ class bSocial_FeaturedComments
 
 	function filter_get_comment_text( $content )
 	{
-		if( is_admin() )
+		if ( is_admin() )
+		{
 			return $content;
+		}
 		else
+		{
 			return preg_replace( $this->tag_regex , '' , $content );
+		}
 	}
 
 	function filter_post_class( $classes )
 	{
-		if( get_post( get_the_ID() )->post_type == $this->post_type_name )
+		if ( get_post( get_the_ID() )->post_type == $this->post_type_name )
+		{
 			$classes[] = 'post';
+		}
 
 		return $classes;
 	}
 
 	function filter_the_author( $author_name )
 	{
-		if( get_the_ID() && get_post( get_the_ID() )->post_type == $this->post_type_name )
-			return get_comment_author( get_post_meta( get_the_ID() , $this->meta_key .'-comment_id' , TRUE ));
+		if ( get_the_ID() && get_post( get_the_ID() )->post_type == $this->post_type_name )
+		{
+			return get_comment_author( get_post_meta( get_the_ID() , $this->meta_key .'-comment_id' , TRUE ) );
+		}
 		else
+		{
 			return $author_name;
+		}
 	}
 
 	function filter_the_author_posts_link( $url )
 	{
-		if( get_the_ID() && get_post( get_the_ID() )->post_type == $this->post_type_name )
+		if ( get_the_ID() && get_post( get_the_ID() )->post_type == $this->post_type_name )
+		{
 			return '';
+		}
 		else
+		{
 			return $url;
+		}
 	}
 
 	function get_featured_comment_text( $comment_id = FALSE )
 	{
-		remove_filter( 'get_comment_text' , array( $this, 'filter_get_comment_text' ));
-		$text = $this->_get_featured_comment_text( get_comment_text( $comment_id ));
-		add_filter( 'get_comment_text' , array( $this, 'filter_get_comment_text' ));
+		remove_filter( 'get_comment_text' , array( $this, 'filter_get_comment_text' ) );
+		$text = $this->_get_featured_comment_text( get_comment_text( $comment_id ) );
+		add_filter( 'get_comment_text' , array( $this, 'filter_get_comment_text' ) );
 
 		return $text[1];
 	}
@@ -147,12 +154,14 @@ class bSocial_FeaturedComments
 		$comment = get_comment( $comment_id );
 
 		// check if the featured tags exist in the comment content, permissions will be checked in the next function
-		if( 
-			$featured = $this->_get_featured_comment_text( $comment->comment_content ) || 
+		if (
+			$featured = $this->_get_featured_comment_text( $comment->comment_content ) ||
 			get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE )
 		)
+		{
 			$this->feature_comment( $comment_id );
-		
+		}
+
 	}
 
 	function unfeature_comment( $comment_id )
@@ -161,9 +170,9 @@ class bSocial_FeaturedComments
 
 		// check user permissions
 		// @todo: map a meta cap for this rather than extend the edit_post here
-		if( current_user_can( 'edit_post' , $comment->comment_post_ID ))
+		if ( current_user_can( 'edit_post' , $comment->comment_post_ID ) )
 		{
-			if( $post_id = get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE ))
+			if ( $post_id = get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE ) )
 			{
 				wp_delete_post( $post_id );
 				delete_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id' );
@@ -177,12 +186,16 @@ class bSocial_FeaturedComments
 
 		// check user permissions
 		// @todo: map a meta cap for this rather than extend the edit_post here
-		if( current_user_can( 'edit_post' , $comment->comment_post_ID ))
+		if ( current_user_can( 'edit_post' , $comment->comment_post_ID ) )
 		{
-			if( $post_id = get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE ))
-				wp_update_post( (object) array( 'ID' => $post_id , 'post_content' => $featured )); // we have a post for this comment
+			if ( $post_id = get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE ) )
+			{
+				wp_update_post( (object) array( 'ID' => $post_id , 'post_content' => $featured ) ); // we have a post for this comment
+			}
 			else
+			{
 				$this->create_post( $comment_id ); // create a new post for this comment
+			}
 		}
 	}
 
@@ -198,8 +211,8 @@ class bSocial_FeaturedComments
 			'post_title' => $featured,
 			'post_content' => $featured,
 			'post_name' => sanitize_title( $featured ),
-			'post_date' => $this->use_comment_date ? $comment->comment_date : FALSE, // comment_date vs. the date the comment was featured
-			'post_date_gmt' => $this->use_comment_date ? $comment->comment_date_gmt : FALSE,
+			'post_date' => bsocial()->options()->featuredcomments->use_commentdate ? $comment->comment_date : FALSE, // comment_date vs. the date the comment was featured
+			'post_date_gmt' => bsocial()->options()->featuredcomments->use_commentdate ? $comment->comment_date_gmt : FALSE,
 			'post_author' => $parent->post_author, // so permissions map the same as for the parent post
 			'post_parent' => $parent->ID,
 			'post_status' => $parent->post_status,
@@ -209,20 +222,26 @@ class bSocial_FeaturedComments
 		$post_id = wp_insert_post( $post );
 
 		// simple sanity check
-		if( ! is_numeric( $post_id ))
+		if ( ! is_numeric( $post_id ) )
+		{
 			return $post_id;
+		}
 
 		// save the meta
 		update_post_meta( $post_id , $this->meta_key .'-comment_id' , $comment->comment_ID );
 		update_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', $post_id );
 
 		// get all the terms on the parent post
-		foreach( (array) wp_get_object_terms( $parent->ID, get_object_taxonomies( $parent->post_type )) as $term )
+		foreach ( (array) wp_get_object_terms( $parent->ID, get_object_taxonomies( $parent->post_type ) ) as $term )
+		{
 			$parent_terms[ $term->taxonomy ][] = $term->name;
+		}
 
 		// set those terms on the comment
-		foreach( (array) $parent_terms as $tax => $terms )
+		foreach ( (array) $parent_terms as $tax => $terms )
+		{
 			wp_set_object_terms( $post_id , $terms , $tax , FALSE );
+		}
 
 		return $post_id;
 	}
@@ -231,19 +250,25 @@ class bSocial_FeaturedComments
 	{
 
 		// check permissions against the parent post
-		if ( ! current_user_can( 'edit_post' , $comment->comment_post_ID ))
+		if ( ! current_user_can( 'edit_post' , $comment->comment_post_ID ) )
+		{
 			return $actions;
+		}
 
 		// is this comment featured or not, what actions are available?
-		if( get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE ))
+		if ( get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE ) )
+		{
 			$actions['feature-comment hide-if-no-js'] = '<a class="feature-comment feature-comment-needs-refresh featured-comment" id="feature-comment-'. $comment->comment_ID .'" title="Unfeature" href="#">Unfeature</a>';
+		}
 		else
+		{
 			$actions['feature-comment hide-if-no-js'] = '<a class="feature-comment feature-comment-needs-refresh unfeatured-comment" id="feature-comment-'. $comment->comment_ID .'" title="Feature" href="#">Feature</a>';
+		}
 
 		// enqueue some JS once
-		if( ! $this->enqueued_admin_js )
+		if ( ! $this->enqueued_admin_js )
 		{
-			add_action( 'admin_print_footer_scripts' , array( $this , 'footer_js' ));
+			add_action( 'admin_print_footer_scripts' , array( $this , 'footer_js' ) );
 			$this->enqueued_admin_js = TRUE;
 		}
 
@@ -252,7 +277,7 @@ class bSocial_FeaturedComments
 
 	function footer_js()
 	{
-		// this JS code originated by Mark Jaquith, http://coveredwebservices.com/ , for GigaOM, http://gigaom.com/
+		// this JS code originated by Mark Jaquith, http://coveredwebservices.com/ , for Gigaom, http://gigaom.com/
 
 		?>
 		<script type="text/javascript">
@@ -297,7 +322,7 @@ class bSocial_FeaturedComments
 					setTimeout("cwsFeatComLoadLoop(" + comment_id + ")", 100);
 				}
 			}
-	
+
 		jQuery( document ).ready( function(){
 			cwsFeatComLoad();
 		});
@@ -309,19 +334,18 @@ class bSocial_FeaturedComments
 	function register_post_type()
 	{
 
-		//@todo: should get list of post types that support comments, then get the list of taxonomies they support
-
-		$taxonomies = get_taxonomies( array( 'public' => true ));
+		// @TODO: should get list of post types that support comments, then get the list of taxonomies they support
+		$taxonomies = get_taxonomies( array( 'public' => TRUE ) );
 
 		register_post_type( $this->post_type_name,
 			array(
 				'labels' => array(
-					'name' => __( 'Featured Comments' ),
-					'singular_name' => __( 'Featured Comment' ),
+					'name' => 'Featured Comments',
+					'singular_name' => 'Featured Comment',
 				),
 				'supports' => array(
-					'title', 
-					'author', 
+					'title',
+					'author',
 				),
 				'register_meta_box_cb' => array( $this , 'register_metaboxes' ),
 				'public' => TRUE,
@@ -360,12 +384,16 @@ class bSocial_FeaturedComments
 			return;
 		}//end if
 
-		if( get_comment( $comment_id ) )
+		if ( get_comment( $comment_id ) )
 		{
 			if ( 'feature' == $_POST['direction'] )
+			{
 				$this->feature_comment( $comment_id );
+			}
 			else
+			{
 				$this->unfeature_comment( $comment_id );
+			}
 		}
 
 		die;

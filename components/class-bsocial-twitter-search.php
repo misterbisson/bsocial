@@ -1,68 +1,80 @@
 <?php
 /*
- * Twitter rest API glue
- * 
- * Don't include this file or directly call it's methods.
- * See bsocial()->new_twitter_search() instead.
- *
- */
-
-/*
  * Twitter_Search class
- * 
+ *
+ * Don't include this file or directly call it's methods. Use
+ * bsocial()->twitter()->search() to get an insstance of this class instead.
+ *
  * Search Twitter with a given term or phrase
- * Example: $twitter_search->search ( array( 'q' => 'search phrase' )) 
- * 
- * Available query args: https://dev.twitter.com/docs/api/1/get/search
+ * Example: bsocial()->twitter->search()->search( array( 'q' => 'search phrase' ))
+ *
+ * Available query args:
+ *   https://dev.twitter.com/docs/api/1.1/get/search/tweets
  *
  * @author Casey Bisson
+ * @author Will Luo
  */
 class bSocial_Twitter_Search
 {
-	var $get_user_info = FALSE;
+	public $twitter = NULL;      // handle to a bSocial_Twitter instance
+	public $api_response = NULL;
 
-	function tweets()
+	public function __construct( $twitter )
 	{
-		if( ! empty( $this->api_response->results ))
-			return $this->api_response->results;
-		else
-			return FALSE;
-	}
+		$this->twitter = $twitter;
+	}//END __construct
 
-	function next()
+	/**
+	 * get the latest search results
+	 */
+	public function tweets()
 	{
-		if( ! empty( $this->api_response->next_page ))
-			return $this->search( $this->args , 'next' );
-		else
+		if ( empty( $this->api_response->statuses ) )
+		{
 			return FALSE;
-	}
+		}
 
-	function refresh()
+		return $this->api_response->statuses;
+	}//END tweets
+
+	public function next()
 	{
-		if( ! empty( $this->api_response->refresh_url ))
-			return $this->search( $this->args , 'refresh' );
-		else
+		if ( empty( $this->api_response->search_metadata->next_results ) )
+		{
 			return FALSE;
-	}
+		}
 
-	function search( $args , $method = 'search' )
+		return $this->search( $this->args, 'next' );
+	}//END next
+
+	public function refresh()
+	{
+		if( empty( $this->api_response->search_metadata->refresh_url ) )
+		{
+			return FALSE;
+		}
+
+		return $this->search( $this->args, 'refresh' );
+	}//END refresh
+
+	public function search( $args, $method = 'search' )
 	{
 		// parse the method
 		switch( $method )
 		{
 			case 'next':
 			case 'next_page':
-				if( ! empty( $this->api_response->next_page ))
+				if ( ! empty( $this->api_response->search_metadata->next_results ) )
 				{
-					$query_url = 'http://search.twitter.com/search.json' . $this->api_response->next_page;
+					$args = wp_parse_args( $this->api_response->search_metadata->next_results );
 					unset( $this->api_response );
 					break;
 				}
-			
+
 			case 'refresh':
-				if( ! empty( $this->api_response->refresh_url ))
+				if( ! empty( $this->api_response->search_metadata->refresh_url ) )
 				{
-					$query_url = 'http://search.twitter.com/search.json' . $this->api_response->refresh_url;
+					$args = wp_parse_args( $this->api_response->search_metadata->refresh_url );
 					unset( $this->api_response );
 					break;
 				}
@@ -70,56 +82,33 @@ class bSocial_Twitter_Search
 			case 'search':
 			default:
 				$defaults = array(
-					'q' => urlencode( site_url() ),
-					'rpp' => 10,
+					'q' => NULL,
+					'geocode' => NULL,
+					'lang' => NULL,
+					'locale' => NULL,
 					'result_type' => 'recent',
-					'page' => 1,
-					'since_id' => FALSE,
-					'lang' => FALSE,
-					'locale' => FALSE,
-					'until' => FALSE,
-					'geocode' => FALSE,
-					'show_user' => FALSE,
+					'count' => 10,
+					'until' => NULL,
+					'since_id' => NULL,
+					'max_id' => NULL,
 					'include_entities' => TRUE,
-					'with_twitter_user_id' => TRUE,
+					'callback' => NULL,
 				);
-				$args = wp_parse_args( $args, $defaults );
 
-				// save the args
-				$this->args = $args;
+				$this->args = array_filter( wp_parse_args( $args, $defaults ) );
 
-				$query_url = add_query_arg( $args , 'http://search.twitter.com/search.json' );
-		}
+				$query_url = 'search/tweets';
+		}//END switch
 
-		$temp_results = wp_remote_get( $query_url );
-		if ( is_wp_error( $temp_results ))
+		$this->api_response = $this->twitter->get_http( $query_url, $this->args );
+
+		if( ! empty( $this->api_response->errors ) )
 		{
-			$this->error = $temp_results; 
-			return FALSE;
-		}
-
-		$this->api_response = json_decode( wp_remote_retrieve_body( $temp_results ));
-		$this->api_response_headers = wp_remote_retrieve_headers( $temp_results );
-		unset( $temp_results );
-
-		if( ! empty( $this->api_response->error ))
-		{
-			$this->error = $this->api_response; 
+			$this->error = $this->api_response;
 			unset( $this->api_response );
 			return FALSE;
 		}
 
-		foreach( $this->api_response->results as $result )
-		{
-			// we can't rely on the user_ids in the result, so we do a name lookup and unset the unreliable data.
-			// http://code.google.com/p/twitter-api/issues/detail?id=214
-			if( $this->get_user_info )
-				$result->from_user = bsocial_twitter_user_info()-get( $result->from_user );
-
-			$this->api_response->min_id = $result->id;
-			$this->api_response->min_id_str = $result->id_str;
-		}
-
-		return $this->api_response->results;
-	}
-}
+		return $this->api_response->statuses;
+	}//END search
+}//END bSocial_Twitter_Search
