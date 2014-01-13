@@ -10,44 +10,21 @@ class bSocial_LinkedIn
 
 	public function __construct()
 	{
-		if ( ! class_exists( 'bSocial_OAuth' ) )
+		// check if we have the user token and secret or not
+		if ( ! empty( bsocial()->options()->linkedin->user_token ) && ! empty( bsocial()->options()->linkedin->user_secret ) )
 		{
-			require __DIR__ . '/class-bsocial-oauth.php';
-		}
-
-		// get our keys and secrets from the config
-		$this->config = apply_filters(
-			'go_config',
-			array(
-				'linkedin' => array(
-					'consumer_key' => NULL,
-					'consumer_secret' => NULL,
-					'user_token' => NULL,
-					'user_secret' => NULL,
-				),
-			),
-			'bsocial'
-		);
-		if ( isset( $this->config['linkedin'] ) )
-		{
-			$this->config = $this->config['linkedin'];
-		}
-
-		// check if we can pass in the user token and secret or not
-		if ( ! empty( $this->config['user_token'] ) && ! empty( $this->config['user_secret'] ) )
-		{
-			$this->oauth = new bSocial_OAuth(
-				$this->config['consumer_key'],
-				$this->config['consumer_secret'],
-				$this->config['user_token'],
-				$this->config['user_secret']
+			$this->oauth = bsocial()->new_oauth(
+				bsocial()->options()->linkedin->consumer_key,
+				bsocial()->options()->linkedin->consumer_secret,
+				bsocial()->options()->linkedin->user_token,
+				bsocial()->options()->linkedin->user_secret
 			);
 		}
 		else
 		{
-			$this->oauth = new bSocial_OAuth(
-				$this->config['consumer_key'],
-				$this->config['consumer_secret']
+			$this->oauth = bsocial()->new_oauth(
+				bsocial()->options()->linkedin->consumer_key,
+				bsocial()->options()->linkedin->consumer_secret
 			);
 		}
 	}//END __construct

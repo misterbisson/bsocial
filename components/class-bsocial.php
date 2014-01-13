@@ -209,8 +209,8 @@ class bSocial
 				'meta' => 1,
 				'js' => 1,
 
-				'app_id' => '',
-				'secret' => '',
+				'app_token' => '',
+				'app_secret' => '',
 
 				'admins' => '',
 				'page' => '',

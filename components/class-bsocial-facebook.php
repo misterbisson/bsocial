@@ -19,26 +19,10 @@ class bSocial_Facebook
 				require __DIR__ . '/external/facebook-php-sdk/src/facebook.php';
 			}
 
-			// get our keys and secrets from the config
-			$this->config = apply_filters(
-				'go_config',
-				array(
-					'facebook' => array(
-						'consumer_key' => NULL,
-						'consumer_secret' => NULL,
-					),
-				),
-				'bsocial'
-			);
-			if ( isset( $this->config['facebook'] ) )
-			{
-				$this->config = $this->config['facebook'];
-			}
-
 			$this->facebook = new Facebook(
 				array(
-					'appId' => $this->config['consumer_key'],
-					'secret' => $this->config['consumer_secret'],
+					'appId' => bsocial()->options()->facebook->app_token,
+					'secret' => bsocial()->options()->facebook->app_secret,
 					'fileUpload' => FALSE,         // optional
 					'allowSignedRequest' => FALSE, // optional but should be set to false for non-canvas apps
 				)
