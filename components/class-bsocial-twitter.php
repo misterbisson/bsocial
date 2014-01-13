@@ -5,50 +5,29 @@
 class bSocial_Twitter
 {
 	public $oauth = NULL;
+	public $comments = NULL;
 	public $config = NULL;
+	public $meta = NULL;
 	public $search = NULL;
 	public $user_stream = NULL;
 
 	public function __construct()
 	{
-		if ( ! class_exists( 'bSocial_OAuth' ) )
-		{
-			require __DIR__ . '/class-bsocial-oauth.php';
-		}
-
-		// get our keys and secrets from the config
-		$this->config = apply_filters(
-			'go_config',
-			array(
-				'twitter' => array(
-					'consumer_key' => NULL,
-					'consumer_secret' => NULL,
-					'access_token' => NULL,
-					'access_secret' => NULL,
-				),
-			),
-			'bsocial'
-		);
-		if ( isset( $this->config['twitter'] ) )
-		{
-			$this->config = $this->config['twitter'];
-		}
-
 		// check if we have the user token and secret or not
-		if ( ! empty( $this->config['access_token'] ) && ! empty( $this->config['access_secret'] ) )
+		if ( ! empty( bsocial()->options()->twitter->access_token ) && ! empty( bsocial()->options()->twitter->access_secret ) )
 		{
-			$this->oauth = new bSocial_OAuth(
-				$this->config['consumer_key'],
-				$this->config['consumer_secret'],
-				$this->config['access_token'],
-				$this->config['access_secret']
+			$this->oauth = bsocial()->new_oauth(
+				bsocial()->options()->twitter->consumer_key,
+				bsocial()->options()->twitter->consumer_secret,
+				bsocial()->options()->twitter->access_token,
+				bsocial()->options()->twitter->access_secret
 			);
 		}
 		else
 		{
-			$this->oauth = new bSocial_OAuth(
-				$this->config['consumer_key'],
-				$this->config['consumer_secret']
+			$this->oauth = bsocial()->new_oauth(
+				bsocial()->options()->twitter->consumer_key,
+				bsocial()->options()->twitter->consumer_secret
 			);
 		}
 	}//END __construct
@@ -91,6 +70,36 @@ class bSocial_Twitter
 			$parameters
 		);
 	}//END post_http
+
+	public function meta()
+	{
+		if ( ! $this->meta )
+		{
+			if ( ! class_exists( 'bSocial_Twitter_Meta' ) )
+			{
+				require __DIR__ .'/class-bsocial-twitter-meta.php';
+			}
+
+			$this->meta = new bSocial_Twitter_Meta;
+		}//END if
+
+		return $this->meta;
+	}//END meta
+
+	public function comments()
+	{
+		if ( ! $this->comments )
+		{
+			if ( ! class_exists( 'bSocial_Twitter_Comments' ) )
+			{
+				require __DIR__ .'/class-bsocial-twitter-comments.php';
+			}
+
+			$this->comments = new bSocial_Twitter_Comments;
+		}//END if
+
+		return $this->comments;
+	}//END comments
 
 	/**
 	 * return the twitter search object
