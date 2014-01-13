@@ -53,6 +53,12 @@ class bSocial_Twitter_Comments
 		// run with it
 		foreach ( (array) bsocial()->twitter()->search()->tweets() as $tweet )
 		{
+
+			if ( current_user_can( 'manage_options' ) )
+			{
+				print_r( $tweet );
+			}
+
 			if ( ! isset( $tweet->from_user->name ) )
 			{
 				continue; // give up if the username lookup failed
@@ -104,8 +110,8 @@ class bSocial_Twitter_Comments
 				'comment_author_url' => 'http://twitter.com/'. $tweet->from_user->screen_name,
 				'comment_content' => $tweet->text,
 				'comment_type' => 'tweet',
-				'comment_date_gmt' => date('Y-m-d H:i:s', strtotime( $tweet->created_at ) ),
-				'comment_date' => date('Y-m-d H:i:s', strtotime( $tweet->created_at ) + (3600 * $tz_offset) ),
+				'comment_date_gmt' => date( 'Y-m-d H:i:s', strtotime( $tweet->created_at ) ),
+				'comment_date' => date( 'Y-m-d H:i:s', strtotime( $tweet->created_at ) + ( 3600 * $tz_offset ) ),
 			);
 
 			// insert the comment
@@ -125,12 +131,17 @@ class bSocial_Twitter_Comments
 				wp_notify_postauthor( $comment_id, 'comment' ); // only works for comments, so we fudge
 			}
 
+			if ( current_user_can( 'manage_options' ) )
+			{
+				echo '<p>Comment inserted, <a href="' . get_edit_comment_link( $tweet ) . '">view/edit</a>.';
+			}
+
 			// possibly useful for determining rank of a tweet:
 			// $tweet->metadata->recent_retweets & $tweet->from_user->followers_count
 		} // END foreach
 
 		// update the option with the last ingested tweet
-		update_option( $this->option_name, $twitter_search->api_response->max_id_str );
+		update_option( $this->option_name, bsocial()->twitter()->search()->api_response->max_id_str );
 
 		// delete the dummy comment meta we used to prime HyperDB earlier
 		delete_comment_meta( 1, $this->option_name );
@@ -157,6 +168,10 @@ class bSocial_Twitter_Comments
 
 		echo '<p>Ingesting comments now</p>';
 		$this->ingest_twitter_comments();
+		echo '<p>Done ingestion</p>';
+
+		die;
+
 	} // END cron_register
 
 	public function admin_comment_types_dropdown( $types )
