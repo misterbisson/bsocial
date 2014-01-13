@@ -5,6 +5,8 @@
  *
  * Author: originally by Will Norris (http://willnorris.com/), extended and maintained by Casey Bisson
  * License: Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html)
+ *
+ * OG docs at http://ogp.me and https://developers.facebook.com/docs/reference/opengraph
  */
 
 class bSocial_Opengraph

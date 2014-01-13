@@ -3,6 +3,8 @@
 class bSocial_Twitter_Comments
 {
 
+	public $option_name = 'bsocial_twitter_comments';
+
 	public function __construct()
 	{
 		add_action( 'init', array( $this, 'init' ) );
@@ -10,9 +12,12 @@ class bSocial_Twitter_Comments
 
 	public function init()
 	{
-		add_action( 'ingest_twitter_comments', array( $this, 'ingest_twitter_comments' ) );
-		add_action( 'admin_head', array( $this, 'cron_register' ) );
+		// add tweets as filterable comment types
 		add_filter( 'admin_comment_types_dropdown', array( $this, 'admin_comment_types_dropdown' ) );
+
+		// cron
+		add_action( 'wp_ajax_bsocial_twitter_comments', array( $this, 'cron_register' ) );
+		add_action( 'ingest_twitter_comments', array( $this, 'ingest_twitter_comments' ) );
 	} // END init
 
 	public function ingest_twitter_comments()
@@ -20,30 +25,33 @@ class bSocial_Twitter_Comments
 		global $wpdb;
 
 		// get the ID of the last ingested tweet
-		if ( strlen( get_option( 'bsuite_twitter_comments' ) ) )
+		if ( strlen( get_option( $this->option_name ) ) )
 		{
-			$most_recent_tweet = get_option( 'bsuite_twitter_comments' );
+			$most_recent_tweet = get_option( $this->option_name );
 		}
 		else
 		{
-			add_option( 'bsuite_twitter_comments', '', '', 'no' ); // add an empty option with the autoload disabled
+			add_option( $this->option_name, '', '', 'no' ); // add an empty option with the autoload disabled
 		} // END else
 
 		// prime HyperDB with a small write so we can make subsequent reads from the mast and avoid problems resulting from replication lag
-		update_comment_meta( 1, 'bsuite_twitter_comments', time() );
+		update_comment_meta( 1, $this->option_name, time() );
 
 		$tz_offset = get_option( 'gmt_offset' ); // get the timezone offset
 
-		// get a new search object
-		$twitter_search = bsocial()->twitter()->search();
+		// start the twitter search
 		$home_url = preg_replace( '|https?://|', '', home_url() );
+		bsocial()->twitter()->search()->search(
+			array(
+				'q' => urlencode( $home_url ),
+				'count' => 100,
+				'result_type' => 'recent',
+				'since_id' => $most_recent_tweet,
+			)
+		);
 
 		// run with it
-		foreach ( (array) $twitter_search->search ( array(
-			'q' => urlencode( $home_url ),
-			'rpp' => 100,
-			'since_id' => $most_recent_tweet,
-		) ) as $tweet )
+		foreach ( (array) bsocial()->twitter()->search()->tweets() as $tweet )
 		{
 			if ( ! isset( $tweet->from_user->name ) )
 			{
@@ -122,19 +130,33 @@ class bSocial_Twitter_Comments
 		} // END foreach
 
 		// update the option with the last ingested tweet
-		update_option( 'bsuite_twitter_comments', $twitter_search->api_response->max_id_str );
+		update_option( $this->option_name, $twitter_search->api_response->max_id_str );
 
 		// delete the dummy comment meta we used to prime HyperDB earlier
-		delete_comment_meta( 1, 'bsuite_twitter_comments' );
+		delete_comment_meta( 1, $this->option_name );
 
 	} // END ingest_twitter_comments
 
 	public function cron_register()
 	{
-		if ( ! wp_next_scheduled( 'ingest_twitter_comments' ) )
+		if ( ! current_user_can( 'manage_options' ) )
 		{
-			wp_schedule_event( time(), 'hourly', 'ingest_twitter_comments' );
+			wp_die( 'Trying something funny, are you?', 'Tisk tisk' );
 		}
+
+		echo '<pre>';
+
+		if ( wp_next_scheduled( 'ingest_twitter_comments' ) )
+		{
+			wp_clear_scheduled_hook( 'ingest_twitter_comments' );
+			echo '<p>Deleted previously schedule hook</p>';
+		}
+
+		wp_schedule_event( time() + 3600, 'hourly', 'ingest_twitter_comments' );
+		echo '<p>Registered cron hook</p>';
+
+		echo '<p>Ingesting comments now</p>';
+		$this->ingest_twitter_comments();
 	} // END cron_register
 
 	public function admin_comment_types_dropdown( $types )

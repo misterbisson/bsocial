@@ -101,7 +101,7 @@
 							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'meta' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->meta, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Ingest tweets that link to this site as comments on the post they link to</th>
-							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'comments' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->comments, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'comments' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->comments, 1 ); ?> /> <a href="<?php echo admin_url( '/admin-ajax.php?action=bsocial_twitter_comments' ); ?>">register cron</a></td>
 						</tr>
 					</table>
 				</div>
