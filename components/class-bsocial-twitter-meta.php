@@ -80,7 +80,7 @@ class bSocial_Twitter_Meta
 
 			echo '<meta name="'. esc_attr( $key ) .'" value="'. esc_attr( $value ) .'" />' . "\n";
 		}
-	} // END head
+	} // END wp_head
 
 	public function metadata()
 	{
@@ -125,4 +125,4 @@ class bSocial_Twitter_Meta
 		</script>
 		<?php
 	} // END inject_js
-}
+}//END class

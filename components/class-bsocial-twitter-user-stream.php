@@ -107,5 +107,5 @@ class bSocial_Twitter_User_Stream
 		$this->min_id_str = $this->api_response[ $min_id_idx ]->id_str;
 
 		return $this->api_response;
-	}//END stream
+	}//END get_stream
 }//END class

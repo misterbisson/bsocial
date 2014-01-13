@@ -77,14 +77,14 @@ class bSocial_Admin
 
 	public function admin_menu()
 	{
-		add_submenu_page( 'plugins.php' , 'bSocial Configuration' , 'bSocial Configuration' , 'manage_options' , 'bsocial-options' , array( $this, 'options_page' ) );
+		add_submenu_page( 'plugins.php', 'bSocial Configuration', 'bSocial Configuration', 'manage_options', 'bsocial-options', array( $this, 'options_page' ) );
 	}// END admin_menu
 
 	public function plugin_action_links( $links, $file )
 	{
 		if ( $file == plugin_basename( __DIR__ .'/bsocial.php' ) )
 		{
-			$links[] = '<a href="plugins.php?page=bsocial-options">'. 'Settings' .'</a>';
+			$links[] = '<a href="plugins.php?page=bsocial-options">Settings</a>';
 		}
 
 		return $links;
@@ -92,12 +92,12 @@ class bSocial_Admin
 
 	public function nonce_field()
 	{
-		wp_nonce_field( plugin_basename( __FILE__ ) , bsocial()->id_base .'-nonce' );
+		wp_nonce_field( plugin_basename( __FILE__ ), bsocial()->id_base .'-nonce' );
 	}
 
 	public function verify_nonce()
 	{
-		return wp_verify_nonce( $_POST[ bsocial()->id_base .'-nonce' ] , plugin_basename( __FILE__ ) );
+		return wp_verify_nonce( $_POST[ bsocial()->id_base .'-nonce' ], plugin_basename( __FILE__ ) );
 	}// END verify_nonce
 
 	public function get_field_name( $field_name )
@@ -150,7 +150,7 @@ class bSocial_Admin
 			{
 				$return->$k = $this->_sanitize_options( $new[ $k ], $old[ $k ], $default[ $k ], $sanitizer[ $k ] );
 			}
-		}
+		}//END if
 		else
 		{
 			// if the sanitizer is not an array, then we're
@@ -176,7 +176,7 @@ class bSocial_Admin
 				// this looks okay, sanitize it
 				$return = call_user_func( $sanitizer, $new );
 			}
-		}
+		}//END else
 
 		return $return;
 	}// END _sanitize_options
@@ -203,7 +203,7 @@ class bSocial_Admin
 		$test = $this->suppress;
 		foreach ( (array) $field_name as $key )
 		{
-			// we have a match at this section, se reset the text for the next section
+			// we have a match at this section, so reset the text for the next section
 			if ( isset( $test[ $key ] ) )
 			{
 				$test = (array) $test[ $key ];
@@ -212,7 +212,7 @@ class bSocial_Admin
 
 			// no match was found, this setting is not suppressed
 			return FALSE;
-		}
+		}//END foreach
 
 		// if the above foreach contues to completion, it means
 		// the input field name array was found among the suppressed fields
@@ -241,7 +241,7 @@ class bSocial_Admin
 		new bSocialFacebook_Test();
 
 		$this->tests_loaded = TRUE;
-	}//END test_loaded
+	}//END tests_loader
 
 	public function options_page()
 	{
@@ -255,5 +255,5 @@ class bSocial_Admin
 		{
 			require __DIR__ . '/templates/test.php';
 		}
-	}
-}
+	}//END options_page
+}//END class

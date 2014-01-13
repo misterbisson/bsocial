@@ -42,7 +42,7 @@ class bSocial
 
 			// if facebook is enabled, the widgets are enabled
 			require_once __DIR__ .'/widgets-facebook.php';
-		}
+		}//END if
 
 		if ( $options->linkedin->enable )
 		{
@@ -54,7 +54,7 @@ class bSocial
 				$this->opengraph();
 //				$this->linkedin()->meta();
 			}
-		}
+		}//END if
 
 		if ( $options->twitter->enable )
 		{
@@ -71,7 +71,7 @@ class bSocial
 			{
 				$this->twitter()->comments();
 			}
-		}
+		}//END if
 
 		// featured comments
 		if ( $options->featuredcomments->enable )
@@ -90,7 +90,7 @@ class bSocial
 		{
 			$this->admin();
 		}
-	}
+	}//END init
 
 
 	/**
@@ -299,11 +299,11 @@ class bSocial
 			// allows us to differentiate between paths of the main blog and those of sub-blogs
 			$path = in_array( $path, $paths ) ? $path : '/';
 			return get_blog_id_from_url( $url['host'], $path );
-		}
+		}//END elseif
 
 		// cry uncle, return 1
 		return 1;
-	}
+	}//END url_to_blogid
 
 	public function find_urls( $text )
 	{
@@ -332,10 +332,10 @@ class bSocial
 				{
 					$destination = array_pop( $this->find_urls( $header ) );
 				}
-			}
+			}//END foreach
 
 			wp_cache_set( (string) $location, $trail, 'follow_url', 3607 ); // cache for an hour
-		}
+		}//END if
 
 		if( $verbose )
 		{
@@ -345,7 +345,7 @@ class bSocial
 		{
 			return $trail[ count( $trail ) - 1 ]['location'];
 		}
-	}
+	}//END follow_url
 
 	public function comment_id_by_meta( $metavalue, $metakey )
 	{
@@ -353,12 +353,12 @@ class bSocial
 
 		if ( ! $comment_id = wp_cache_get( (string) $metakey .':'. (string) $metavalue, 'comment_id_by_meta' ) )
 		{
-			$comment_id = $wpdb->get_var( $wpdb->prepare( 'SELECT comment_id FROM ' . $wpdb->commentmeta . ' WHERE meta_key = %s AND meta_value = %s',  $metakey, $metavalue ) );
+			$comment_id = $wpdb->get_var( $wpdb->prepare( 'SELECT comment_id FROM ' . $wpdb->commentmeta . ' WHERE meta_key = %s AND meta_value = %s', $metakey, $metavalue ) );
 			wp_cache_set( (string) $metakey .':'. (string) $metavalue, $comment_id, 'comment_id_by_meta' );
 		}
 
 		return $comment_id;
-	}
+	}//END comment_id_by_meta
 
 	public function comment_id_by_meta_update_cache( $comment_id, $metavalue, $metakey )
 	{
@@ -373,7 +373,7 @@ class bSocial
 		}
 
 		wp_cache_set( (string) $metakey .':'. (string) $metavalue, (int) $comment_id, 'comment_id_by_meta' );
-	}
+	}//END comment_id_by_meta_update_cache
 
 	public function comment_id_by_meta_delete_cache( $comment_id )
 	{
@@ -384,7 +384,7 @@ class bSocial
 				wp_cache_delete( (string) $metakey .':'. (string) $metavalue, 'comment_id_by_meta' );
 			}
 		}
-	}
+	}//END comment_id_by_meta_delete_cache
 
 	public function json_int_to_string( $string )
 	{
@@ -392,8 +392,7 @@ class bSocial
 		//encapsulate large ints in double-quotes to force them to be strings
 		//http://stackoverflow.com/questions/2907806/handling-big-user-ids-returned-by-fql-in-php
 		return preg_replace( '/:(\d+)/', ':"${1}"', $string );
-	}
-
+	}//END json_int_to_string
 
 	// Show cron array for debugging
 	public function show_cron()
@@ -403,7 +402,7 @@ class bSocial
 			echo '<pre>' .  print_r( _get_cron_array(), TRUE ) . '</pre>';
 		};
 		exit;
-	}
+	}//END show_cron
 }//END class
 
 function bsocial()

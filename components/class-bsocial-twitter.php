@@ -173,5 +173,4 @@ class bSocial_Twitter
 	{
 		return $this->post_http( 'statuses/update', array( 'status' => $message ) );
 	}//END post_tweet
-	
 }//END class

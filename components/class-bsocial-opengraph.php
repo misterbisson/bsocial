@@ -207,7 +207,7 @@ class bSocial_Opengraph
 	/**
 	 * get the post thumbnail, wrapper for wp_get_attachment_image_src()
 	 */
-	function get_thumbnail( $post_id, $size = 'large' )
+	public function get_thumbnail( $post_id, $size = 'large' )
 	{
 		if (
 			current_theme_supports( 'post-thumbnails' ) && // only attempt to get the post thumbnail if the theme supports them
@@ -219,7 +219,7 @@ class bSocial_Opengraph
 			{
 				$image = $thumbnail[0];
 			}
-		}
+		}//END if
 
 		return $image;
 	}// END get_thumbnail
@@ -230,7 +230,7 @@ class bSocial_Opengraph
 	 * this is derived from WP's core get_avatar() method, https://core.trac.wordpress.org/browser/tags/3.8/src/wp-includes/pluggable.php#L1669
 	 * unfortunately, that method is too messy and there's no other clean way to get a gravatar
 	 */
-	function get_avatar( $email, $size = 512, $ssl = FALSE )
+	public function get_avatar( $email, $size = 512, $ssl = FALSE )
 	{
 
 		if ( ! empty( $email ) )
@@ -247,7 +247,7 @@ class bSocial_Opengraph
 		{
 			if ( ! empty( $email ) )
 			{
-				$host = sprintf( "http://%d.gravatar.com", ( hexdec( $email_hash[0] ) % 2 ) );
+				$host = sprintf( 'http://%d.gravatar.com', ( hexdec( $email_hash[0] ) % 2 ) );
 			}
 			else
 			{
@@ -309,4 +309,4 @@ class bSocial_Opengraph
 			return $default;
 		}// END else
 	}// END get_avatar
-}
+}//END class

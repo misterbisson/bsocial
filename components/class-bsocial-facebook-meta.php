@@ -82,4 +82,4 @@ class bSocial_Facebook_Meta
 
 		return $button . $content . $button;
 	} // END inject_like_button
-}
+}//END class

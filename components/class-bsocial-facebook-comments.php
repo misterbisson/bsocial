@@ -91,7 +91,9 @@ class bSocial_Facebook_Comments
 		// get the user info for those comments
 		// make an array of the user IDs from the comments
 		foreach( (array) $fb_comments as $fb_comment )
+		{
 			$uids[] = $fb_comment->fromid;
+		}
 		$uids = implode( ',', (array) $uids );
 
 		// query the API for details on those IDs
@@ -103,7 +105,9 @@ class bSocial_Facebook_Comments
 
 		// make a happy array that maps user ID to details
 		foreach( (array) $names as $name )
+		{
 			$uids_to_names[ $name->uid ] = $name->name;
+		}
 
 		// iterate over all the comments and insert them
 		foreach ( $fb_comments as $fb_comment )
@@ -139,7 +143,9 @@ class bSocial_Facebook_Comments
 				bsocial()->comment_id_by_meta_update_cache( $comment_id, $fb_comment->post_fbid, 'fb_comment_post_id' );
 
 				if ( get_option('comments_notify') )
+				{
 					wp_notify_postauthor( $comment_id, 'comment' ); //hardcoded to type 'comment'
+				}
 			} // END if
 		} // END foreach
 
@@ -195,11 +201,11 @@ class bSocial_Facebook_Comments
 		}
 
 		return $content;
-	} // check_comments
+	} //END check_comments
 
 	public function admin_comment_types_dropdown( $types )
 	{
 		$types['fbcomment'] = __( 'Facebook Comments' );
 		return $types;
 	} // END admin_comment_types_dropdown
-}
+}//END class

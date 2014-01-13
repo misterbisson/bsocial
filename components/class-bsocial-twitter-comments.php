@@ -179,4 +179,4 @@ class bSocial_Twitter_Comments
 		$types['tweet'] = 'Tweets';
 		return $types;
 	} // END admin_comment_types_dropdown
-}
+}//END class

@@ -9,23 +9,23 @@ class bSocial_FeaturedComments
 	var $wrapper_regex = '/\[featured_?comment\](.*?)\[\/?featured_?comment\]/i'; // match the content inside the tags
 	var $enqueued_admin_js = FALSE;
 
-	function __construct()
+	public function __construct()
 	{
 
-		add_action( 'init' , array( $this, 'register_post_type' ) , 11 );
-		add_action( 'edit_comment' , array( $this, 'edit_comment' ) , 5 );
-		add_action( 'delete_comment' , array( $this, 'unfeature_comment' ) );
-		add_action( 'wp_ajax_bsocial_feature_comment' , array( $this, 'ajax' ) );
+		add_action( 'init', array( $this, 'register_post_type' ), 11 );
+		add_action( 'edit_comment', array( $this, 'edit_comment' ), 5 );
+		add_action( 'delete_comment', array( $this, 'unfeature_comment' ) );
+		add_action( 'wp_ajax_bsocial_feature_comment', array( $this, 'ajax' ) );
 
-		add_filter( 'quicktags_settings' , array( $this, 'quicktags_settings' ) );
-		add_filter( 'comment_row_actions' , array( $this , 'comment_row_actions' ) , 10 , 2 );
+		add_filter( 'quicktags_settings', array( $this, 'quicktags_settings' ) );
+		add_filter( 'comment_row_actions', array( $this, 'comment_row_actions' ), 10, 2 );
 
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
-		add_filter( 'post_class' , array( $this, 'filter_post_class' ) );
-		add_filter( 'get_comment_text' , array( $this, 'filter_get_comment_text' ) );
-		add_filter( 'the_author' , array( $this, 'filter_the_author' ) );
-		add_filter( 'the_author_posts_link' , array( $this, 'filter_the_author_posts_link' ) );
-		add_filter( 'post_type_link', array( $this , 'post_type_link' ), 11, 2 );
+		add_filter( 'post_class', array( $this, 'filter_post_class' ) );
+		add_filter( 'get_comment_text', array( $this, 'filter_get_comment_text' ) );
+		add_filter( 'the_author', array( $this, 'filter_the_author' ) );
+		add_filter( 'the_author_posts_link', array( $this, 'filter_the_author_posts_link' ) );
+		add_filter( 'post_type_link', array( $this, 'post_type_link' ), 11, 2 );
 
 /*
 
@@ -41,15 +41,15 @@ class bSocial_FeaturedComments
 
 */
 
-	}
+	}//END __construct
 
-	function pre_get_posts( $query )
+	public function pre_get_posts( $query )
 	{
 
 		if ( bsocial()->options()->featuredcomments->add_to_waterfall && ! is_admin() && $query->is_main_query() )
 		{
 			$post_types = array_merge(
-				(array) $query->query_vars['post_type'] ,
+				(array) $query->query_vars['post_type'],
 				array( is_singular() && isset( $query->queried_object->post_type ) ? $query->queried_object->post_type : 'post' ),
 				array( $this->post_type_name )
 			);
@@ -58,15 +58,17 @@ class bSocial_FeaturedComments
 		}
 
 		return $query;
-	}
+	}//END pre_get_posts
 
-	function quicktags_settings( $settings )
+	public function quicktags_settings( $settings )
 	{
 		switch( $settings['id'] )
 		{
 			case 'content':
 				if ( get_current_screen()->id !== 'comment' )
+				{
 					return $settings;
+				}
 				// no break, so it continues to the case below
 			case 'replycontent':
 				$settings['buttons'] .= ',featuredcomment';
@@ -74,20 +76,22 @@ class bSocial_FeaturedComments
 				// similar to AddQuicktagsAndFunctions() in http://plugins.trac.wordpress.org/browser/vipers-video-quicktags/trunk/vipers-video-quicktags.php#L556
 				// and now that I've read further, I don't think messing with the button list does anything.
 				break;
-		}
+		}//END switch
 
 		return $settings;
-	}
+	}//END quicktags_settings
 
-	function post_type_link( $permalink, $post )
+	public function post_type_link( $permalink, $post )
 	{
-		if ( $post->post_type == $this->post_type_name && ( $comment_id = get_post_meta( $post->ID , $this->meta_key .'-comment_id' , TRUE ) ))
+		if ( $post->post_type == $this->post_type_name && ( $comment_id = get_post_meta( $post->ID, $this->meta_key .'-comment_id', TRUE ) ) )
+		{
 			return get_comment_link( $comment_id );
+		}
 
 		return $permalink;
-	}
+	}//END post_type_link
 
-	function filter_get_comment_text( $content )
+	public function filter_get_comment_text( $content )
 	{
 		if ( is_admin() )
 		{
@@ -95,11 +99,11 @@ class bSocial_FeaturedComments
 		}
 		else
 		{
-			return preg_replace( $this->tag_regex , '' , $content );
+			return preg_replace( $this->tag_regex, '', $content );
 		}
-	}
+	}//END filter_get_comment_text
 
-	function filter_post_class( $classes )
+	public function filter_post_class( $classes )
 	{
 		if ( get_post( get_the_ID() )->post_type == $this->post_type_name )
 		{
@@ -107,21 +111,21 @@ class bSocial_FeaturedComments
 		}
 
 		return $classes;
-	}
+	}//END filter_post_class
 
-	function filter_the_author( $author_name )
+	public function filter_the_author( $author_name )
 	{
 		if ( get_the_ID() && get_post( get_the_ID() )->post_type == $this->post_type_name )
 		{
-			return get_comment_author( get_post_meta( get_the_ID() , $this->meta_key .'-comment_id' , TRUE ) );
+			return get_comment_author( get_post_meta( get_the_ID(), $this->meta_key .'-comment_id', TRUE ) );
 		}
 		else
 		{
 			return $author_name;
 		}
-	}
+	}//END filter_the_author
 
-	function filter_the_author_posts_link( $url )
+	public function filter_the_author_posts_link( $url )
 	{
 		if ( get_the_ID() && get_post( get_the_ID() )->post_type == $this->post_type_name )
 		{
@@ -131,75 +135,75 @@ class bSocial_FeaturedComments
 		{
 			return $url;
 		}
-	}
+	}//END filter_the_author_posts_link
 
-	function get_featured_comment_text( $comment_id = FALSE )
+	public function get_featured_comment_text( $comment_id = FALSE )
 	{
-		remove_filter( 'get_comment_text' , array( $this, 'filter_get_comment_text' ) );
+		remove_filter( 'get_comment_text', array( $this, 'filter_get_comment_text' ) );
 		$text = $this->_get_featured_comment_text( get_comment_text( $comment_id ) );
-		add_filter( 'get_comment_text' , array( $this, 'filter_get_comment_text' ) );
+		add_filter( 'get_comment_text', array( $this, 'filter_get_comment_text' ) );
 
 		return $text[1];
-	}
+	}//END get_featured_comment_text
 
-	function _get_featured_comment_text( $input )
+	public function _get_featured_comment_text( $input )
 	{
-		preg_match( $this->wrapper_regex , $input , $text );
+		preg_match( $this->wrapper_regex, $input, $text );
 
 		return empty( $text[1] ) ? $input : $text[1];
-	}
+	}//END _get_featured_comment_text
 
-	function edit_comment( $comment_id )
+	public function edit_comment( $comment_id )
 	{
 		$comment = get_comment( $comment_id );
 
 		// check if the featured tags exist in the comment content, permissions will be checked in the next function
 		if (
 			$featured = $this->_get_featured_comment_text( $comment->comment_content ) ||
-			get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE )
+			get_comment_meta( $comment->comment_ID, $this->meta_key .'-post_id', TRUE )
 		)
 		{
 			$this->feature_comment( $comment_id );
 		}
 
-	}
+	}//END edit_comment
 
-	function unfeature_comment( $comment_id )
+	public function unfeature_comment( $comment_id )
 	{
 		$comment = get_comment( $comment_id );
 
 		// check user permissions
 		// @todo: map a meta cap for this rather than extend the edit_post here
-		if ( current_user_can( 'edit_post' , $comment->comment_post_ID ) )
+		if ( current_user_can( 'edit_post', $comment->comment_post_ID ) )
 		{
-			if ( $post_id = get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE ) )
+			if ( $post_id = get_comment_meta( $comment->comment_ID, $this->meta_key .'-post_id', TRUE ) )
 			{
 				wp_delete_post( $post_id );
-				delete_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id' );
+				delete_comment_meta( $comment->comment_ID, $this->meta_key .'-post_id' );
 			}
 		}
-	}
+	}//END unfeature_comment
 
-	function feature_comment( $comment_id )
+	public function feature_comment( $comment_id )
 	{
 		$comment = get_comment( $comment_id );
 
 		// check user permissions
 		// @todo: map a meta cap for this rather than extend the edit_post here
-		if ( current_user_can( 'edit_post' , $comment->comment_post_ID ) )
+		if ( current_user_can( 'edit_post', $comment->comment_post_ID ) )
 		{
-			if ( $post_id = get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE ) )
+			if ( $post_id = get_comment_meta( $comment->comment_ID, $this->meta_key .'-post_id', TRUE ) )
 			{
-				wp_update_post( (object) array( 'ID' => $post_id , 'post_content' => $featured ) ); // we have a post for this comment
+				wp_update_post( (object) array( 'ID' => $post_id, 'post_content' => $featured ) ); // we have a post for this comment
 			}
 			else
 			{
 				$this->create_post( $comment_id ); // create a new post for this comment
 			}
-		}
-	}
+		}//END if
+	}//END feature_comment
 
-	function create_post( $comment_id )
+	public function create_post( $comment_id )
 	{
 
 		$comment = get_comment( $comment_id );
@@ -228,8 +232,8 @@ class bSocial_FeaturedComments
 		}
 
 		// save the meta
-		update_post_meta( $post_id , $this->meta_key .'-comment_id' , $comment->comment_ID );
-		update_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', $post_id );
+		update_post_meta( $post_id, $this->meta_key .'-comment_id', $comment->comment_ID );
+		update_comment_meta( $comment->comment_ID, $this->meta_key .'-post_id', $post_id );
 
 		// get all the terms on the parent post
 		foreach ( (array) wp_get_object_terms( $parent->ID, get_object_taxonomies( $parent->post_type ) ) as $term )
@@ -240,23 +244,23 @@ class bSocial_FeaturedComments
 		// set those terms on the comment
 		foreach ( (array) $parent_terms as $tax => $terms )
 		{
-			wp_set_object_terms( $post_id , $terms , $tax , FALSE );
+			wp_set_object_terms( $post_id, $terms, $tax, FALSE );
 		}
 
 		return $post_id;
-	}
+	}//END create_post
 
-	function comment_row_actions( $actions , $comment )
+	public function comment_row_actions( $actions, $comment )
 	{
 
 		// check permissions against the parent post
-		if ( ! current_user_can( 'edit_post' , $comment->comment_post_ID ) )
+		if ( ! current_user_can( 'edit_post', $comment->comment_post_ID ) )
 		{
 			return $actions;
 		}
 
 		// is this comment featured or not, what actions are available?
-		if ( get_comment_meta( $comment->comment_ID , $this->meta_key .'-post_id', TRUE ) )
+		if ( get_comment_meta( $comment->comment_ID, $this->meta_key .'-post_id', TRUE ) )
 		{
 			$actions['feature-comment hide-if-no-js'] = '<a class="feature-comment feature-comment-needs-refresh featured-comment" id="feature-comment-'. $comment->comment_ID .'" title="Unfeature" href="#">Unfeature</a>';
 		}
@@ -268,14 +272,14 @@ class bSocial_FeaturedComments
 		// enqueue some JS once
 		if ( ! $this->enqueued_admin_js )
 		{
-			add_action( 'admin_print_footer_scripts' , array( $this , 'footer_js' ) );
+			add_action( 'admin_print_footer_scripts', array( $this, 'footer_js' ) );
 			$this->enqueued_admin_js = TRUE;
 		}
 
 		return $actions;
-	}
+	}//END comment_row_actions
 
-	function footer_js()
+	public function footer_js()
 	{
 		// this JS code originated by Mark Jaquith, http://coveredwebservices.com/ , for Gigaom, http://gigaom.com/
 
@@ -328,10 +332,10 @@ class bSocial_FeaturedComments
 		});
 		</script>
 		<?php
-	}
+	}//END footer_js
 
 
-	function register_post_type()
+	public function register_post_type()
 	{
 
 		// @TODO: should get list of post types that support comments, then get the list of taxonomies they support
@@ -347,7 +351,7 @@ class bSocial_FeaturedComments
 					'title',
 					'author',
 				),
-				'register_meta_box_cb' => array( $this , 'register_metaboxes' ),
+				'register_meta_box_cb' => array( $this, 'register_metaboxes' ),
 				'public' => TRUE,
 				'show_in_menu' => 'edit-comments.php',
 				'has_archive' => 'talkbox',
@@ -358,19 +362,19 @@ class bSocial_FeaturedComments
 				'taxonomies' => $taxonomies,
 			)
 		);
-	}
+	}//END register_post_type
 
-	function metabox( $post )
+	public function metabox( $post )
 	{
-	}
+	}//END metabox
 
-	function register_metaboxes()
+	public function register_metaboxes()
 	{
 		// add metaboxes
-		add_meta_box( $id_base , 'Featured Comment' , array( $this , 'metabox' ) , $this->post_type_name , 'normal', 'high' );
-	}
+		add_meta_box( $id_base, 'Featured Comment', array( $this, 'metabox' ), $this->post_type_name, 'normal', 'high' );
+	}//END register_metaboxes
 
-	function ajax()
+	public function ajax()
 	{
 		$comment_id = intval( $_REQUEST['comment_id'] );
 
@@ -394,10 +398,8 @@ class bSocial_FeaturedComments
 			{
 				$this->unfeature_comment( $comment_id );
 			}
-		}
+		}//END if
 
 		die;
-	}
-
-
+	}//END ajax
 }//end bSuite_FeaturedComments class

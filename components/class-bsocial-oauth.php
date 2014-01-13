@@ -99,12 +99,12 @@ class bSocial_OAuth
 										 'Content-Type: application/' . $postfields['custom_post_type'],
 										 'Content-Length: ' . strlen( $postfields['post_data'] ),
 						) );
-					}
+					}//END if
 					else
 					{
 						curl_setopt( $ci, CURLOPT_POSTFIELDS, $postfields );
 					}
-				}
+				}//END if
 				break;
 
 			case 'DELETE':

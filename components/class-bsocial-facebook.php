@@ -183,5 +183,5 @@ class bSocial_Facebook
 		}
 
 		return $post_id;
-	}//END post
+	}//END post_status
 }//END class
