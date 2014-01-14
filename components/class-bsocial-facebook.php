@@ -9,25 +9,24 @@ class bSocial_Facebook
 	public $config = NULL;
 	public $meta = NULL;
 	public $user_stream = NULL;
+	public $errors = array();
 
-	public function __construct()
+	/**
+	 * return an instance of the facebook oauth client
+	 */
+	public function facebook()
 	{
-		if ( ! $this->facebook )
+		if ( $this->facebook )
 		{
-			if ( ! class_exists( 'Facebook' ) )
-			{
-				require __DIR__ . '/external/facebook-php-sdk/src/facebook.php';
-			}
+			return $this->facebook;
+		}
 
-			$this->facebook = new Facebook(
-				array(
-					'appId' => bsocial()->options()->facebook->app_token,
-					'secret' => bsocial()->options()->facebook->app_secret,
-					'fileUpload' => FALSE,         // optional
-					'allowSignedRequest' => FALSE, // optional but should be set to false for non-canvas apps
-				)
-			);
-		}//END if
+		$this->facebook = bsocial()->new_facebook(
+			bsocial()->options()->facebook->app_id,
+			bsocial()->options()->facebook->secret
+		);
+
+		return $this->facebook;
 	}//END __construct
 
 	public function meta()
@@ -85,22 +84,18 @@ class bSocial_Facebook
 	 */
 	public function get_user_id( $scope = NULL )
 	{
-		if ( ! $this->facebook )
-		{
-			return new WP_Error( 'facebook auth error', 'error instantiating a Facebook instance.');
-		}
-
-		$user_id = $this->facebook->getUser();
+		$user_id = $this->facebook()->getUser();
 
 		if ( ! $user_id )
 		{
-			$login_url = $this->facebook->getLoginUrl();
+			$login_url = $this->facebook()->getLoginUrl();
 			if ( $scope )
 			{
 				$login_url .= '&scope=' . implode( ',', $scope );
 			}
-			return new WP_Error( 'facebook auth error', 'user not logged in. Please <a href="' . $login_url . '">login</a> and try again.' );
-		}
+			$this->errors[] = new WP_Error( 'facebook auth error', 'user not logged in. Please <a href="' . $login_url . '">login</a> and try again.' );
+			return FALSE;
+		}//END if
 
 		return $user_id;
 	}//END get_user_id
@@ -115,9 +110,9 @@ class bSocial_Facebook
 		{
 			$user_or_page_id = $this->get_user_id();
 		}
-		if ( is_wp_error( $user_or_page_id ) )
+		if ( ! $user_or_page_id )
 		{
-			return $user_or_page_id;
+			return FALSE;
 		}
 
 		if ( 0 !== strpos( $user_or_page_id, '/' ) )
@@ -127,12 +122,14 @@ class bSocial_Facebook
 
 		try
 		{
-			return $this->facebook->api( $user_or_page_id, 'GET' );
+			return $this->facebook()->api( $user_or_page_id, 'GET' );
 		}
 		catch ( FacebookApiException $e )
 		{
-			return new WP_Error( $e->getType(), $e->getMessage() );
+			$this->erros[] = new WP_Error( $e->getType(), $e->getMessage() );
 		}
+
+		return FALSE;
 	}//END get_profile
 
 	/**
@@ -146,14 +143,14 @@ class bSocial_Facebook
 		// publish_actions is the permission needed to post to a user's wall
 		$user_id = $this->get_user_id( array( 'publish_actions' ) );
 
-		if ( is_wp_error( $user_id ) )
+		if ( ! $user_id )
 		{
-			return $user_id;
+			return FALSE;
 		}
 
 		try
 		{
-			$post_id = $this->facebook->api(
+			$post_id = $this->facebook()->api(
 				'/' . $user_id . '/feed',
 				'POST',
 				array(
@@ -163,7 +160,8 @@ class bSocial_Facebook
 		}
 		catch ( Exception $e )
 		{
-			return new WP_Error( '/feed post error', $e->getMessage() );
+			$post_id = FALSE;
+			$this->errors[] = new WP_Error( '/feed post error', $e->getMessage() );
 		}
 
 		return $post_id;

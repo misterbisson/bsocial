@@ -1,5 +1,5 @@
 === bSocial ===
-Contributors: misterbisson, Will Luo
+Contributors: misterbisson, willsfca
 Donate link: http://MaisonBisson.com/
 Tags: bSuite, social, social networks, comments, Facebook, Twitter, LinkedIn, widgets, featured comments, social proof
 Requires at least: 3.7

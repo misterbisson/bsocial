@@ -11,8 +11,16 @@ class bSocial_Twitter
 	public $search = NULL;
 	public $user_stream = NULL;
 
-	public function __construct()
+	/**
+	 * get an oauth instance
+	 */
+	public function oauth()
 	{
+		if ( $this->oauth )
+		{
+			return $this->oauth;
+		}
+
 		// check if we have the user token and secret or not
 		if ( ! empty( bsocial()->options()->twitter->access_token ) && ! empty( bsocial()->options()->twitter->access_secret ) )
 		{
@@ -30,7 +38,9 @@ class bSocial_Twitter
 				bsocial()->options()->twitter->consumer_secret
 			);
 		}
-	}//END __construct
+
+		return $this->oauth;
+	}//END oauth
 
 	// prepend the twitter api url if $query_url is not absolute
 	public function validate_query_url( $query_url, $parameters )
@@ -57,7 +67,7 @@ class bSocial_Twitter
 
 	public function get_http( $query_url, $parameters = array() )
 	{
-		return $this->oauth->get_http(
+		return $this->oauth()->get_http(
 			$this->validate_query_url( $query_url, $parameters ),
 			$parameters
 		);
@@ -65,7 +75,7 @@ class bSocial_Twitter
 
 	public function post_http( $query_url, $parameters = array() )
 	{
-		return $this->oauth->post_http(
+		return $this->oauth()->post_http(
 			$this->validate_query_url( $query_url, $parameters ),
 			$parameters
 		);

@@ -122,13 +122,7 @@ class bSocial_Admin
 
 	public function sanitize_options( $input )
 	{
-//echo '<pre>';
-//print_r( $input );
-
 		$result = $this->_sanitize_options( $input, bsocial()->options(), bsocial()->options_default(), $this->options_sanitizer );
-
-//print_r( $result );
-//die;
 
 		return $result;
 	}// END sanitize_options
@@ -253,7 +247,7 @@ class bSocial_Admin
 		// load the links to the test suite if the user has permissions
 		if( current_user_can( 'manage_options' ) )
 		{
-			require __DIR__ . '/templates/test.php';
+			require __DIR__ . '/templates/tests.php';
 		}
 	}//END options_page
 }//END class

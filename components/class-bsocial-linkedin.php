@@ -7,9 +7,18 @@ class bSocial_LinkedIn
 	public $oauth = NULL;
 	public $config = NULL;
 	public $base_url = 'http://api.linkedin.com/v1/people/';
+	public $errors = array();
 
-	public function __construct()
+	/**
+	 * get an oauth instance
+	 */
+	public function oauth()
 	{
+		if ( $this->oauth )
+		{
+			return $this->oauth;
+		}
+
 		// check if we have the user token and secret or not
 		if ( ! empty( bsocial()->options()->linkedin->user_token ) && ! empty( bsocial()->options()->linkedin->user_secret ) )
 		{
@@ -27,7 +36,9 @@ class bSocial_LinkedIn
 				bsocial()->options()->linkedin->consumer_secret
 			);
 		}
-	}//END __construct
+
+		return $this->oauth;
+	}//END oauth
 
 	/**
 	 * @param $user_id user's profile url or id #
@@ -65,10 +76,11 @@ class bSocial_LinkedIn
 		// check the cache for the user info
 		if ( ! $user = wp_cache_get( $user_id, 'linkedin_' . $by ) )
 		{
-			$user = $this->oauth->get_http( $url );
+			$user = $this->oauth()->get_http( $url );
 
 			if ( is_wp_error( $user ) )
 			{
+				$this->errors[] = $user;
 				return FALSE;
 			}
 
@@ -113,7 +125,7 @@ class bSocial_LinkedIn
 			'scope' => 'self',
 		);
 
-		return $this->oauth->get_http( $url, $params );
+		return $this->oauth()->get_http( $url, $params );
 	}//END get_updates
 
 	/**
@@ -165,6 +177,6 @@ class bSocial_LinkedIn
 			$json->visibility->code = $parameters['visibility'];
 		}
 
-		return $this->oauth->post_http( $url, array( 'custom_post_type' => 'json', 'post_data' => json_encode( $json ) ) );
+		return $this->oauth()->post_http( $url, array( 'custom_post_type' => 'json', 'post_data' => json_encode( $json ) ) );
 	}//END share
 }//END class

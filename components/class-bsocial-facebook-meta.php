@@ -5,12 +5,6 @@ class bSocial_Facebook_Meta
 
 	public function __construct()
 	{
-		/*
-		* be sure to set the app ID and admins after instantiating the object
-		* $this->app_id = FBJS_APP_ID;
-		* $this->admins = FBJS_ADMINS;
-		*/
-
 		$this->namespace = 'http://www.facebook.com/2008/fbml';
 
 		$this->options->add_like_button = FALSE;
@@ -27,7 +21,7 @@ class bSocial_Facebook_Meta
 
 		// add opengraph filters
 		add_filter( 'opengraph_metadata', array( $this, 'opengraph_metadata' ) );
-		add_filter( 'language_attributes', array( $this, 'add_namespace' ) );
+		add_filter( 'language_attributes', array( $this, 'language_attributes' ) );
 
 		// conditionally add js
 		if ( bsocial()->options()->facebook->js )
@@ -50,12 +44,12 @@ class bSocial_Facebook_Meta
 		return $properties;
 	} // END opengraph_metadata
 
-	public function add_namespace( $output )
+	public function language_attributes( $output )
 	{
 		$output .= ' xmlns:fb="'. esc_attr( $this->namespace ) .'"';
 
 		return $output;
-	} // END add_namespace
+	} // END language_attributes
 
 	public function inject_js( $output )
 	{

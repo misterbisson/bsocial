@@ -156,6 +156,23 @@ class bSocial
 		return new bSocial_OAuth( $consumer_key, $consumer_secret, $access_token, $access_secret );
 	}//END new_oauth
 
+	public function new_facebook( $app_id, $secret )
+	{
+		if ( ! class_exists( 'Facebook' ) )
+		{
+			require __DIR__ . '/external/facebook-php-sdk/src/facebook.php';
+		}
+
+		return new Facebook(
+			array(
+				'appId' => $app_id,
+				'secret' => $secret,
+				'fileUpload' => FALSE,
+				'allowSignedRequest' => FALSE, // for non-canvas apps
+			)
+		);
+	}//END new_oauth
+
 	public function opengraph()
 	{
 		if ( ! $this->opengraph )
@@ -209,8 +226,8 @@ class bSocial
 				'meta' => 1,
 				'js' => 1,
 
-				'app_token' => '',
-				'app_secret' => '',
+				'app_id' => '',  // fb's oauth consumer/api key
+				'secret' => '',  // fb's oauth consumer/api secret
 
 				'admins' => '',
 				'page' => '',

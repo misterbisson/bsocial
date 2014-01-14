@@ -25,9 +25,9 @@ class bSocial_Facebook_User_Stream
 	{
 		$user_id = $this->bsocial_facebook->get_user_id();
 
-		if ( is_wp_error( $user_id ) )
+		if ( ! $user_id )
 		{
-			return $user_id;
+			return FALSE;
 		}
 
 		$posts = $this->bsocial_facebook->facebook->api(
