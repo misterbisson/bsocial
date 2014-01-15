@@ -6,7 +6,6 @@ class bSocial_Facebook
 {
 	public $facebook = NULL;
 	public $comments = NULL;
-	public $config = NULL;
 	public $meta = NULL;
 	public $user_stream = NULL;
 	public $errors = array();

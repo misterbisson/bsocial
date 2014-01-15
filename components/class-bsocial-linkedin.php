@@ -5,7 +5,6 @@
 class bSocial_LinkedIn
 {
 	public $oauth = NULL;
-	public $config = NULL;
 	public $base_url = 'http://api.linkedin.com/v1/people/';
 	public $errors = array();
 

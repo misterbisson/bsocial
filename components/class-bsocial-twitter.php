@@ -6,7 +6,6 @@ class bSocial_Twitter
 {
 	public $oauth = NULL;
 	public $comments = NULL;
-	public $config = NULL;
 	public $meta = NULL;
 	public $search = NULL;
 	public $user_stream = NULL;
