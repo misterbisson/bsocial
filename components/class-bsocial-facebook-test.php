@@ -1,6 +1,6 @@
 <?php
 
-class bSocialFacebook_Test extends bSocial
+class bSocialFacebook_Test
 {
 	public function __construct()
 	{

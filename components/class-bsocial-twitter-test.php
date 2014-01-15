@@ -1,6 +1,6 @@
 <?php
 
-class bSocialTwitter_Test extends bSocial
+class bSocialTwitter_Test
 {
 	public function __construct()
 	{
