@@ -582,7 +582,7 @@ function bsuite_sa_map_tweets_from_search( $search )
 
 	$bsa = bsuite_sa();
 
-	$twitter_search = bsocial()->new_twitter_search();
+	$twitter_search = bsocial()->twitter()->search();
 	$twitter_search->get_user_info = FALSE; // suppress user lookups to avoid rate limits
 	$twitter_search->search( array( 
 		'q' => urlencode( $search ) , 
@@ -653,9 +653,9 @@ function bsuite_sa_map_tweets_from_user( $screenname )
 		add_option( 'bsa-stream-'. $screenname , '' , '' , 'no' ); // add an empty option with the autoload disabled
 
 	$bsa = bsuite_sa();
-	$twitter_feed = bsocial()->new_twitter_user_stream();
+	$twitter_feed = bsocial()->twitter()->user_stream();
 
-	$twitter_feed->stream( array( 
+	$twitter_feed->get_stream( array( 
 		'screen_name' => urlencode( $screenname ) , 
 		'count' => 200 ,
 		'since_id' => $most_recent_tweet ,

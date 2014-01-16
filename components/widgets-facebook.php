@@ -7,7 +7,7 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 	{
 		$widget_ops = array('classname' => 'widget_fb_comments', 'description' => __( 'Displays Facebook comments') );
 		$this->WP_Widget('fb_comments', __('Facebook Comments (bSocial)'), $widget_ops);
-	}
+	}//END __construct
 
 	public function widget( $args, $instance )
 	{
@@ -29,7 +29,7 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 		<div class="fb-comments" <?php echo $url; ?> data-num-posts="<?php echo $instance['comments'] ?>" data-width="<?php echo $instance['width'] ?>" data-colorscheme="<?php echo $instance['colorscheme'] ?>"></div>
 <?php
 		echo $after_widget;
-	}
+	}//END widget
 
 	public function update( $new_instance, $old_instance )
 	{
@@ -40,7 +40,7 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 		$instance['colorscheme'] = in_array( $new_instance['colorscheme'], array( 'light', 'dark' )) ? $new_instance['colorscheme'] : 'dark';
 
 		return $instance;
-	}
+	}//END update
 
 	public function form( $instance )
 	{
@@ -75,7 +75,7 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 			</select>
 		</p>
 <?php
-	}
+	}//END form
 }// end Widget_FB_Comments
 
 class bSocial_Facebook_Activity_Widget extends WP_Widget
@@ -85,7 +85,7 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 	{
 		$widget_ops = array('classname' => 'widget_fb_activity', 'description' => __( 'Displays Facebook activity for this domain') );
 		$this->WP_Widget('fb_activity', __('Facebook Activity (bSocial)'), $widget_ops);
-	}
+	}//END __construct
 
 	public function widget( $args, $instance )
 	{
@@ -99,7 +99,7 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 		<fb:activity width="300" height="270" header="false" font="segoe ui" border_color="#fff" recommendations="true"></fb:activity>
 <?php
 		echo $after_widget;
-	}
+	}//END widget
 
 	public function update( $new_instance, $old_instance )
 	{
@@ -107,7 +107,7 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 		$instance['title'] = wp_kses( $new_instance['title'], array() );
 
 		return $instance;
-	}
+	}//END update
 
 	public function form( $instance )
 	{
@@ -125,7 +125,7 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
 		</p>
 <?php
-	}
+	}//END form
 }// end Widget_FB_Activity
 
 
@@ -136,7 +136,7 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 	{
 		$widget_ops = array('classname' => 'widget_fb_like', 'description' => __( 'Displays a Facebook like button and facepile') );
 		$this->WP_Widget('fb_like', __('Facebook Like (bSocial)'), $widget_ops);
-	}
+	}//END __construct
 
 	public function widget( $args, $instance )
 	{
@@ -171,7 +171,7 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 		</span>
 <?php
 		echo $after_widget;
-	}
+	}//END widget
 
 	public function update( $new_instance, $old_instance )
 	{
@@ -180,7 +180,7 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 		$instance['context'] = in_array( $new_instance['context'], array( 'site', 'page' )) ? $new_instance['context'] : 'site';
 
 		return $instance;
-	}
+	}//END update
 
 	public function form( $instance )
 	{
@@ -206,7 +206,7 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 			</select>
 		</p>
 <?php
-	}
+	}//END form
 }// end Widget_FB_Like
 
 
@@ -217,5 +217,5 @@ function fb_widgets_init()
 	register_widget( 'bSocial_Facebook_Comments_Widget' );
 	register_widget( 'bSocial_Facebook_Activity_Widget' );
 	register_widget( 'bSocial_Facebook_Like_Widget' );
-}
+}//END fb_widgets_init
 add_action( 'widgets_init' , 'fb_widgets_init', 1 );
