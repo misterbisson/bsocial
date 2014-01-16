@@ -234,6 +234,9 @@ class bSocial_Admin
 		require_once __DIR__ . '/class-bsocial-facebook-test.php';
 		new bSocialFacebook_Test();
 
+		require_once __DIR__ . '/class-bsocial-reddit-test.php';
+		new bSocialReddit_Test();
+
 		$this->tests_loaded = TRUE;
 	}//END tests_loader
 

@@ -9,6 +9,7 @@ class bSocial
 	public $linkedin = NULL;
 	public $opengraph = NULL;
 	public $twitter = NULL;
+	public $reddit = NULL;
 
 	public function __construct()
 	{
@@ -198,6 +199,19 @@ class bSocial
 		}
 		return $this->twitter;
 	}//END twitter
+
+	public function reddit()
+	{
+		if ( ! $this->reddit )
+		{
+			if ( ! class_exists( 'bSocial_Reddit' ) )
+			{
+				require __DIR__ .'/class-bsocial-reddit.php';
+			}
+			$this->reddit = new bSocial_Reddit();
+		}
+		return $this->reddit;
+	}//END reddit
 
 	/**
 	 * plugin options getter
