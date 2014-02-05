@@ -232,7 +232,7 @@ class bSocial
 
 	public function options_default()
 	{
-		// please note that most arrays are cooerced to objects
+		// please note that most arrays are coerced to objects
 		return (object) array(
 			// social network integrations
 			'facebook' => (object) array(
@@ -285,7 +285,7 @@ class bSocial
 				'type' => 'blog',
 			),
 
-			// supressed options (hides them from options page)
+			// suppressed options (hides them from options page)
 			// this is only useful if the options are being set using a go_config filter
 			// it does not block somebody from setting options for these values
 			// note that these are not coerced to objects
