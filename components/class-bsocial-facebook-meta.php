@@ -2,12 +2,14 @@
 
 class bSocial_Facebook_Meta
 {
+	private $namespace;
+	private $options;
 
 	public function __construct()
 	{
 		$this->namespace = 'http://www.facebook.com/2008/fbml';
 
-		$this->options->add_like_button = FALSE;
+		$this->options = (object) array( 'add_like_button' => FALSE );
 
 		add_action( 'init', array( $this, 'init' ) );
 	} // END __construct

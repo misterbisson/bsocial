@@ -11,6 +11,8 @@ class bSocial
 	public $twitter = NULL;
 	public $reddit = NULL;
 
+	private $options = NULL;
+
 	public function __construct()
 	{
 		// activate components
@@ -172,7 +174,7 @@ class bSocial
 				'allowSignedRequest' => FALSE, // for non-canvas apps
 			)
 		);
-	}//END new_oauth
+	}//END new_facebook
 
 	public function opengraph()
 	{
