@@ -71,9 +71,11 @@ class bSocial_Opengraph
 					echo '<meta ' . $xml_ns . 'property="' . esc_attr( $key ) . '" content="' . esc_attr( $v ) . '" />' . "\n";
 				}
 			}// END if
-
-			// default to single instances
-			echo '<meta ' . $xml_ns . 'property="' . esc_attr( $key ) . '" content="' . esc_attr( $value ) . '" />' . "\n";
+			else
+			{
+				// default to single instances
+				echo '<meta ' . $xml_ns . 'property="' . esc_attr( $key ) . '" content="' . esc_attr( $value ) . '" />' . "\n";
+			}//end else
 		} // END foreach
 	}// END wp_head
 
@@ -210,18 +212,20 @@ class bSocial_Opengraph
 	public function get_thumbnail( $post_id, $size = 'large' )
 	{
 		if (
-			current_theme_supports( 'post-thumbnails' ) && // only attempt to get the post thumbnail if the theme supports them
-			has_post_thumbnail( $post_id ) // only set the meta if we have a thumbnail
+			! current_theme_supports( 'post-thumbnails' ) || // only attempt to get the post thumbnail if the theme supports them
+			! has_post_thumbnail( $post_id ) // only set the meta if we have a thumbnail
 		)
 		{
-			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), $size );
-			if ( $thumbnail )
-			{
-				$image = $thumbnail[0];
-			}
+			return;
 		}//END if
 
-		return $image;
+		$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), $size );
+		if ( ! $thumbnail )
+		{
+			return;
+		}//END if
+
+		return $thumbnail[0];
 	}// END get_thumbnail
 
 	/**
