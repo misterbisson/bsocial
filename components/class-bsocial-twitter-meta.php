@@ -30,8 +30,8 @@ class bSocial_Twitter_Meta
 		add_action( 'wp_head', array( $this, 'wp_head' ) );
 
 		// defaults
-		add_filter( 'twittercard_card', array( $this, 'default_card' ), 5 );
-		add_filter( 'twittercard_site', array( $this, 'default_site' ), 5 );
+		add_filter( 'twittercard_card', array( $this, 'default_card' ), 1 );
+		add_filter( 'twittercard_site', array( $this, 'default_site' ), 1 );
 
 		// optionally load js
 		if ( bsocial()->options()->twitter->js )
@@ -42,30 +42,12 @@ class bSocial_Twitter_Meta
 
 	public function default_card( $type = '' )
 	{
-		// default to 'summary', unless something else is set
-		if ( empty( $type ) )
-		{
-			return 'summary';
-		}
-
-		return $type;
+		return 'summary';
 	} // END default_card
 
 	public function default_site( $twitteruser = '' )
 	{
-		// can only move forward if we have a twitter username of our own
-		if ( empty( $this->card_site ) )
-		{
-			return $twitteruser;
-		}
-
-		// default, unless something else is set
-		if ( empty( $twitteruser ) )
-		{
-			return bsocial()->options()->twitter->username;
-		}
-
-		return $twitteruser;
+		return bsocial()->options()->twitter->username;
 	} // END default_site
 
 	public function wp_head()
