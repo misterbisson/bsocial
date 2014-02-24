@@ -20,7 +20,13 @@ class bSocial_Twitter
 			return $this->oauth;
 		}
 
-		// check if we have the user token and secret or not
+		// If keyring is present lets try to use that first
+		if ( bsocial()->keyring() && $this->oauth = bsocial()->new_keyring_oauth('twitter') )
+		{
+			return $this->oauth;
+		} // END if
+		
+		// Start an oauth instance
 		if ( ! empty( bsocial()->options()->twitter->access_token ) && ! empty( bsocial()->options()->twitter->access_secret ) )
 		{
 			$this->oauth = bsocial()->new_oauth(
@@ -29,14 +35,14 @@ class bSocial_Twitter
 				bsocial()->options()->twitter->access_token,
 				bsocial()->options()->twitter->access_secret
 			);
-		}
+		} // END if
 		else
-		{
+		{			
 			$this->oauth = bsocial()->new_oauth(
 				bsocial()->options()->twitter->consumer_key,
 				bsocial()->options()->twitter->consumer_secret
 			);
-		}
+		} // END else
 
 		return $this->oauth;
 	}//END oauth
@@ -178,8 +184,14 @@ class bSocial_Twitter
 	/**
 	 * @param $message the message to tweet
 	 */
-	public function post_tweet( $message )
+	public function post_tweet( $message, $user_id = FALSE )
 	{
+		if ( $user_id && bsocial()->keyring() )
+		{
+			$this->oauth();
+			$this->oauth->token = bsocial()->keyring()->get_token_store()->get_token( array( 'service' => 'twitter', 'user_id' => $user_id ) );
+		} // END if
+
 		return $this->post_http( 'statuses/update', array( 'status' => $message ) );
 	}//END post_tweet
 }//END class

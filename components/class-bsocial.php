@@ -21,7 +21,24 @@ class bSocial
 		// hooks for methods in this class
 		add_action( 'wp_ajax_show_cron', array( $this, 'show_cron' ) );
 		add_action( 'delete_comment', array( $this, 'comment_id_by_meta_delete_cache' ) );
+		add_filter( 'keyring_services', array( $this, 'keyring_services' ), 11 );
+		add_filter( 'keyring_credentials', array( $this, 'keyring_credentials' ), 11, 2 );
 	}
+
+	/**
+	 * Singleton for the keyring plugin
+	 */
+	public function keyring()
+	{
+		global $keyring;
+
+		if ( class_exists( 'Keyring' ) && ! is_object( $keyring ) )
+		{
+			$keyring = Keyring::init();
+		} // END if
+
+		return $keyring;
+	} // END keyring
 
 	public function init()
 	{
@@ -150,7 +167,7 @@ class bSocial
 	}//END linkedin
 
 	public function new_oauth( $consumer_key, $consumer_secret, $access_token = NULL, $access_secret = NULL )
-	{
+	{		
 		if ( ! class_exists( 'bSocial_OAuth' ) )
 		{
 			require __DIR__ . '/class-bsocial-oauth.php';
@@ -158,6 +175,56 @@ class bSocial
 
 		return new bSocial_OAuth( $consumer_key, $consumer_secret, $access_token, $access_secret );
 	}//END new_oauth
+	
+	public function new_keyring_oauth( $service )
+	{
+		$keyring = Keyring::init();
+		$service = $keyring->get_service_by_name( 'bsocial-' . $service );
+
+		if ( ! $service->is_configured() )
+		{
+			return FALSE;
+		} // END if
+
+		return $service;
+	} // END new_keyring_oauth
+
+	public function keyring_services( $services )
+	{
+		// Add our extended twitter and facebook services
+		$services[] = __DIR__ . '/class-bsocial-keyring-twitter.php';
+		$services[] = __DIR__ . '/class-bsocial-keyring-linkedin.php';
+		$services[] = __DIR__ . '/class-bsocial-keyring-facebook.php';
+		
+		return $services;
+	} // END keyring_services
+
+	public function keyring_credentials( $credentials, $service = '' )
+	{
+		if ( $service == '' )
+		{
+			return $credentials;
+		} // END if
+
+		if ( 0 != strncmp( 'bsocial-', $service, 8 ) )
+		{
+			return $credentials;
+		} // END if
+		
+		$keyring = Keyring::init();
+		$service = $keyring->get_service_by_name( str_replace( 'bsocial-', '', $service ) );
+		
+		if ( ! isset( $service->key, $service->secret, $service->app_id ) )
+		{
+			return $credentials;
+		} // END if
+		
+		return array(
+			'app_id' => $service->app_id,
+			'key'    => $service->key,
+			'secret' => $service->secret,
+		);
+	} // END keyring_credentials
 
 	public function new_facebook( $app_id, $secret )
 	{
