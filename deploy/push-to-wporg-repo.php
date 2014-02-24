@@ -54,11 +54,6 @@ Exporting git submodules to SVN
 passthru( "git submodule foreach 'git checkout-index -a -f --prefix=$svn_repo_path/\$path/'" );
 
 echo '
-Removing any svn:executable properties for security
-';
-passthru( "find $svn_repo_path -type f -not -iwholename *svn* -exec svn propdel svn:executable {} \; | grep 'deleted from'" );
-
-echo '
 Setting svn:ignore properties
 ';
 passthru( "svn propset svn:ignore '" . implode( "\n", $svn_ignore_files ) ."
@@ -84,6 +79,11 @@ foreach( $svn_ignore_files as $file )
 {
 	passthru( "svn rm --force $svn_repo_path/$file" );
 }
+
+echo '
+Removing any svn:executable properties for security
+';
+passthru( "find $svn_repo_path -type f -not -iwholename *svn* -exec svn propdel svn:executable {} \; | grep 'deleted from'" );
 
 
 echo "
