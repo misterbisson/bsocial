@@ -71,7 +71,7 @@ class bSocial_OAuth
 	}//END post_http
 
 	/**
-	 * execute OAuth HTTP Requesty via Keyring Service
+	 * execute OAuth HTTP Request via Keyring Service
 	 */
 	public function keyring_http( $query_url, $method, $postfields = NULL )
 	{

@@ -186,8 +186,7 @@ class bSocial_Twitter
 	{
 		if ( $user_id && $token = bsocial()->get_keyring_token( $user_id, 'twitter' ) )
 		{
-			$this->oauth();
-			$this->oauth->service->token = $token;
+			$this->oauth()->service->token = $token;
 		} // END if
 
 		return $this->post_http( 'statuses/update', array( 'status' => $message ) );
@@ -197,8 +196,7 @@ class bSocial_Twitter
 	{
 		if ( $user_id && $token = bsocial()->get_keyring_token( $user_id, 'twitter' ) )
 		{
-			$this->oauth();
-			$this->oauth->service->token = $token;
+			$this->oauth()->service->token = $token;
 		} // END if
 
 		return $this->post_http( 'statuses/retweet/' . absint( $tweet_id ) );
