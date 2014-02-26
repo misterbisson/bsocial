@@ -19,7 +19,7 @@ class bSocial_Twitter
 		{
 			return $this->oauth;
 		}
-		
+
 		// Start an oauth instance
 		if ( ! empty( bsocial()->options()->twitter->access_token ) && ! empty( bsocial()->options()->twitter->access_secret ) )
 		{
@@ -32,7 +32,7 @@ class bSocial_Twitter
 			);
 		} // END if
 		else
-		{			
+		{
 			$this->oauth = bsocial()->new_oauth(
 				bsocial()->options()->twitter->consumer_key,
 				bsocial()->options()->twitter->consumer_secret,
@@ -192,7 +192,7 @@ class bSocial_Twitter
 
 		return $this->post_http( 'statuses/update', array( 'status' => $message ) );
 	}//END post_tweet
-	
+
 	public function retweet( $tweet_id, $user_id = FALSE )
 	{
 		if ( $user_id && $token = bsocial()->get_keyring_token( $user_id, 'twitter' ) )
@@ -200,7 +200,7 @@ class bSocial_Twitter
 			$this->oauth();
 			$this->oauth->service->token = $token;
 		} // END if
-		
+
 		return $this->post_http( 'statuses/retweet/' . absint( $tweet_id ) );
 	} // END retweet
 }//END class

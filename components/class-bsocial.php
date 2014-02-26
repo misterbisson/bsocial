@@ -44,7 +44,7 @@ class bSocial
 		{
 			return FALSE;
 		} // END if
-		
+
 		return bsocial()->keyring()->get_token_store()->get_token( array( 'service' => $service, 'user_id' => $user_id, 'type' => $type ) );
 	} // END get_keyring_token
 
@@ -175,7 +175,7 @@ class bSocial
 	}//END linkedin
 
 	public function new_oauth( $consumer_key, $consumer_secret, $access_token = NULL, $access_secret = NULL, $service = NULL )
-	{		
+	{
 		if ( ! class_exists( 'bSocial_OAuth' ) )
 		{
 			require __DIR__ . '/class-bsocial-oauth.php';

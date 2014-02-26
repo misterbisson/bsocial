@@ -1,4 +1,4 @@
-f<?php
+<?php
 
 /**
  * Our wrapper around the php OAuth class
@@ -15,7 +15,7 @@ class bSocial_OAuth
 	public $consumer = NULL;
 	public $token = NULL;
 	public $sha1_method = NULL;
-	
+
 	public $service = NULL;
 
 	public function __construct( $consumer_key, $consumer_secret, $user_key = NULL, $user_secret = NULL, $service = FALSE )
@@ -24,7 +24,7 @@ class bSocial_OAuth
 		{
 			return;
 		} // END if
-		
+
 		if ( ! class_exists( 'OAuthRequest' ) )
 		{
 			require __DIR__ . '/external/OAuth.php';
@@ -47,7 +47,7 @@ class bSocial_OAuth
 		{
 			return $this->keyring_http( $query_url, 'GET', $parameters );
 		} // END if
-		
+
 		return $this->oauth_http( $query_url, 'GET', $parameters );
 	}//END get_http
 
@@ -66,10 +66,10 @@ class bSocial_OAuth
 		{
 			return $this->keyring_http( $query_url, 'POST', $parameters );
 		} // END if
-		
+
 		return $this->oauth_http( $query_url, 'POST', $parameters );
 	}//END post_http
-	
+
 	/**
 	 * execute OAuth HTTP Requesty via Keyring Service
 	 */
@@ -80,14 +80,14 @@ class bSocial_OAuth
 		{
 			return FALSE;
 		} // END if
-		
+
 		$parameters['method'] = $method;
-		
+
 		if ( $postfields )
 		{
 			$parameters['body'] = $postfields;
 		} // END if
-				
+
 		return $this->service->request( $query_url, $parameters );
 	} // END keyring_http
 
