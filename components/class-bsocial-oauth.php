@@ -48,14 +48,9 @@ class bSocial_OAuth
 			return;
 		} // END if
 
-		if ( ! $user_id )
-		{
-			$user_id = get_current_user_id();
-		} // END if
-
 		$parameters = array(
 			'service' => $this->service->get_name(),
-			'user_id' => $user_id,
+			'user_id' => $user_id ? $user_id : get_current_user_id(),
 			'type'    => $type,
 		);
 
