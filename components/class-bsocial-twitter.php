@@ -9,6 +9,8 @@ class bSocial_Twitter
 	public $meta = NULL;
 	public $search = NULL;
 	public $user_stream = NULL;
+	public $user_id = NULL;
+	public $user = NULL;
 
 	/**
 	 * get an oauth instance
@@ -132,8 +134,10 @@ class bSocial_Twitter
 		return $this->search;
 	}//END search
 
-	public function user_stream()
+	public function user_stream( $user_id = FALSE )
 	{
+		$this->oauth()->set_keyring_user_token( $user_id );
+		
 		if ( ! $this->user_stream )
 		{
 			if ( ! class_exists( 'bSocial_Twitter_User_Stream' ) )
@@ -159,8 +163,10 @@ class bSocial_Twitter
 	 * @param $screen_name user screen name or id
 	 * @param $by 'screen_name' or 'id'
 	 */
-	public function get_user_info( $screen_name, $by = 'screen_name' )
+	public function get_user_info( $screen_name, $by = 'screen_name', $user_id = FALSE )
 	{
+		$this->oauth()->set_keyring_user_token( $user_id );
+		
 		// are we searching by screen name or ID?
 		$by = in_array( $by, array( 'screen_name', 'id' )) ? $by : 'screen_name';
 
@@ -184,20 +190,14 @@ class bSocial_Twitter
 	 */
 	public function post_tweet( $message, $user_id = FALSE )
 	{
-		if ( $user_id && $token = bsocial()->get_keyring_token( $user_id, 'twitter' ) )
-		{
-			$this->oauth()->service->token = $token;
-		} // END if
+		$this->oauth()->set_keyring_user_token( $user_id );
 
 		return $this->post_http( 'statuses/update', array( 'status' => $message ) );
 	}//END post_tweet
 
 	public function retweet( $tweet_id, $user_id = FALSE )
 	{
-		if ( $user_id && $token = bsocial()->get_keyring_token( $user_id, 'twitter' ) )
-		{
-			$this->oauth()->service->token = $token;
-		} // END if
+		$this->oauth()->set_keyring_user_token( $user_id );
 
 		return $this->post_http( 'statuses/retweet/' . absint( $tweet_id ) );
 	} // END retweet

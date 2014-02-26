@@ -38,16 +38,6 @@ class bSocial
 		return $keyring;
 	} // END keyring
 
-	public function get_keyring_token( $user_id, $service, $type = 'access' )
-	{
-		if ( ! bsocial()->keyring() )
-		{
-			return FALSE;
-		} // END if
-
-		return bsocial()->keyring()->get_token_store()->get_token( array( 'service' => $service, 'user_id' => $user_id, 'type' => $type ) );
-	} // END get_keyring_token
-
 	public function init()
 	{
 		$options = $this->options();

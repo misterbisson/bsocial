@@ -40,6 +40,22 @@ class bSocial_OAuth
 		$this->sha1_method = new OAuthSignatureMethod_HMAC_SHA1();
 	}//END __construct
 
+	public function set_keyring_user_token( $user_id, $type = 'access' )
+	{
+		if ( ! $user_id || ! bsocial()->keyring() )
+		{
+			return;
+		} // END if
+
+		$parameters = array(
+			'service' => $this->service->get_name(),
+			'user_id' => $user_id,
+			'type'    => $type,
+		);
+
+		$this->service->token = bsocial()->keyring()->get_token_store()->get_token( $parameters );
+	} // END set_keyring_user_token
+
 	public function get_http( $query_url, $parameters = array() )
 	{
 		// If a keyring service is available lets use that
@@ -83,10 +99,14 @@ class bSocial_OAuth
 
 		$parameters['method'] = $method;
 
-		if ( $postfields )
+		if ( $postfields && 'POST' == $parameters['method'] )
 		{
 			$parameters['body'] = $postfields;
 		} // END if
+		elseif ( $postfields && 'GET' == $parameters['method'] )
+		{
+			$query_url = add_query_arg( $postfields, $query_url );
+		} // END elseif
 
 		return $this->service->request( $query_url, $parameters );
 	} // END keyring_http
