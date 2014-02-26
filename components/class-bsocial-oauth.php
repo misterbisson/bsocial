@@ -22,6 +22,7 @@ class bSocial_OAuth
 	{
 		if ( $service && bsocial()->keyring() && $this->service = bsocial()->keyring()->get_service_by_name( $service ) )
 		{
+			$this->set_keyring_user_token();
 			return;
 		} // END if
 
@@ -40,11 +41,16 @@ class bSocial_OAuth
 		$this->sha1_method = new OAuthSignatureMethod_HMAC_SHA1();
 	}//END __construct
 
-	public function set_keyring_user_token( $user_id, $type = 'access' )
+	public function set_keyring_user_token( $user_id = FALSE, $type = 'access' )
 	{
-		if ( ! $user_id || ! bsocial()->keyring() )
+		if ( ! bsocial()->keyring() )
 		{
 			return;
+		} // END if
+
+		if ( ! $user_id )
+		{
+			$user_id = get_current_user_id();
 		} // END if
 
 		$parameters = array(

@@ -136,7 +136,10 @@ class bSocial_Twitter
 
 	public function user_stream( $user_id = FALSE )
 	{
-		$this->oauth()->set_keyring_user_token( $user_id );
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
 		
 		if ( ! $this->user_stream )
 		{
@@ -165,7 +168,10 @@ class bSocial_Twitter
 	 */
 	public function get_user_info( $screen_name, $by = 'screen_name', $user_id = FALSE )
 	{
-		$this->oauth()->set_keyring_user_token( $user_id );
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
 		
 		// are we searching by screen name or ID?
 		$by = in_array( $by, array( 'screen_name', 'id' )) ? $by : 'screen_name';
@@ -190,14 +196,20 @@ class bSocial_Twitter
 	 */
 	public function post_tweet( $message, $user_id = FALSE )
 	{
-		$this->oauth()->set_keyring_user_token( $user_id );
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
 
 		return $this->post_http( 'statuses/update', array( 'status' => $message ) );
 	}//END post_tweet
 
 	public function retweet( $tweet_id, $user_id = FALSE )
 	{
-		$this->oauth()->set_keyring_user_token( $user_id );
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
 
 		return $this->post_http( 'statuses/retweet/' . absint( $tweet_id ) );
 	} // END retweet
