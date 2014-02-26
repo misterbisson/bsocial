@@ -19,12 +19,6 @@ class bSocial_Twitter
 		{
 			return $this->oauth;
 		}
-
-		// If keyring is present lets try to use that first
-		if ( bsocial()->keyring() && $this->oauth = bsocial()->new_keyring_oauth('twitter') )
-		{
-			return $this->oauth;
-		} // END if
 		
 		// Start an oauth instance
 		if ( ! empty( bsocial()->options()->twitter->access_token ) && ! empty( bsocial()->options()->twitter->access_secret ) )
@@ -33,14 +27,18 @@ class bSocial_Twitter
 				bsocial()->options()->twitter->consumer_key,
 				bsocial()->options()->twitter->consumer_secret,
 				bsocial()->options()->twitter->access_token,
-				bsocial()->options()->twitter->access_secret
+				bsocial()->options()->twitter->access_secret,
+				'twitter'
 			);
 		} // END if
 		else
 		{			
 			$this->oauth = bsocial()->new_oauth(
 				bsocial()->options()->twitter->consumer_key,
-				bsocial()->options()->twitter->consumer_secret
+				bsocial()->options()->twitter->consumer_secret,
+				NULL,
+				NULL,
+				'twitter'
 			);
 		} // END else
 
@@ -186,12 +184,23 @@ class bSocial_Twitter
 	 */
 	public function post_tweet( $message, $user_id = FALSE )
 	{
-		if ( $user_id && bsocial()->keyring() )
+		if ( $user_id && $token = bsocial()->get_keyring_token( $user_id, 'twitter' ) )
 		{
 			$this->oauth();
-			$this->oauth->token = bsocial()->keyring()->get_token_store()->get_token( array( 'service' => 'twitter', 'user_id' => $user_id ) );
+			$this->oauth->service->token = $token;
 		} // END if
 
 		return $this->post_http( 'statuses/update', array( 'status' => $message ) );
 	}//END post_tweet
+	
+	public function retweet( $tweet_id, $user_id = FALSE )
+	{
+		if ( $user_id && $token = bsocial()->get_keyring_token( $user_id, 'twitter' ) )
+		{
+			$this->oauth();
+			$this->oauth->service->token = $token;
+		} // END if
+		
+		return $this->post_http( 'statuses/retweet/' . absint( $tweet_id ) );
+	} // END retweet
 }//END class
