@@ -5,6 +5,7 @@
 class bSocial_Facebook
 {
 	public $facebook = NULL;
+	public $oauth    = NULL;
 	public $comments = NULL;
 	public $meta = NULL;
 	public $user_stream = NULL;
@@ -25,8 +26,40 @@ class bSocial_Facebook
 			bsocial()->options()->facebook->secret
 		);
 
+		if ( bsocial()->keyring() )
+		{
+			if ( ! class_exists( 'bSocial_OAuth' ) )
+			{
+				require __DIR__ . '/class-bsocial-oauth.php';
+			}
+
+			$this->oauth = bsocial()->new_oauth(
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				'facebook'
+			);
+		} // END if
+
 		return $this->facebook;
 	}//END __construct
+
+	// prepend the facebook api url if $query_url is not absolute
+	public function validate_query_url( $query_url, $parameters )
+	{
+		if (
+			0 == strpos( $query_url, 'http://' ) &&
+			0 == strpos( $query_url, 'https://' )
+		)
+		{
+			return $query_url;
+		} // END if
+
+		$query_url = 'https://graph.facebook.com/' . $query_url;
+
+		return $query_url;
+	}//END validate_query_url
 
 	public function meta()
 	{
@@ -61,8 +94,13 @@ class bSocial_Facebook
 	/**
 	 * get an instance of bSocial_Facebook_User_Stream
 	 */
-	public function user_stream()
+	public function user_stream( $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
 		if ( ! $this->user_stream )
 		{
 			if ( ! class_exists( 'bSocial_Facebook_User_Stream' ) )
@@ -81,7 +119,7 @@ class bSocial_Facebook
 	 *        permissions can be found here:
 	 *        https://developers.facebook.com/docs/reference/login/
 	 */
-	public function get_user_id( $scope = NULL )
+	public function get_user_id( $scope = NULL, $user_id )
 	{
 		$user_id = $this->facebook()->getUser();
 

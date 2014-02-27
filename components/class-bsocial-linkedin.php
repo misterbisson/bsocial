@@ -25,14 +25,18 @@ class bSocial_LinkedIn
 				bsocial()->options()->linkedin->consumer_key,
 				bsocial()->options()->linkedin->consumer_secret,
 				bsocial()->options()->linkedin->user_token,
-				bsocial()->options()->linkedin->user_secret
+				bsocial()->options()->linkedin->user_secret,
+				'linkedin'
 			);
 		}
 		else
 		{
 			$this->oauth = bsocial()->new_oauth(
 				bsocial()->options()->linkedin->consumer_key,
-				bsocial()->options()->linkedin->consumer_secret
+				bsocial()->options()->linkedin->consumer_secret,
+				NULL,
+				NULL,
+				'linkedin'
 			);
 		}
 
@@ -40,23 +44,29 @@ class bSocial_LinkedIn
 	}//END oauth
 
 	/**
-	 * @param $user_id user's profile url or id #
+	 * @param $id user's profile url or id #
 	 * @param $by 'url', 'token' or 'self'. linkedIn uses "member id" and
 	 *  "member token" interchangeably, and it should not to be confused
 	 *  with the numeric ID found on a member's profile page. Also note that
 	 *  request by token does not work on out-of-network users.
-	 * @fields (string) fields to request for
+	 * @param $fields (string) fields to request for
+	 * @param $user_id WP user_id of the user you want to act a
 	 */
-	public function get_user_info( $user_id, $by, $fields = NULL )
+	public function get_user_info( $id, $by, $fields = NULL, $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+		
 		switch( $by )
 		{
 			case 'url':
-				$url = $this->base_url . 'url=' . urlencode( $user_id );
+				$url = $this->base_url . 'url=' . urlencode( $id );
 				break;
 
 			case 'token':
-				$url = $this->base_url . 'id=' . $user_id;
+				$url = $this->base_url . 'id=' . $id;
 				break;
 
 			case 'self':
@@ -73,7 +83,7 @@ class bSocial_LinkedIn
 		}
 
 		// check the cache for the user info
-		if ( ! $user = wp_cache_get( $user_id, 'linkedin_' . $by ) )
+		if ( ! $user = wp_cache_get( $id, 'linkedin_' . $by ) )
 		{
 			$user = $this->oauth()->get_http( $url );
 
@@ -93,20 +103,26 @@ class bSocial_LinkedIn
 	}//END get_user_info
 
 	/**
-	 * @param $user_id a user token/id or url
+	 * @param $id a user token/id or url
 	 * @param $by 'token', 'url' or 'self'
 	 * @param $count how many updates to fetch
+	 * @param $user_id WP user_id of the user you want to act as
 	 */
-	public function get_updates( $user_id, $by = 'token', $count = 25 )
+	public function get_updates( $id, $by = 'token', $count = 25, $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+		
 		switch ( $by )
 		{
 			case 'token':
-				$url = $this->base_url . 'id=' . $user_id;
+				$url = $this->base_url . 'id=' . $id;
 				break;
 
 			case 'url':
-				$url = $this->base_url . 'url=' . urlencode( $user_id );
+				$url = $this->base_url . 'url=' . urlencode( $id );
 				break;
 
 			case 'self':
@@ -139,9 +155,15 @@ class bSocial_LinkedIn
 	 *  'submitted-url': url of shared content
 	 *  'submitted-image-url': an image to go with the shared content url
 	 *  'visibility': who can see this comment ('connections-only' or 'anyone'
+	 * @param $user_id WP user_id of the user you want to act as
 	 */
-	public function share( $parameters )
+	public function share( $parameters, $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+		
 		$url = $this->base_url . '~/shares';
 
 		// convert contents of $parameters into an object that can be

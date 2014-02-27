@@ -86,8 +86,13 @@ class bSocial_Twitter
 		);
 	}//END post_http
 
-	public function meta()
+	public function meta( $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
 		if ( ! $this->meta )
 		{
 			if ( ! class_exists( 'bSocial_Twitter_Meta' ) )
@@ -101,8 +106,13 @@ class bSocial_Twitter
 		return $this->meta;
 	}//END meta
 
-	public function comments()
+	public function comments( $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
 		if ( ! $this->comments )
 		{
 			if ( ! class_exists( 'bSocial_Twitter_Comments' ) )
@@ -119,8 +129,13 @@ class bSocial_Twitter
 	/**
 	 * return the twitter search object
 	 */
-	public function search()
+	public function search( $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
 		if ( ! $this->search )
 		{
 			if ( ! class_exists( 'bSocial_Twitter_Search' ) )
@@ -140,7 +155,7 @@ class bSocial_Twitter
 		{
 			$this->oauth()->set_keyring_user_token( $user_id );
 		} // END if
-		
+
 		if ( ! $this->user_stream )
 		{
 			if ( ! class_exists( 'bSocial_Twitter_User_Stream' ) )
@@ -172,7 +187,7 @@ class bSocial_Twitter
 		{
 			$this->oauth()->set_keyring_user_token( $user_id );
 		} // END if
-		
+
 		// are we searching by screen name or ID?
 		$by = in_array( $by, array( 'screen_name', 'id' )) ? $by : 'screen_name';
 

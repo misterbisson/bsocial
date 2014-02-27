@@ -23,6 +23,11 @@ class bSocial_Facebook_User_Stream
 	 */
 	public function get_posts( $limit = 2 )
 	{
+		if ( bsocial()->keyring() )
+		{
+			// Do something here?
+		} // END if
+
 		$user_id = $this->bsocial_facebook->get_user_id();
 
 		if ( ! $user_id )
