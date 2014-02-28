@@ -16,34 +16,57 @@ class bSocial_Facebook
 	 */
 	public function facebook()
 	{
+		if ( bsocial()->keyring() )
+		{
+			return $this->oauth();
+		} // END if
+
 		if ( $this->facebook )
 		{
 			return $this->facebook;
 		}
 
-		$this->facebook = bsocial()->new_facebook(
-			bsocial()->options()->facebook->app_id,
-			bsocial()->options()->facebook->secret
-		);
-
-		if ( bsocial()->keyring() )
+		// Start a facebook instance
+		if ( ! empty( bsocial()->options()->facebook->access_token ) )
 		{
-			if ( ! class_exists( 'bSocial_OAuth' ) )
-			{
-				require __DIR__ . '/class-bsocial-oauth.php';
-			}
-
-			$this->oauth = bsocial()->new_oauth(
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				'facebook'
+			$this->facebook = bsocial()->new_facebook(
+				bsocial()->options()->facebook->app_id,
+				bsocial()->options()->facebook->secret,
+				bsocial()->options()->facebook->access_token
 			);
 		} // END if
+		else
+		{
+			$this->facebook = bsocial()->new_facebook(
+				bsocial()->options()->facebook->app_id,
+				bsocial()->options()->facebook->secret,
+				NULL
+			);
+		} // END else
 
 		return $this->facebook;
 	}//END __construct
+
+	/**
+	 * Returns a generic facebook oauth instance
+	 */
+	public function oauth()
+	{
+		if ( $this->oauth )
+		{
+			return $this->oauth;
+		} // END if
+
+		$this->oauth = bsocial()->new_oauth(
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			'facebook'
+		);
+
+		return $this->oauth;
+	} // END oauth
 
 	// prepend the facebook api url if $query_url is not absolute
 	public function validate_query_url( $query_url, $parameters )
@@ -60,6 +83,37 @@ class bSocial_Facebook
 
 		return $query_url;
 	}//END validate_query_url
+
+	/**
+	 * get the Facebook id of the current authenticated user
+	 *
+	 * @param $scope an array of permissions to request. the list of
+	 *        permissions can be found here:
+	 *        https://developers.facebook.com/docs/reference/login/
+	 */
+	public function get_fb_user_id( $scope = NULL )
+	{
+		// Try getting it from the the Keyring service first
+		if ( isset( $this->oauth()->service->token->meta['user_id'] ) )
+		{
+			return $this->oauth()->service->token->meta['user_id'];
+		} // END if
+
+		$fb_user_id = $this->facebook()->getUser();
+
+		if ( ! $fb_user_id )
+		{
+			$login_url = $this->facebook()->getLoginUrl();
+			if ( $scope )
+			{
+				$login_url .= '&scope=' . implode( ',', $scope );
+			}
+			$this->errors[] = new WP_Error( 'facebook auth error', 'user not logged in. Please <a href="' . $login_url . '">login</a> and try again.' );
+			return FALSE;
+		}//END if
+
+		return $fb_user_id;
+	}//END get_fb_user_id
 
 	public function meta()
 	{
@@ -94,13 +148,8 @@ class bSocial_Facebook
 	/**
 	 * get an instance of bSocial_Facebook_User_Stream
 	 */
-	public function user_stream( $user_id = FALSE )
+	public function user_stream()
 	{
-		if ( $user_id )
-		{
-			$this->oauth()->set_keyring_user_token( $user_id );
-		} // END if
-
 		if ( ! $this->user_stream )
 		{
 			if ( ! class_exists( 'bSocial_Facebook_User_Stream' ) )
@@ -113,53 +162,28 @@ class bSocial_Facebook
 	}//END user_stream
 
 	/**
-	 * get the id of the current authenticated user
-	 *
-	 * @param $scope an array of permissions to request. the list of
-	 *        permissions can be found here:
-	 *        https://developers.facebook.com/docs/reference/login/
-	 */
-	public function get_user_id( $scope = NULL, $user_id )
-	{
-		$user_id = $this->facebook()->getUser();
-
-		if ( ! $user_id )
-		{
-			$login_url = $this->facebook()->getLoginUrl();
-			if ( $scope )
-			{
-				$login_url .= '&scope=' . implode( ',', $scope );
-			}
-			$this->errors[] = new WP_Error( 'facebook auth error', 'user not logged in. Please <a href="' . $login_url . '">login</a> and try again.' );
-			return FALSE;
-		}//END if
-
-		return $user_id;
-	}//END get_user_id
-
-	/**
-	 * @param $user_or_page_id id of a user or a page. if it's left blank
+	 * @param $fb_user_or_page_id Facebook id of a user or a page. if it's left blank
 	 *  then we'll use the authenticated user's id.
 	 */
-	public function get_profile( $user_or_page_id = NULL )
+	public function get_profile( $fb_user_or_page_id = NULL )
 	{
-		if ( empty( $user_or_page_id ) )
+		if ( empty( $fb_user_or_page_id ) )
 		{
-			$user_or_page_id = $this->get_user_id();
+			$fb_user_or_page_id = $this->get_fb_user_id();
 		}
-		if ( ! $user_or_page_id )
+		if ( ! $fb_user_or_page_id )
 		{
 			return FALSE;
 		}
 
-		if ( 0 !== strpos( $user_or_page_id, '/' ) )
+		if ( 0 !== strpos( $fb_user_or_page_id, '/' ) )
 		{
-			$user_or_page_id = '/' . $user_or_page_id;
+			$fb_user_or_page_id = '/' . $fb_user_or_page_id;
 		}
 
 		try
 		{
-			return $this->facebook()->api( $user_or_page_id, 'GET' );
+			return $this->facebook()->api( $fb_user_or_page_id, 'GET' );
 		}
 		catch ( FacebookApiException $e )
 		{
@@ -178,9 +202,9 @@ class bSocial_Facebook
 	public function post_status( $message )
 	{
 		// publish_actions is the permission needed to post to a user's wall
-		$user_id = $this->get_user_id( array( 'publish_actions' ) );
+		$fb_user_id = $this->get_fb_user_id( array( 'publish_actions' ) );
 
-		if ( ! $user_id )
+		if ( ! $fb_user_id )
 		{
 			return FALSE;
 		}
@@ -188,7 +212,7 @@ class bSocial_Facebook
 		try
 		{
 			$post_id = $this->facebook()->api(
-				'/' . $user_id . '/feed',
+				'/' . $fb_user_id . '/feed',
 				'POST',
 				array(
 					'message' => $message,

@@ -28,15 +28,15 @@ class bSocial_Facebook_User_Stream
 			// Do something here?
 		} // END if
 
-		$user_id = $this->bsocial_facebook->get_user_id();
+		$fb_user_id = $this->bsocial_facebook->get_fb_user_id();
 
-		if ( ! $user_id )
+		if ( ! $fb_user_id )
 		{
 			return FALSE;
 		}
 
 		$posts = $this->bsocial_facebook->facebook->api(
-			'/' . $user_id . '/feed',
+			'/' . $fb_user_id . '/feed',
 			'GET',
 			array(
 				'limit' => $limit,

@@ -174,14 +174,14 @@ class bSocial
 		return new bSocial_OAuth( $consumer_key, $consumer_secret, $access_token, $access_secret, $service );
 	}//END new_oauth
 
-	public function new_facebook( $app_id, $secret )
+	public function new_facebook( $app_id, $secret, $access_token = NULL )
 	{
 		if ( ! class_exists( 'Facebook' ) )
 		{
 			require __DIR__ . '/external/facebook-php-sdk/src/facebook.php';
 		}
 
-		return new Facebook(
+		$facebook = new Facebook(
 			array(
 				'appId' => $app_id,
 				'secret' => $secret,
@@ -189,6 +189,13 @@ class bSocial
 				'allowSignedRequest' => FALSE, // for non-canvas apps
 			)
 		);
+
+		if ( $access_token )
+		{
+			$facebook->setAccessToken( $access_token );
+		} // END if
+
+		return $facebook;
 	}//END new_facebook
 
 	public function opengraph()
@@ -242,10 +249,72 @@ class bSocial
 				wp_parse_args( (array) get_option( $this->id_base ), (array) $this->options_default() ),
 				$this->id_base
 			);
+
+			// If Keyring is present we'll override appropriate options
+			if ( $this->keyring() )
+			{
+				$this->options = $this->keyring_options( $this->options );
+			} // END if
 		}
 
 		return $this->options;
 	} // END options
+
+	public function keyring_options( $options )
+	{
+		$valid_services = array(
+			'facebook',
+			'twitter',
+			'linkedin',
+		);
+
+		foreach ( $options as $service => $service_options )
+		{
+			if ( ! in_array( $service, $valid_services ) )
+			{
+				continue;
+			} // END if
+
+			if ( $keyring_service = $this->keyring()->get_service_by_name( $service ) )
+			{
+				if ( ! $keyring_service->is_configured() )
+				{
+					continue;
+				} // END if
+
+				$options->$service->enable = TRUE;
+
+				if ( 'facebook' == $service )
+				{
+					$options->$service->app_id = $keyring_service->app_id;
+					$options->$service->secret = $keyring_service->secret;
+
+					if ( $current_user_token = $this->keyring()->get_token_store()->get_token( array( 'service' => $service ) ) )
+					{
+						$options->$service->access_token = $current_user_token->token;
+					} // END if
+				} // END if
+				else
+				{
+					$options->$service->consumer_key = $keyring_service->key;
+					$options->$service->consumer_secret = $keyring_service->secret;
+
+					if ( $current_user_token = $this->keyring()->get_token_store()->get_token( array( 'service' => $service ) ) )
+					{
+						$options->$service->access_token = $current_user_token->token->key;
+						$options->$service->access_secret = $current_user_token->token->secret;
+
+						if ( 'twitter' == $service )
+						{
+							$options->$service->username = $current_user_token->meta['username'];
+						} // END if
+					} // END if
+				} // END else
+			} // END if
+		} // END foreach
+
+		return $options;
+	} // END keyring_options
 
 	public function options_default()
 	{
@@ -259,6 +328,7 @@ class bSocial
 
 				'app_id' => '',  // fb's oauth consumer/api key
 				'secret' => '',  // fb's oauth consumer/api secret
+				'access_token' => '',
 
 				'admins' => '',
 				'page' => '',

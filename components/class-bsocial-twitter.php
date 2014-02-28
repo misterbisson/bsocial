@@ -86,13 +86,8 @@ class bSocial_Twitter
 		);
 	}//END post_http
 
-	public function meta( $user_id = FALSE )
+	public function meta()
 	{
-		if ( $user_id )
-		{
-			$this->oauth()->set_keyring_user_token( $user_id );
-		} // END if
-
 		if ( ! $this->meta )
 		{
 			if ( ! class_exists( 'bSocial_Twitter_Meta' ) )
