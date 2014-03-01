@@ -18,27 +18,14 @@ class bSocial_LinkedIn
 			return $this->oauth;
 		}
 
-		// check if we have the user token and secret or not
-		if ( ! empty( bsocial()->options()->linkedin->user_token ) && ! empty( bsocial()->options()->linkedin->user_secret ) )
-		{
-			$this->oauth = bsocial()->new_oauth(
-				bsocial()->options()->linkedin->consumer_key,
-				bsocial()->options()->linkedin->consumer_secret,
-				bsocial()->options()->linkedin->user_token,
-				bsocial()->options()->linkedin->user_secret,
-				'linkedin'
-			);
-		}
-		else
-		{
-			$this->oauth = bsocial()->new_oauth(
-				bsocial()->options()->linkedin->consumer_key,
-				bsocial()->options()->linkedin->consumer_secret,
-				NULL,
-				NULL,
-				'linkedin'
-			);
-		}
+		// We don't care to pass any credentials because we're going to require Keyring for Linkedin to work
+		$this->oauth = bsocial()->new_oauth(
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			'linkedin'
+		);
 
 		return $this->oauth;
 	}//END oauth
@@ -58,7 +45,7 @@ class bSocial_LinkedIn
 		{
 			$this->oauth()->set_keyring_user_token( $user_id );
 		} // END if
-		
+
 		switch( $by )
 		{
 			case 'url':
@@ -114,7 +101,7 @@ class bSocial_LinkedIn
 		{
 			$this->oauth()->set_keyring_user_token( $user_id );
 		} // END if
-		
+
 		switch ( $by )
 		{
 			case 'token':
@@ -163,7 +150,7 @@ class bSocial_LinkedIn
 		{
 			$this->oauth()->set_keyring_user_token( $user_id );
 		} // END if
-		
+
 		$url = $this->base_url . '~/shares';
 
 		// convert contents of $parameters into an object that can be

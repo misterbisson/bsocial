@@ -4,48 +4,11 @@
  */
 class bSocial_Facebook
 {
-	public $facebook = NULL;
 	public $oauth    = NULL;
 	public $comments = NULL;
 	public $meta = NULL;
 	public $user_stream = NULL;
 	public $errors = array();
-
-	/**
-	 * return an instance of the facebook oauth client
-	 */
-	public function facebook()
-	{
-		if ( bsocial()->keyring() )
-		{
-			return $this->oauth();
-		} // END if
-
-		if ( $this->facebook )
-		{
-			return $this->facebook;
-		}
-
-		// Start a facebook instance
-		if ( ! empty( bsocial()->options()->facebook->access_token ) )
-		{
-			$this->facebook = bsocial()->new_facebook(
-				bsocial()->options()->facebook->app_id,
-				bsocial()->options()->facebook->secret,
-				bsocial()->options()->facebook->access_token
-			);
-		} // END if
-		else
-		{
-			$this->facebook = bsocial()->new_facebook(
-				bsocial()->options()->facebook->app_id,
-				bsocial()->options()->facebook->secret,
-				NULL
-			);
-		} // END else
-
-		return $this->facebook;
-	}//END __construct
 
 	/**
 	 * Returns a generic facebook oauth instance
@@ -57,6 +20,7 @@ class bSocial_Facebook
 			return $this->oauth;
 		} // END if
 
+		// We don't care to pass any credentials because we're going to require Keyring for Facebook to work
 		$this->oauth = bsocial()->new_oauth(
 			NULL,
 			NULL,
@@ -69,50 +33,66 @@ class bSocial_Facebook
 	} // END oauth
 
 	// prepend the facebook api url if $query_url is not absolute
-	public function validate_query_url( $query_url, $parameters )
+	public function validate_query_url( $query_url )
 	{
 		if (
 			0 == strpos( $query_url, 'http://' ) &&
 			0 == strpos( $query_url, 'https://' )
 		)
 		{
-			return $query_url;
+			$query_url = 'https://graph.facebook.com/' . $query_url;
 		} // END if
-
-		$query_url = 'https://graph.facebook.com/' . $query_url;
 
 		return $query_url;
 	}//END validate_query_url
+	
+	public function get_http( $query_url, $parameters = array() )
+	{
+		return $this->oauth()->get_http(
+			$this->validate_query_url( $query_url ),
+			$parameters
+		);
+	}//END get_http
+
+	public function post_http( $query_url, $parameters = array() )
+	{
+		return $this->oauth()->post_http(
+			$this->validate_query_url( $query_url ),
+			$parameters
+		);
+	}//END post_http
 
 	/**
-	 * get the Facebook id of the current authenticated user
+	 * get the Facebook user_id of the current authenticated user
 	 *
-	 * @param $scope an array of permissions to request. the list of
-	 *        permissions can be found here:
-	 *        https://developers.facebook.com/docs/reference/login/
+	 * @param $user_id WP user_id which Keyring will use to retrieve the FB user_id if left blank we'll use the current user
 	 */
-	public function get_fb_user_id( $scope = NULL )
+	public function get_fb_user_id( $user_id = FALSE )
 	{
-		// Try getting it from the the Keyring service first
-		if ( isset( $this->oauth()->service->token->meta['user_id'] ) )
+		// If a WP user_id value was given lets try to retrieve a token for that user instead
+		if ( $user_id )
 		{
-			return $this->oauth()->service->token->meta['user_id'];
+			$parameters = array(
+				'service' => 'facebook',
+				'user_id' => $user_id,
+			);
+
+			$token = bsocial()->keyring()->get_token_store()->get_token( $parameters );
+			
+			if ( ! isset( $token->meta['user_id'] ) )
+			{
+				return FALSE;
+			} // END if
+			
+			return $token->meta['user_id'];
+		} // END if
+		
+		if ( ! isset( $this->oauth()->service->token->meta['user_id'] ) )
+		{
+			return FALSE;
 		} // END if
 
-		$fb_user_id = $this->facebook()->getUser();
-
-		if ( ! $fb_user_id )
-		{
-			$login_url = $this->facebook()->getLoginUrl();
-			if ( $scope )
-			{
-				$login_url .= '&scope=' . implode( ',', $scope );
-			}
-			$this->errors[] = new WP_Error( 'facebook auth error', 'user not logged in. Please <a href="' . $login_url . '">login</a> and try again.' );
-			return FALSE;
-		}//END if
-
-		return $fb_user_id;
+		return $this->oauth()->service->token->meta['user_id'];
 	}//END get_fb_user_id
 
 	public function meta()
@@ -146,10 +126,15 @@ class bSocial_Facebook
 	}//END comments
 
 	/**
-	 * get an instance of bSocial_Facebook_User_Stream
+	 * @param $user_id WP user_id of the user you want to act as
 	 */
-	public function user_stream()
+	public function user_stream( $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+		
 		if ( ! $this->user_stream )
 		{
 			if ( ! class_exists( 'bSocial_Facebook_User_Stream' ) )
@@ -162,44 +147,67 @@ class bSocial_Facebook
 	}//END user_stream
 
 	/**
-	 * @param $fb_user_or_page_id Facebook id of a user or a page. if it's left blank
-	 *  then we'll use the authenticated user's id.
+	 * @param $user_id WP user_id of the user you want to act as
 	 */
-	public function get_profile( $fb_user_or_page_id = NULL )
+	public function get_permissions( $user_id = FALSE )
 	{
-		if ( empty( $fb_user_or_page_id ) )
+		if ( $user_id )
 		{
-			$fb_user_or_page_id = $this->get_fb_user_id();
-		}
-		if ( ! $fb_user_or_page_id )
-		{
-			return FALSE;
-		}
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
 
-		if ( 0 !== strpos( $fb_user_or_page_id, '/' ) )
-		{
-			$fb_user_or_page_id = '/' . $fb_user_or_page_id;
-		}
-
-		try
-		{
-			return $this->facebook()->api( $fb_user_or_page_id, 'GET' );
-		}
-		catch ( FacebookApiException $e )
-		{
-			$this->erros[] = new WP_Error( $e->getType(), $e->getMessage() );
-		}
-
-		return FALSE;
+		return $this->get_http( $this->get_fb_user_id() . '/permissions' );
 	}//END get_profile
+
+	/**
+	 * @param $user_id WP user_id of the user you want to act as
+	 * @param $page_id Facebook id of a page you wish to get the profile of
+	 */
+	public function get_profile( $user_id = FALSE, $page_id = FALSE )
+	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
+		if ( $page_id )
+		{
+			
+		} // END if
+		
+		$profile_id = $page_id ? $page_id : $this->get_fb_user_id();
+
+		return $this->get_http( $id );
+	}//END get_profile
+	
+	public function get_page( $user_id = FALSE, $page_id )
+	{
+		return $this->get_profile( $user_id, $page_id );
+	} // END get_page
+
+	/**
+	 * returns a array of Facebook pages the user has admin access to including access_tokens that can be used to post to those pages
+	 *
+	 * @param $user_id WP user_id of the user you want to act as
+	 */
+	public function get_pages( $user_id = FALSE )
+	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+		
+		return $this->get_http( $this->get_fb_user_id() . '/accounts' );
+	} // END get_pages
 
 	/**
 	 * post a status update to the user's feed/wall
 	 *
 	 * @param $message the message to post
+	 * @param $user_id WP user_id of the user you want to act as
 	 * @retval string id of the newly created post
 	 */
-	public function post_status( $message )
+	public function post_status( $message, $user_id = FALSE )
 	{
 		// publish_actions is the permission needed to post to a user's wall
 		$fb_user_id = $this->get_fb_user_id( array( 'publish_actions' ) );

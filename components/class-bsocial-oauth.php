@@ -20,8 +20,10 @@ class bSocial_OAuth
 
 	public function __construct( $consumer_key, $consumer_secret, $user_key = NULL, $user_secret = NULL, $service = FALSE )
 	{
+		// If Keyring is active we want to use that for OAuth instead of bSocial's built in stuff
 		if ( $service && bsocial()->keyring() && $this->service = bsocial()->keyring()->get_service_by_name( $service ) )
 		{
+			// Set the access token according to the current user
 			$this->set_keyring_user_token();
 			return;
 		} // END if
@@ -55,6 +57,7 @@ class bSocial_OAuth
 		);
 
 		$this->service->token = bsocial()->keyring()->get_token_store()->get_token( $parameters );
+		return $this->service->token;
 	} // END set_keyring_user_token
 
 	public function get_http( $query_url, $parameters = array() )

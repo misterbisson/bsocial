@@ -101,6 +101,9 @@ class bSocial_Twitter
 		return $this->meta;
 	}//END meta
 
+	/**
+	 * @param $user_id WP user_id of the user you want to act as
+	 */
 	public function comments( $user_id = FALSE )
 	{
 		if ( $user_id )
@@ -123,6 +126,7 @@ class bSocial_Twitter
 
 	/**
 	 * return the twitter search object
+	 * @param $user_id WP user_id of the user you want to act as
 	 */
 	public function search( $user_id = FALSE )
 	{
@@ -144,6 +148,9 @@ class bSocial_Twitter
 		return $this->search;
 	}//END search
 
+	/**
+	 * @param $user_id WP user_id of the user you want to act as
+	 */
 	public function user_stream( $user_id = FALSE )
 	{
 		if ( $user_id )
@@ -175,6 +182,7 @@ class bSocial_Twitter
 	 *
 	 * @param $screen_name user screen name or id
 	 * @param $by 'screen_name' or 'id'
+	 * @param $user_id WP user_id of the user you want to act as
 	 */
 	public function get_user_info( $screen_name, $by = 'screen_name', $user_id = FALSE )
 	{
@@ -203,6 +211,7 @@ class bSocial_Twitter
 
 	/**
 	 * @param $message the message to tweet
+	 * @param $user_id WP user_id of the user you want to act as
 	 */
 	public function post_tweet( $message, $user_id = FALSE )
 	{
@@ -214,6 +223,10 @@ class bSocial_Twitter
 		return $this->post_http( 'statuses/update', array( 'status' => $message ) );
 	}//END post_tweet
 
+	/**
+	 * @param $tweet_id the id of the tweet you want to retweet
+	 * @param $user_id WP user_id of the user you want to act as
+	 */
 	public function retweet( $tweet_id, $user_id = FALSE )
 	{
 		if ( $user_id )
