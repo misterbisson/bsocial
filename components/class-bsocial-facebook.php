@@ -268,7 +268,7 @@ class bSocial_Facebook
 	} // END set_page_token
 
 	/**
-	 * returns a array of Facebook pages the user has admin access to including access_tokens that can be used to post to those pages
+	 * returns an array of Facebook pages the user has admin access to including access_tokens that can be used to post to those pages
 	 *
 	 * @param $user_id WP user_id of the user you want to act as
 	 */
@@ -283,56 +283,69 @@ class bSocial_Facebook
 	} // END get_pages
 
 	/**
+	 * publishes content to a user profile or FB page
+	 *
+	 * @param $method FB publishing method you wish to use (feed, comments, likes, events). See full list: https://developers.facebook.com/docs/reference/api/publishing/
+	 * @param $data array of data you wish to publish to FB (acceptable values depends on publishing method)
+	 * @param $user_id WP user_id of the user you want to act as
+	 * @param $id FB id of the object you want to interact with (page, event, album, object). Leave blank for user profiles. See: https://developers.facebook.com/docs/reference/api/publishing/
+	 */
+	public function publish( $method, array $data, $user_id = FALSE, $id = FALSE )
+	{
+		$profile_methods = array(
+			'feed',
+			'notes',
+			'links',
+			'events',
+			'albums',
+		);
+
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
+		// If this is a profile method and an $id value was provided this is a page
+		if ( $id && in_array( $method, $profile_methods ) )
+		{
+			if ( ! $page = $this->set_page_token( $id ) )
+			{
+				// User doesn't have access to the page
+				return FALSE;
+			} // END if
+
+			// In case the $page_id is actually a page name we'll just make sure it is set correctly to an id value here
+			$id = $page->id;
+		} // END if
+
+		$id = $id ? $id : $this->get_fb_user_id();
+
+		return $this->post_http( $id . '/' . $method, $data );
+	} // END publish
+
+	/**
 	 * post a status update to a user profile or FB page
 	 *
-	 * @param $message_info array of message info (message, picture, link, name, caption, description, source, place, tags) See full list: https://developers.facebook.com/docs/reference/api/post
+	 * @param $message_info array of message info (message, picture, link, name, caption, description, source, place, tags). See full list: https://developers.facebook.com/docs/reference/api/post
 	 * @param $user_id WP user_id of the user you want to act as
 	 * @param $page_id FB id/name of a page you wish to post to
 	 * @retval string id of the newly created post
 	 */
 	public function post_status( array $message_info, $user_id = FALSE, $page_id = FALSE )
 	{
-		if ( $page_id )
-		{
-			if ( ! $page = $this->set_page_token( $page_id ) )
-			{
-				// User doesn't have access to the page
-				return FALSE;
-			} // END if
-
-			// In case the $page_id is actually a page name we'll just make sure it is set correctly to an id value here
-			$page_id = $page->id;
-		} // END if
-
-		$profile_id = $page_id ? $page_id : $this->get_fb_user_id();
-
-		return $this->get_http( $profile_id . '/feed', $message_info );
+		return $this->publish( 'feed', $message_info, $user_id, $page_id );
 	} // END post_status
 
 	/**
 	 * post an event to a user profile or FB page
 	 *
-	 * @param $event_info array of event info (name, start_time, end_time) See full list: https://developers.facebook.com/docs/graph-api/reference/event
+	 * @param $event_info array of event info (name, start_time, end_time). See full list: https://developers.facebook.com/docs/graph-api/reference/event
 	 * @param $user_id WP user_id of the user you want to act as
 	 * @param $page_id FB id/name of a page you wish to post to
-	 * @retval string id of the newly created post
+	 * @retval string id of the newly created event
 	 */
 	public function post_event( array $event_info, $user_id = FALSE, $page_id = FALSE )
 	{
-		if ( $page_id )
-		{
-			if ( ! $page = $this->set_page_token( $page_id ) )
-			{
-				// User doesn't have access to the page
-				return FALSE;
-			} // END if
-
-			// In case the $page_id is actually a page name we'll just make sure it is set correctly to an id value here
-			$page_id = $page->id;
-		} // END if
-
-		$profile_id = $page_id ? $page_id : $this->get_fb_user_id();
-
-		return $this->get_http( $this->get_fb_user_id() . '/events', $event_info );
+		return $this->publish( 'events', $event_info, $user_id, $page_id );
 	} // END post_event
 } // END bSocial_Facebook
