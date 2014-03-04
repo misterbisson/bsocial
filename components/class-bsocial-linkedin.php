@@ -185,6 +185,13 @@ class bSocial_LinkedIn
 			$json->visibility->code = $parameters['visibility'];
 		}
 
-		return $this->oauth()->post_http( $url, array( 'custom_post_type' => 'json', 'post_data' => json_encode( $json ) ) );
+		return $this->oauth()->post_http( $url, array(
+			'body' => json_encode( $json ),
+			'headers' => array(
+				'Content-Type' => 'application/json',
+				'x-li-format' => 'json',
+			),
+			'sign_parameters' => FALSE,
+		) );
 	}//END share
 }//END class

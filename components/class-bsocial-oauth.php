@@ -103,9 +103,28 @@ class bSocial_OAuth
 
 		$parameters['method'] = $method;
 
+		if ( isset( $postfields['sign_parameters'] ) )
+		{
+			$parameters['sign_parameters'] = $postfields['sign_parameters'];
+			unset( $postfields['sign_parameters'] );
+		}//end if
+
 		if ( $postfields && 'POST' == $parameters['method'] )
 		{
-			$parameters['body'] = $postfields;
+			if ( isset( $postfields['headers'] ) )
+			{
+				$parameters['headers'] = $postfields['headers'];
+				unset( $postfields['headers'] );
+			}//end if
+
+			if ( isset( $parameters['headers'] ) )
+			{
+				$parameters['body'] = $postfields['body'];
+			}
+			else
+			{
+				$parameters['body'] = $postfields;
+			}
 		} // END if
 		elseif ( $postfields && 'GET' == $parameters['method'] )
 		{
