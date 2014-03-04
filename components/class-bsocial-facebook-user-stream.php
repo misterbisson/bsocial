@@ -13,10 +13,12 @@ class bSocial_Facebook_User_Stream
 	public $previous_url = NULL;
 	public $next_url = NULL;
 
+	public $profile_id;
+
 	public function __construct( $facebook )
 	{
 		$this->facebook = $facebook;
-	}//END __construct
+	} // END __construct
 
 	/**
 	 * get some number of posts from the authenticated user's wall
@@ -24,14 +26,14 @@ class bSocial_Facebook_User_Stream
 	 */
 	public function get_posts( $limit = 10 )
 	{
-		$posts = $this->facebook->get_http( $this->facebook->get_fb_user_id() . '/feed', array( 'limit' => $limit ) );
+		$posts = $this->facebook->get_http( $this->profile_id . '/feed', array( 'limit' => $limit ) );
 
 		if ( isset( $posts->paging ) )
 		{
-			$this->previous_url = $posts->paging['previous'];
-			$this->next_url = $posts->paging['next'];
+			$this->previous_url = $posts->paging->previous;
+			$this->next_url = $posts->paging->next;
 		}
 
 		return $posts;
-	}//END get_posts
-}//END class
+	} // END get_posts
+} // END bSocial_Facebook_User_Stream

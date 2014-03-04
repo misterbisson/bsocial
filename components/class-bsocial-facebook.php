@@ -45,7 +45,7 @@ class bSocial_Facebook
 
 		return $query_url;
 	}//END validate_query_url
-	
+
 	public function get_http( $query_url, $parameters = array() )
 	{
 		return $this->oauth()->get_http(
@@ -60,7 +60,7 @@ class bSocial_Facebook
 			$this->validate_query_url( $query_url ),
 			$parameters
 		);
-	}//END post_http
+	} // END post_http
 
 	/**
 	 * get the Facebook user_id of the current authenticated user
@@ -78,22 +78,22 @@ class bSocial_Facebook
 			);
 
 			$token = bsocial()->keyring()->get_token_store()->get_token( $parameters );
-			
+
 			if ( ! isset( $token->meta['user_id'] ) )
 			{
 				return FALSE;
 			} // END if
-			
+
 			return $token->meta['user_id'];
 		} // END if
-		
+
 		if ( ! isset( $this->oauth()->service->token->meta['user_id'] ) )
 		{
 			return FALSE;
 		} // END if
 
 		return $this->oauth()->service->token->meta['user_id'];
-	}//END get_fb_user_id
+	} // END get_fb_user_id
 
 	public function meta()
 	{
@@ -108,7 +108,7 @@ class bSocial_Facebook
 		}//END if
 
 		return $this->meta;
-	}//END meta
+	} // END meta
 
 	public function comments()
 	{
@@ -123,18 +123,33 @@ class bSocial_Facebook
 		}//END if
 
 		return $this->comments;
-	}//END comments
+	} // END comments
 
 	/**
+	 * re
+	 *
 	 * @param $user_id WP user_id of the user you want to act as
+	 * @param $page_id FB id/name of a page you wish to get the stream for
 	 */
-	public function user_stream( $user_id = FALSE )
+	public function user_stream( $user_id = FALSE, $page_id = FALSE )
 	{
 		if ( $user_id )
 		{
 			$this->oauth()->set_keyring_user_token( $user_id );
 		} // END if
-		
+
+		if ( $page_id )
+		{
+			if ( ! $page = $this->set_page_token( $page_id ) )
+			{
+				// User doesn't have access to the page
+				return FALSE;
+			} // END if
+
+			// In case the $page_id is actually a page name we'll just make sure it is set correctly to an id value here
+			$page_id = $page->id;
+		} // END if
+
 		if ( ! $this->user_stream )
 		{
 			if ( ! class_exists( 'bSocial_Facebook_User_Stream' ) )
@@ -143,8 +158,22 @@ class bSocial_Facebook
 			}
 			$this->user_stream = new bSocial_Facebook_User_Stream( $this );
 		}//END if
+
+		$this->user_stream->profile_id = $page_id ? $page_id : $this->get_fb_user_id();
+
 		return $this->user_stream;
-	}//END user_stream
+	} // END user_stream
+
+	/**
+	 * wrapper for user_stream
+	 *
+	 * @param $user_id WP user_id of the user you want to act as
+	 * @param $page_id FB id/name of a page you wish to get the stream of
+	 */
+	public function page_stream( $user_id = FALSE, $page_id )
+	{
+		return $this->user_stream( $user_id, $page_id );
+	} // END get_page
 
 	/**
 	 * @param $user_id WP user_id of the user you want to act as
@@ -160,8 +189,10 @@ class bSocial_Facebook
 	}//END get_profile
 
 	/**
+	 * returns profile object for a FB user or page
+	 *
 	 * @param $user_id WP user_id of the user you want to act as
-	 * @param $page_id Facebook id of a page you wish to get the profile of
+	 * @param $page_id FB id/name of a page you wish to get the profile of
 	 */
 	public function get_profile( $user_id = FALSE, $page_id = FALSE )
 	{
@@ -172,18 +203,69 @@ class bSocial_Facebook
 
 		if ( $page_id )
 		{
-			
+			if ( ! $page = $this->set_page_token( $page_id ) )
+			{
+				// User doesn't have access to the page
+				return FALSE;
+			} // END if
+
+			// In case the $page_id is actually a page name we'll just make sure it is set correctly to an id value here
+			$page_id = $page->id;
 		} // END if
-		
+
 		$profile_id = $page_id ? $page_id : $this->get_fb_user_id();
 
-		return $this->get_http( $id );
-	}//END get_profile
-	
+		return $this->get_http( $profile_id );
+	} // END get_profile
+
+	/**
+	 * wrapper for get_profile
+	 *
+	 * @param $user_id WP user_id of the user you want to act as
+	 * @param $page_id FB id/name of a page you wish to get the profile of
+	 */
 	public function get_page( $user_id = FALSE, $page_id )
 	{
 		return $this->get_profile( $user_id, $page_id );
 	} // END get_page
+
+	/**
+	 * Sets the access token according to the page being edited if the current user has access to the page, returns FB get_pages object for the page
+	 *
+	 * @param $page_id Facebook id / or FB Name of a page you wish to get the profile of
+	 */
+	public function set_page_token( $page_id )
+	{
+		$user_pages = $this->get_pages();
+
+		if ( ! isset( $user_pages->data ) )
+		{
+			return FALSE;
+		} // END if
+
+		$page = FALSE;
+
+		foreach ( $user_pages->data as $user_page )
+		{
+			if ( is_numeric( $page_id ) && $page_id != $user_page->id )
+			{
+				continue;
+			} // END if
+			elseif ( ! is_numeric( $page_id ) && $page_id != $user_page->name )
+			{
+				continue;
+			} // END elseif
+
+			$page = $user_page;
+		} // END foreach
+
+		if ( $page )
+		{
+			$this->oauth->service->token = $page->access_token;
+		} // END if
+
+		return $page;
+	} // END set_page_token
 
 	/**
 	 * returns a array of Facebook pages the user has admin access to including access_tokens that can be used to post to those pages
@@ -196,43 +278,61 @@ class bSocial_Facebook
 		{
 			$this->oauth()->set_keyring_user_token( $user_id );
 		} // END if
-		
+
 		return $this->get_http( $this->get_fb_user_id() . '/accounts' );
 	} // END get_pages
 
 	/**
-	 * post a status update to the user's feed/wall
+	 * post a status update to a user profile or FB page
 	 *
 	 * @param $message the message to post
 	 * @param $user_id WP user_id of the user you want to act as
+	 * @param $page_id FB id/name of a page you wish to post to
 	 * @retval string id of the newly created post
 	 */
-	public function post_status( $message, $user_id = FALSE )
+	public function post_status( $message, $user_id = FALSE, $page_id = FALSE )
 	{
-		// publish_actions is the permission needed to post to a user's wall
-		$fb_user_id = $this->get_fb_user_id( array( 'publish_actions' ) );
-
-		if ( ! $fb_user_id )
+		if ( $page_id )
 		{
-			return FALSE;
-		}
+			if ( ! $page = $this->set_page_token( $page_id ) )
+			{
+				// User doesn't have access to the page
+				return FALSE;
+			} // END if
 
-		try
-		{
-			$post_id = $this->facebook()->api(
-				'/' . $fb_user_id . '/feed',
-				'POST',
-				array(
-					'message' => $message,
-				)
-			);
-		}
-		catch ( Exception $e )
-		{
-			$post_id = FALSE;
-			$this->errors[] = new WP_Error( '/feed post error', $e->getMessage() );
-		}
+			// In case the $page_id is actually a page name we'll just make sure it is set correctly to an id value here
+			$page_id = $page->id;
+		} // END if
 
-		return $post_id;
-	}//END post_status
-}//END class
+		$profile_id = $page_id ? $page_id : $this->get_fb_user_id();
+
+		return $this->get_http( $profile_id . '/feed', array( 'message' => $message ) );
+	} // END post_status
+
+	/**
+	 * post an event to a user profile or FB page
+	 *
+	 * @param $event_info array of event info (name, start_time, end_time) See full list: https://developers.facebook.com/docs/graph-api/reference/event
+	 * @param $user_id WP user_id of the user you want to act as
+	 * @param $page_id FB id/name of a page you wish to post to
+	 * @retval string id of the newly created post
+	 */
+	public function post_event( array $event_info, $user_id = FALSE, $page_id = FALSE )
+	{
+		if ( $page_id )
+		{
+			if ( ! $page = $this->set_page_token( $page_id ) )
+			{
+				// User doesn't have access to the page
+				return FALSE;
+			} // END if
+
+			// In case the $page_id is actually a page name we'll just make sure it is set correctly to an id value here
+			$page_id = $page->id;
+		} // END if
+
+		$profile_id = $page_id ? $page_id : $this->get_fb_user_id();
+
+		return $this->get_http( $this->get_fb_user_id() . '/events', $event_info );
+	} // END post_event
+} // END bSocial_Facebook
