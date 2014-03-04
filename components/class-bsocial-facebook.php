@@ -285,12 +285,12 @@ class bSocial_Facebook
 	/**
 	 * post a status update to a user profile or FB page
 	 *
-	 * @param $message the message to post
+	 * @param $message_info array of message info (message, picture, link, name, caption, description, source, place, tags) See full list: https://developers.facebook.com/docs/reference/api/post
 	 * @param $user_id WP user_id of the user you want to act as
 	 * @param $page_id FB id/name of a page you wish to post to
 	 * @retval string id of the newly created post
 	 */
-	public function post_status( $message, $user_id = FALSE, $page_id = FALSE )
+	public function post_status( array $message_info, $user_id = FALSE, $page_id = FALSE )
 	{
 		if ( $page_id )
 		{
@@ -306,7 +306,7 @@ class bSocial_Facebook
 
 		$profile_id = $page_id ? $page_id : $this->get_fb_user_id();
 
-		return $this->get_http( $profile_id . '/feed', array( 'message' => $message ) );
+		return $this->get_http( $profile_id . '/feed', $message_info );
 	} // END post_status
 
 	/**
