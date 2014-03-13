@@ -9,16 +9,18 @@
 
 class bSocial_Facebook_Comments
 {
+	public $app_id;
+	public $secret;
+	
 	public function __construct()
 	{
-		// this requires the app_id and secret be set in the bsocial options
-		if (
-			! bsocial()->options()->facebook->app_id ||
-			! bsocial()->options()->facebook->secret
-		)
+		if ( ! bsocial()->facebook()->oauth()->service->is_configured() )
 		{
 			return;
-		}
+		} // END if
+
+		$this->app_id = bsocial()->facebook()->oauth()->service->app_id;
+		$this->secret = bsocial()->facebook()->oauth()->service->secret;
 
 		add_action( 'init', array( $this, 'init' ) );
 	} // END __construct
@@ -47,9 +49,8 @@ class bSocial_Facebook_Comments
 		$comment_limit = 25;
 
 		// get the access token
-		$url = 'https://graph.facebook.com/oauth/access_token?client_id=' . bsocial()->options()->facebook->app_id .
-				'&client_secret=' . bsocial()->options()->facebook->secret .
-				'&grant_type=client_credentials';
+		$url = 'https://graph.facebook.com/oauth/access_token?client_id=' . $this->app_id .
+				'&client_secret=' . $this->secret . '&grant_type=client_credentials';
 		$token = $this->fb_api_fetch( $url, $post_id );
 
 		// get the link ID for this post URL
@@ -123,6 +124,8 @@ class bSocial_Facebook_Comments
 				$wp_commment = array(
 					'comment_post_ID' => $post_id,
 					'comment_author' => $fb_comment->username,
+					// @TODO I think in light of this (see link below) we probably want to kill this line, no? 
+					// https://github.com/GigaOM/legacy-pro/issues/2592
 					'comment_author_email' => $fb_comment->fromid . '@facebook.id',
 					'comment_author_url' => 'http://facebook.com/profile.php?id=' . $fb_comment->fromid,
 					'comment_content' => $fb_comment->text,

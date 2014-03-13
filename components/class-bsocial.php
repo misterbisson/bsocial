@@ -23,6 +23,21 @@ class bSocial
 		add_action( 'delete_comment', array( $this, 'comment_id_by_meta_delete_cache' ) );
 	}
 
+	/**
+	 * Singleton for the keyring plugin
+	 */
+	public function keyring()
+	{
+		global $keyring;
+
+		if ( class_exists( 'Keyring' ) && ! is_object( $keyring ) )
+		{
+			$keyring = Keyring::init();
+		} // END if
+
+		return $keyring;
+	} // END keyring
+
 	public function init()
 	{
 		$options = $this->options();
@@ -149,32 +164,15 @@ class bSocial
 		return $this->linkedin;
 	}//END linkedin
 
-	public function new_oauth( $consumer_key, $consumer_secret, $access_token = NULL, $access_secret = NULL )
+	public function new_oauth( $consumer_key, $consumer_secret, $access_token = NULL, $access_secret = NULL, $service = NULL )
 	{
 		if ( ! class_exists( 'bSocial_OAuth' ) )
 		{
 			require __DIR__ . '/class-bsocial-oauth.php';
 		}
 
-		return new bSocial_OAuth( $consumer_key, $consumer_secret, $access_token, $access_secret );
+		return new bSocial_OAuth( $consumer_key, $consumer_secret, $access_token, $access_secret, $service );
 	}//END new_oauth
-
-	public function new_facebook( $app_id, $secret )
-	{
-		if ( ! class_exists( 'Facebook' ) )
-		{
-			require __DIR__ . '/external/facebook-php-sdk/src/facebook.php';
-		}
-
-		return new Facebook(
-			array(
-				'appId' => $app_id,
-				'secret' => $secret,
-				'fileUpload' => FALSE,
-				'allowSignedRequest' => FALSE, // for non-canvas apps
-			)
-		);
-	}//END new_facebook
 
 	public function opengraph()
 	{
@@ -242,9 +240,6 @@ class bSocial
 				'meta' => 1,
 				'js' => 1,
 
-				'app_id' => '',  // fb's oauth consumer/api key
-				'secret' => '',  // fb's oauth consumer/api secret
-
 				'admins' => '',
 				'page' => '',
 
@@ -255,11 +250,6 @@ class bSocial
 				'enable' => 1,
 				'meta' => 1,
 				'js' => 1,
-
-				'consumer_key' => '',
-				'consumer_secret' => '',
-				'access_token' => '',
-				'access_secret' => '',
 			),
 			'twitter' => (object) array(
 				'enable' => 1,

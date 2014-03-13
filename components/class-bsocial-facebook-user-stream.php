@@ -7,43 +7,33 @@
  */
 class bSocial_Facebook_User_Stream
 {
-	public $bsocial_facebook = NULL;
+	public $facebook = NULL;
 
 	// urls to get to the next and previous pages
 	public $previous_url = NULL;
 	public $next_url = NULL;
 
-	public function __construct( $bsocial_facebook )
+	public $profile_id;
+
+	public function __construct( $facebook )
 	{
-		$this->bsocial_facebook = $bsocial_facebook;
-	}//END __construct
+		$this->facebook = $facebook;
+	} // END __construct
 
 	/**
 	 * get some number of posts from the authenticated user's wall
+	 * @param $limit number of posts to return
 	 */
-	public function get_posts( $limit = 2 )
+	public function get_posts( $limit = 10 )
 	{
-		$user_id = $this->bsocial_facebook->get_user_id();
-
-		if ( ! $user_id )
-		{
-			return FALSE;
-		}
-
-		$posts = $this->bsocial_facebook->facebook->api(
-			'/' . $user_id . '/feed',
-			'GET',
-			array(
-				'limit' => $limit,
-			)
-		);
+		$posts = $this->facebook->get_http( $this->profile_id . '/feed', array( 'limit' => $limit ) );
 
 		if ( isset( $posts->paging ) )
 		{
-			$this->previous_url = $posts->paging['previous'];
-			$this->next_url = $posts->paging['next'];
+			$this->previous_url = $posts->paging->previous;
+			$this->next_url = $posts->paging->next;
 		}
 
 		return $posts;
-	}//END get_posts
-}//END class
+	} // END get_posts
+} // END bSocial_Facebook_User_Stream

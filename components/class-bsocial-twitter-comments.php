@@ -105,6 +105,8 @@ class bSocial_Twitter_Comments
 			$comment = array(
 				'comment_post_ID' => $post_id,
 				'comment_author' => $tweet->from_user->name,
+				// @TODO I think in light of this (see link below) we probably want to kill this line, no? 
+				// https://github.com/GigaOM/legacy-pro/issues/2592
 				'comment_author_email' => $tweet->from_user->id_str . '@twitter.id',
 //				'comment_author_url' => 'http://twitter.com/'. $tweet->from_user->screen_name .'/status/'. $tweet->id_str,
 				'comment_author_url' => 'http://twitter.com/'. $tweet->from_user->screen_name,
