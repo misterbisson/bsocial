@@ -87,6 +87,11 @@ class bSocial_Facebook
 			return $token->meta['user_id'];
 		} // END if
 
+		if ( ! $this->oauth() )
+		{
+			return FALSE;
+		} // END if
+
 		if ( ! isset( $this->oauth()->service->token->meta['user_id'] ) )
 		{
 			return FALSE;
@@ -234,7 +239,7 @@ class bSocial_Facebook
 	 *
 	 * @param $page_id Facebook id / or FB Name of a page you wish to get the profile of
 	 */
-	public function set_page_token( $page_id )
+	public function set_page_token( $page_id, $post_as_user = FALSE )
 	{
 		$user_pages = $this->get_pages();
 
@@ -259,7 +264,7 @@ class bSocial_Facebook
 			$page = $user_page;
 		} // END foreach
 
-		if ( $page )
+		if ( $page && ! $post_as_user )
 		{
 			$this->oauth->service->token = $page->access_token;
 		} // END if
