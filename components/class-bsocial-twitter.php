@@ -236,4 +236,14 @@ class bSocial_Twitter
 
 		return $this->post_http( 'statuses/retweet/' . absint( $tweet_id ) );
 	} // END retweet
+
+	/**
+	 * Get current Twitter.com configuration.
+	 * Useful for getting things like the current short_url_length and short_url_length_https values.
+	 * See: https://dev.twitter.com/docs/api/1.1/get/help/configuration
+	 */
+	public function get_twitter_help_configuration()
+	{
+		return $this->get_http( 'help/configuration' );
+	} // END get_twitter_help_configuration
 }//END class
