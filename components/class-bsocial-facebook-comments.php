@@ -124,8 +124,6 @@ class bSocial_Facebook_Comments
 				$wp_commment = array(
 					'comment_post_ID' => $post_id,
 					'comment_author' => $fb_comment->username,
-					// @TODO I think in light of this (see link below) we probably want to kill this line, no? 
-					// https://github.com/GigaOM/legacy-pro/issues/2592
 					'comment_author_email' => $fb_comment->fromid . '@facebook.id',
 					'comment_author_url' => 'http://facebook.com/profile.php?id=' . $fb_comment->fromid,
 					'comment_content' => $fb_comment->text,
