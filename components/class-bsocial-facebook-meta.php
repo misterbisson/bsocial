@@ -60,7 +60,7 @@ class bSocial_Facebook_Meta
 		<div id="fb-root"></div>
 		<script>
 			window.fbAsyncInit = function() {
-				FB.init({appId: <?php echo bsocial()->options()->facebook->app_id; ?>, status: true, cookie: true, xfbml: true});
+				FB.init({appId: <?php echo esc_js( bsocial()->options()->facebook->app_id ); ?>, status: true, cookie: true, xfbml: true});
 			};
 
 			var e = document.createElement('script');
