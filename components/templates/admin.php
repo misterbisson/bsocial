@@ -11,31 +11,31 @@
 					<table class="form-table">
 						<!-- facebook details -->
 						<tr valign="top"><th scope="row">Enable Facebook components</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'enable' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->enable, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'enable' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->enable, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Facebook app ID</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'app_id' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->app_id ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'app_id' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->app_id ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Facebook app secret</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'secret' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->secret ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'secret' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->secret ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Facebook app admin IDs</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'admins' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->admins ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'admins' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->admins ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Facebook page for site</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'page' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->page ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'page' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->page ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Enable Facebook JS</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'js' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->js, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'js' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->js, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Enable Facebook meta</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'meta' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->meta, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'meta' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->meta, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Ingest Facebook comments</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'comments' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->comments, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'comments' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->comments, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Add a Facebook like button to every post</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'add_button' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->add_button, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'facebook', 'add_button' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->add_button, 1 ); ?> /></td>
 						</tr>
 					</table>
 				</div>
@@ -47,25 +47,25 @@
 					<table class="form-table">
 						<!-- linkedin details -->
 						<tr valign="top"><th scope="row">Enable LinkedIn components</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'linkedin', 'enable' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->linkedin->enable, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'linkedin', 'enable' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->linkedin->enable, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">LinkedIn application consumer key</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'linkedin', 'consumer_key' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->linkedin->consumer_key ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'linkedin', 'consumer_key' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->linkedin->consumer_key ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">LinkedIn application consumer secret</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'linkedin', 'consumer_secret' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->linkedin->consumer_secret ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'linkedin', 'consumer_secret' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->linkedin->consumer_secret ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">LinkedIn application access token</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'linkedin', 'access_token' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->linkedin->access_token ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'linkedin', 'access_token' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->linkedin->access_token ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">LinkedIn application access secret</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'linkedin', 'access_secret' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->linkedin->access_secret ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'linkedin', 'access_secret' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->linkedin->access_secret ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Enable LinkedIn JS</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'linkedin', 'js' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->linkedin->js, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'linkedin', 'js' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->linkedin->js, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Enable LinkedIn meta</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'linkedin', 'meta' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->linkedin->meta, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'linkedin', 'meta' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->linkedin->meta, 1 ); ?> /></td>
 						</tr>
 					</table>
 				</div>
@@ -77,31 +77,31 @@
 					<table class="form-table">
 						<!-- twitter details -->
 						<tr valign="top"><th scope="row">Enable Twitter components</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'twitter', 'enable' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->enable, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'enable' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->enable, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Twitter application consumer key</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'twitter', 'consumer_key' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->twitter->consumer_key ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'consumer_key' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->twitter->consumer_key ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Twitter application consumer secret</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'twitter', 'consumer_secret' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->twitter->consumer_secret ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'consumer_secret' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->twitter->consumer_secret ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Twitter application access token</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'twitter', 'access_token' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->twitter->access_token ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'access_token' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->twitter->access_token ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Twitter application access secret</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'twitter', 'access_secret' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->twitter->access_secret ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'access_secret' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->twitter->access_secret ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Default Twitter @username for site</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'twitter', 'username' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->twitter->username ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'username' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->twitter->username ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Enable Twitter JS</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'twitter', 'js' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->js, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'js' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->js, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Enable Twitter meta</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'twitter', 'meta' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->meta, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'meta' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->meta, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Ingest tweets that link to this site as comments on the post they link to</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'twitter', 'comments' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->comments, 1 ); ?> /> <a href="<?php echo admin_url( '/admin-ajax.php?action=bsocial_twitter_comments' ); ?>">register cron</a></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'twitter', 'comments' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->twitter->comments, 1 ); ?> /> <a href="<?php echo admin_url( '/admin-ajax.php?action=bsocial_twitter_comments' ); ?>">register cron</a></td>
 						</tr>
 					</table>
 				</div>
@@ -113,10 +113,10 @@
 					<table class="form-table">
 						<!-- opengraph -->
 						<tr valign="top"><th scope="row">Enable Open Graph metadata</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'opengraph', 'enable' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->opengraph->enable, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'opengraph', 'enable' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->opengraph->enable, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Default open graph type for site</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'opengraph', 'type' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->opengraph->type ); ?>" /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'opengraph', 'type' ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->opengraph->type ); ?>" /></td>
 						</tr>
 					</table>
 				</div>
@@ -129,14 +129,14 @@
 					<table class="form-table">
 						<!-- featuredcomments -->
 						<tr valign="top"><th scope="row">Enable featured comments</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'featuredcomments', 'enable' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->featuredcomments->enable, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'featuredcomments', 'enable' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->featuredcomments->enable, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Add featured comments to waterfall</th>
-							<td><input name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'featuredcomments', 'add_to_waterfall' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->featuredcomments->add_to_waterfall, 1 ); ?> /></td>
+							<td><input name="<?php echo bsocial()->admin()->get_field_name( array( 'featuredcomments', 'add_to_waterfall' ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->featuredcomments->add_to_waterfall, 1 ); ?> /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Date</th>
 							<td>
-								<select name="<?php echo esc_attr( bsocial()->admin()->get_field_name( array( 'featuredcomments', 'use_commentdate' ) ) ); ?>">
+								<select name="<?php echo bsocial()->admin()->get_field_name( array( 'featuredcomments', 'use_commentdate' ) ); ?>">
 									<option value="1" <?php selected( bsocial()->options()->featuredcomments->use_commentdate, 1 ); ?>>Use the original comment date</option>
 									<option value="0" <?php selected( bsocial()->options()->featuredcomments->use_commentdate, 0 ); ?>>Use the date they were featured</option>
 								</select>
