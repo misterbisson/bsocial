@@ -9,6 +9,8 @@ class bSocial_Twitter
 	public $meta = NULL;
 	public $search = NULL;
 	public $user_stream = NULL;
+	public $user_id = NULL;
+	public $user = NULL;
 
 	/**
 	 * get an oauth instance
@@ -20,23 +22,27 @@ class bSocial_Twitter
 			return $this->oauth;
 		}
 
-		// check if we have the user token and secret or not
+		// Start an oauth instance
 		if ( ! empty( bsocial()->options()->twitter->access_token ) && ! empty( bsocial()->options()->twitter->access_secret ) )
 		{
 			$this->oauth = bsocial()->new_oauth(
 				bsocial()->options()->twitter->consumer_key,
 				bsocial()->options()->twitter->consumer_secret,
 				bsocial()->options()->twitter->access_token,
-				bsocial()->options()->twitter->access_secret
+				bsocial()->options()->twitter->access_secret,
+				'twitter'
 			);
-		}
+		} // END if
 		else
 		{
 			$this->oauth = bsocial()->new_oauth(
 				bsocial()->options()->twitter->consumer_key,
-				bsocial()->options()->twitter->consumer_secret
+				bsocial()->options()->twitter->consumer_secret,
+				NULL,
+				NULL,
+				'twitter'
 			);
-		}
+		} // END else
 
 		return $this->oauth;
 	}//END oauth
@@ -95,8 +101,16 @@ class bSocial_Twitter
 		return $this->meta;
 	}//END meta
 
-	public function comments()
+	/**
+	 * @param $user_id WP user_id of the user you want to act as
+	 */
+	public function comments( $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
 		if ( ! $this->comments )
 		{
 			if ( ! class_exists( 'bSocial_Twitter_Comments' ) )
@@ -112,9 +126,15 @@ class bSocial_Twitter
 
 	/**
 	 * return the twitter search object
+	 * @param $user_id WP user_id of the user you want to act as
 	 */
-	public function search()
+	public function search( $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
 		if ( ! $this->search )
 		{
 			if ( ! class_exists( 'bSocial_Twitter_Search' ) )
@@ -128,8 +148,16 @@ class bSocial_Twitter
 		return $this->search;
 	}//END search
 
-	public function user_stream()
+	/**
+	 * @param $user_id WP user_id of the user you want to act as
+	 */
+	public function user_stream( $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
 		if ( ! $this->user_stream )
 		{
 			if ( ! class_exists( 'bSocial_Twitter_User_Stream' ) )
@@ -154,9 +182,15 @@ class bSocial_Twitter
 	 *
 	 * @param $screen_name user screen name or id
 	 * @param $by 'screen_name' or 'id'
+	 * @param $user_id WP user_id of the user you want to act as
 	 */
-	public function get_user_info( $screen_name, $by = 'screen_name' )
+	public function get_user_info( $screen_name, $by = 'screen_name', $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
 		// are we searching by screen name or ID?
 		$by = in_array( $by, array( 'screen_name', 'id' )) ? $by : 'screen_name';
 
@@ -177,9 +211,39 @@ class bSocial_Twitter
 
 	/**
 	 * @param $message the message to tweet
+	 * @param $user_id WP user_id of the user you want to act as
 	 */
-	public function post_tweet( $message )
+	public function post_tweet( $message, $user_id = FALSE )
 	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
 		return $this->post_http( 'statuses/update', array( 'status' => $message ) );
 	}//END post_tweet
+
+	/**
+	 * @param $tweet_id the id of the tweet you want to retweet
+	 * @param $user_id WP user_id of the user you want to act as
+	 */
+	public function retweet( $tweet_id, $user_id = FALSE )
+	{
+		if ( $user_id )
+		{
+			$this->oauth()->set_keyring_user_token( $user_id );
+		} // END if
+
+		return $this->post_http( 'statuses/retweet/' . absint( $tweet_id ) );
+	} // END retweet
+
+	/**
+	 * Get current Twitter.com configuration.
+	 * Useful for getting things like the current short_url_length and short_url_length_https values.
+	 * See: https://dev.twitter.com/docs/api/1.1/get/help/configuration
+	 */
+	public function get_twitter_help_configuration()
+	{
+		return $this->get_http( 'help/configuration' );
+	} // END get_twitter_help_configuration
 }//END class
