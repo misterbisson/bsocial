@@ -26,7 +26,7 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 
 		echo $before_widget . $before_title . $title . $after_title;
 ?>
-		<div class="fb-comments" <?php echo $url; ?> data-num-posts="<?php echo $instance['comments'] ?>" data-width="<?php echo $instance['width'] ?>" data-colorscheme="<?php echo $instance['colorscheme'] ?>"></div>
+		<div class="fb-comments" <?php echo esc_url( $url ); ?> data-num-posts="<?php echo $instance['comments'] ?>" data-width="<?php echo $instance['width'] ?>" data-colorscheme="<?php echo $instance['colorscheme'] ?>"></div>
 <?php
 		echo $after_widget;
 	}//END widget
@@ -166,8 +166,8 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 		echo $before_widget . $before_title . $title . $after_title;
 ?>
 		<span id="fb_activity_like">
-			<fb:like ref="top_activity" width="50" show_faces="false" send="false" layout="box_count" href="<?php echo $url; ?>" font="segoe ui"></fb:like>
-			<fb:facepile href="<?php echo $url; ?>" width="225" max_rows="1"  font="segoe ui"></fb:facepile>
+			<fb:like ref="top_activity" width="50" show_faces="false" send="false" layout="box_count" href="<?php echo esc_url( $url ); ?>" font="segoe ui"></fb:like>
+			<fb:facepile href="<?php echo esc_url( $url ); ?>" width="225" max_rows="1"  font="segoe ui"></fb:facepile>
 		</span>
 <?php
 		echo $after_widget;

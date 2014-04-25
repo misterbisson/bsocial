@@ -155,7 +155,7 @@
 
 <script>
 jQuery(function() {
-	jQuery( "#<?php echo bsocial()->admin()->get_field_id( 'accordian' ); ?>" ).accordion({
+	jQuery( "#<?php echo esc_js( bsocial()->admin()->get_field_id( 'accordian' ) ); ?>" ).accordion({
       heightStyle: "content",
       event: "click hoverintent"
     });
