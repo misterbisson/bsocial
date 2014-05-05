@@ -23,7 +23,7 @@
 							<td><input name="<?php /* @INSANE */ echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'admins' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->admins ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Facebook page for site</th>
-							<td><input name="<?php /* @INSANE */ echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'page' ) ) ); ?>" ); type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->page ); ?>" /></td>
+							<td><input name="<?php /* @INSANE */ echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'page' ) ) ); ?>" type="text" value="<?php echo esc_attr( bsocial()->options()->facebook->page ); ?>" /></td>
 						</tr>
 						<tr valign="top"><th scope="row">Enable Facebook JS</th>
 							<td><input name="<?php /* @INSANE */ echo esc_attr( bsocial()->admin()->get_field_name( array( 'facebook', 'js' ) ) ); ?>" type="checkbox" value="1" <?php checked( bsocial()->options()->facebook->js, 1 ); ?> /></td>
