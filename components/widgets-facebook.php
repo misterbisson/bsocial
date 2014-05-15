@@ -2,7 +2,6 @@
 
 class bSocial_Facebook_Comments_Widget extends WP_Widget
 {
-
 	public function __construct()
 	{
 		$widget_ops = array('classname' => 'widget_fb_comments', 'description' => __( 'Displays Facebook comments') );
@@ -25,9 +24,9 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 		}
 
 		echo $before_widget . $before_title . $title . $after_title;
-?>
-		<div class="fb-comments" <?php echo esc_url( $url ); ?> data-num-posts="<?php echo $instance['comments'] ?>" data-width="<?php echo $instance['width'] ?>" data-colorscheme="<?php echo $instance['colorscheme'] ?>"></div>
-<?php
+		?>
+		<div class="fb-comments" <?php echo esc_url( $url ); ?> data-num-posts="<?php echo absint( $instance['comments'] ); ?>" data-width="<?php echo absint( $instance['width'] ); ?>" data-colorscheme="<?php echo esc_attr( $instance['colorscheme'] ); ?>"></div>
+		<?php
 		echo $after_widget;
 	}//END widget
 
