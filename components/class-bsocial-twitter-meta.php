@@ -60,7 +60,7 @@ class bSocial_Twitter_Meta
 				continue;
 			}
 
-			echo '<meta name="'. esc_attr( $key ) .'" value="'. esc_attr( $value ) .'" />' . "\n";
+			echo '<meta name="' . esc_attr( $key ) . '" content="' . esc_attr( $value ) . '" />' . "\n";
 		}
 	} // END wp_head
 
