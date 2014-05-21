@@ -326,7 +326,7 @@ class bSocial_Facebook
 		$id = $id ? $id : $this->get_fb_user_id();
 
 		// Facebook doesn't always respond in a timely enough manner and will actually publish something but not reply quick enough
-		// Wo we'll raise this enough that we know when a publish action has actually occured
+		// So we raise this enough that we know when a publish action has actually occured
 		$data['timeout'] = 7;
 
 		return $this->post_http( $id . '/' . $method, $data );
