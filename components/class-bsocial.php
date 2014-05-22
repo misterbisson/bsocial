@@ -307,6 +307,13 @@ class bSocial
 		{
 			return get_blog_id_from_url( $url['host'], '/' );
 		}
+		/**
+		 * This else condition will only happen when is_subdomain_install() 
+		 * is false. I.e.: it should never happen on WP.com
+		 * 
+		 * get_blog_id_from_url() in WP core can't handle URLs that include
+		 * a post's permalink, so we work around it with some custom queries.
+		 */
 		elseif ( ! empty( $url['path'] ) )
 		{
 			// get the likely blog path
@@ -370,6 +377,13 @@ class bSocial
 		}
 	}//END follow_url
 
+	/**
+	 * this method uses a custom SQL query because it's way more performant
+	 * than the SQL from WP's core WP_Comment_Query class.
+	 * 
+	 * The main problem: joins on tables with BLOB or TEXT columns _always_
+	 * go to temp tables on disk. See http://dev.mysql.com/doc/refman/5.5/en/internal-temporary-tables.html
+	 */
 	public function comment_id_by_meta( $metavalue, $metakey )
 	{
 		global $wpdb;
