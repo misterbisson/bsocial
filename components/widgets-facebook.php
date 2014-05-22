@@ -10,8 +10,6 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 
 	public function widget( $args, $instance )
 	{
-		extract( $args );
-
 		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'] );
 		if( is_singular() ) // get clean URLs on single post pages
 		{
@@ -23,11 +21,11 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 			$url = ''; // empty URL
 		}
 
-		echo $before_widget . $before_title . $title . $after_title;
+		echo $args['before_widget'] . $args['before_title'] . $title . $args['after_title'];
 		?>
 		<div class="fb-comments" <?php echo esc_url( $url ); ?> data-num-posts="<?php echo absint( $instance['comments'] ); ?>" data-width="<?php echo absint( $instance['width'] ); ?>" data-colorscheme="<?php echo esc_attr( $instance['colorscheme'] ); ?>"></div>
 		<?php
-		echo $after_widget;
+		echo $args['after_widget'];
 	}//END widget
 
 	public function update( $new_instance, $old_instance )
@@ -88,16 +86,13 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 
 	public function widget( $args, $instance )
 	{
-		extract( $args );
-
-
 		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'] );
 
-		echo $before_widget . $before_title . $title . $after_title;
+		echo $args['before_widget'] . $args['before_title'] . $title . $args['after_title'];
 ?>
 		<fb:activity width="300" height="270" header="false" font="segoe ui" border_color="#fff" recommendations="true"></fb:activity>
 <?php
-		echo $after_widget;
+		echo $args['after_widget'];
 	}//END widget
 
 	public function update( $new_instance, $old_instance )
@@ -139,7 +134,6 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 
 	public function widget( $args, $instance )
 	{
-		extract( $args );
 
 		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'] );
 
@@ -162,14 +156,14 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 				$url = trailingslashit( home_url() );
 		}
 
-		echo $before_widget . $before_title . $title . $after_title;
+		echo $args['before_widget'] . $args['before_title'] . $title . $args['after_title'];
 ?>
 		<span id="fb_activity_like">
 			<fb:like ref="top_activity" width="50" show_faces="false" send="false" layout="box_count" href="<?php echo esc_url( $url ); ?>" font="segoe ui"></fb:like>
 			<fb:facepile href="<?php echo esc_url( $url ); ?>" width="225" max_rows="1"  font="segoe ui"></fb:facepile>
 		</span>
 <?php
-		echo $after_widget;
+		echo $args['after_widget'];
 	}//END widget
 
 	public function update( $new_instance, $old_instance )
