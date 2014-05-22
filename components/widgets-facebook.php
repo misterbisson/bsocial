@@ -21,7 +21,7 @@ class bSocial_Facebook_Comments_Widget extends WP_Widget
 			$url = ''; // empty URL
 		}
 
-		echo $args['before_widget'] . $args['before_title'] . $title . $args['after_title'];
+		echo $args['before_widget'] . $args['before_title'] . esc_html( $title ) . $args['after_title'];
 		?>
 		<div class="fb-comments" <?php echo esc_url( $url ); ?> data-num-posts="<?php echo absint( $instance['comments'] ); ?>" data-width="<?php echo absint( $instance['width'] ); ?>" data-colorscheme="<?php echo esc_attr( $instance['colorscheme'] ); ?>"></div>
 		<?php
@@ -88,7 +88,7 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 	{
 		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'] );
 
-		echo $args['before_widget'] . $args['before_title'] . $title . $args['after_title'];
+		echo $args['before_widget'] . $args['before_title'] . esc_html( $title ) . $args['after_title'];
 ?>
 		<fb:activity width="300" height="270" header="false" font="segoe ui" border_color="#fff" recommendations="true"></fb:activity>
 <?php
@@ -112,11 +112,10 @@ class bSocial_Facebook_Activity_Widget extends WP_Widget
 			)
 		);
 
-		$title = esc_attr( $instance['title'] );
 ?>
 
 		<p>
-			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
 		</p>
 <?php
 	}//END form
@@ -156,7 +155,7 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 				$url = trailingslashit( home_url() );
 		}
 
-		echo $args['before_widget'] . $args['before_title'] . $title . $args['after_title'];
+		echo $args['before_widget'] . $args['before_title'] . esc_html( $title ) . $args['after_title'];
 ?>
 		<span id="fb_activity_like">
 			<fb:like ref="top_activity" width="50" show_faces="false" send="false" layout="box_count" href="<?php echo esc_url( $url ); ?>" font="segoe ui"></fb:like>
@@ -185,7 +184,6 @@ class bSocial_Facebook_Like_Widget extends WP_Widget
 			)
 		);
 
-		$title = esc_attr( $instance['title'] );
 ?>
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
