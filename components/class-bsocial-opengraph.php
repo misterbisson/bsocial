@@ -133,7 +133,10 @@ class bSocial_Opengraph
 		$old_tz = date_default_timezone_get();
 		date_default_timezone_set( 'UTC' );
 
-		if ( is_author() )
+		// the "author" taxonomy is from co-authors-plus. we check for it here
+		// because go-local-coauthors-plus converts author queries to
+		// author taxonomy queries
+		if ( is_author() || is_tax( 'author' ) )
 		{
 			$author = get_queried_object();
 
