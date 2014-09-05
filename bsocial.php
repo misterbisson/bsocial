@@ -3,7 +3,7 @@
 Plugin Name: bSocial Connected Blogging Tools
 Plugin URI: http://wordpress.org/plugins/bsocial/
 Description: Social widgets and connectivity.
-Version: 6.0
+Version: 6.1
 Author: Casey Bisson
 Author URI: http://maisonbisson.com/blog/
 */
