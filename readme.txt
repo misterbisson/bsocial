@@ -3,7 +3,7 @@ Contributors: misterbisson, willsfca
 Donate link: http://MaisonBisson.com/
 Tags: bSuite, social, social networks, comments, Facebook, Twitter, LinkedIn, widgets, featured comments, social proof
 Requires at least: 3.7
-Tested up to: 3.8
+Tested up to: 4.0
 Stable tag: trunk
 
 More social, more fun; a better connected blog.
