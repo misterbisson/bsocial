@@ -313,7 +313,7 @@ class bSocial_Facebook
 		// If this is a profile method and an $id value was provided this is a page
 		if ( $id && in_array( $method, $profile_methods ) )
 		{
-			if ( ! $page = $this->set_page_token( $id ) )
+			if ( ! $page = $this->set_page_token( $id, TRUE ) )
 			{
 				// User doesn't have access to the page
 				return FALSE;
