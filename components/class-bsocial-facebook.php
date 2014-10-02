@@ -266,7 +266,7 @@ class bSocial_Facebook
 
 		if ( $page && ! $post_as_user )
 		{
-			$this->oauth->service->token = $page->access_token;
+			$this->oauth()->service->token = $page->access_token;
 		} // END if
 
 		return $page;
