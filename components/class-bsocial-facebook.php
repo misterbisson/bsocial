@@ -313,7 +313,8 @@ class bSocial_Facebook
 		// If this is a profile method and an $id value was provided this is a page
 		if ( $id && in_array( $method, $profile_methods ) )
 		{
-			if ( ! $page = $this->set_page_token( $id ) )
+			// Setting the second argument to TRUE will cause the post attempt to continue using the current user's token instead of a page specific one
+			if ( ! $page = $this->set_page_token( $id, TRUE ) )
 			{
 				// User doesn't have access to the page
 				return FALSE;
