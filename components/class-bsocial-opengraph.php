@@ -136,6 +136,12 @@ class bSocial_Opengraph
 		if ( is_author() )
 		{
 			$author = get_queried_object();
+			
+			// Deal with authors when coauthors-plus is running and the queried object is an author term not a user object
+			if ( isset( $author->taxonomy ) && 'author' == $author->taxonomy )
+			{
+				$author = get_user_by( 'slug', $author->name );
+			} // END if
 
 			$return['og:description']     = get_the_author_meta( 'description', $author->ID );
 			$return['og:image']           = $this->get_avatar( $author->user_email, 512 );
