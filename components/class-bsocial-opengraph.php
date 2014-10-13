@@ -135,7 +135,7 @@ class bSocial_Opengraph
 
 		if ( is_author() )
 		{
-			$author = get_queried_object();
+			$author = apply_filters( 'opengraph_author_object', get_queried_object() );
 
 			$return['og:description']     = get_the_author_meta( 'description', $author->ID );
 			$return['og:image']           = $this->get_avatar( $author->user_email, 512 );
@@ -151,11 +151,11 @@ class bSocial_Opengraph
 			$post = get_queried_object();
 
 			// get article-specific data
-			$return['article:author'] = get_author_posts_url( $post->post_author );
-			$return['article:modified_time'] = date( 'c', strtotime( $post->post_modified_gmt ) );
+			$return['article:author']         = get_author_posts_url( $post->post_author );
+			$return['article:modified_time']  = date( 'c', strtotime( $post->post_modified_gmt ) );
 			$return['article:published_time'] = date( 'c', strtotime( $post->post_date_gmt ) );
-			$return['article:publisher'] = bsocial()->options()->facebook->page;
-			$return['article:tag'] = (array) wp_get_object_terms(
+			$return['article:publisher']      = bsocial()->options()->facebook->page;
+			$return['article:tag']            = (array) wp_get_object_terms(
 				$post->ID,
 				(array) get_object_taxonomies( $post->post_type ),
 				array(
