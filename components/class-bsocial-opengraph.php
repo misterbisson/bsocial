@@ -182,7 +182,7 @@ class bSocial_Opengraph
 
 				$return['og:image'] = $this->get_thumbnail( $post->ID, 'large' );
 			}// END else
-			$return['og:title'] = empty( $post->post_title ) ? ' ' : wp_kses( $post->post_title, array() ) ;
+			$return['og:title'] = empty( $post->post_title ) ? ' ' : wp_kses( get_the_title( $post->ID ), array() ) ;
 			$return['og:type']  = 'article';
 			$return['og:url']   = get_permalink( $post->ID );
 		}// END elseif
