@@ -40,7 +40,7 @@ This plugin is on Github: https://github.com/misterbisson/bsocial
 
 ### = Build status =
 
-- Master: <a href="https://travis-ci.org/misterbisson/bsocial"><img src="https://travis-ci.org/misterbisson/bsocial.svg?branch=master" alt="build status" /></a>
+[Master build status at Travis-CI](https://travis-ci.org/misterbisson/bsocial): [![Build Status](https://travis-ci.org/misterbisson/bcms.svg?branch=master)](https://travis-ci.org/misterbisson/bcms)
 
 ## == Installation ==
 
