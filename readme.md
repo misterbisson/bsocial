@@ -1,9 +1,15 @@
 # === bSocial ===
+
 Contributors: misterbisson, willsfca
+
 Donate link: http://MaisonBisson.com/
+
 Tags: bSuite, social, social networks, comments, Facebook, Twitter, LinkedIn, widgets, featured comments, social proof
+
 Requires at least: 3.7
+
 Tested up to: 4.0
+
 Stable tag: trunk
 
 More social, more fun; a better connected blog.
@@ -23,6 +29,14 @@ More social, more fun; a better connected blog.
 ### = History =
 
 The bSocial plugin is derived from bSuite and includes many of the social features and none of the cruft from that plugin. See <a href="http://wordpress.org/extend/plugins/tags/bsuite">the whole family of bSuite plugins</a>.
+
+### = In the WordPress.org plugin repo =
+
+Here: https://wordpress.org/plugins/bsocial/
+
+### = Fork me! =
+
+This plugin is on Github: https://github.com/misterbisson/bsocial
 
 ### = Build status =
 
