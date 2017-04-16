@@ -180,7 +180,8 @@ class bSocial_Opengraph
 					array()
 				);
 
-				$return['og:image'] = $this->get_thumbnail( $post->ID, 'large' );
+				$return['og:image'] = apply_filters( 'bsocial_opengraph_image', $this->get_thumbnail( $post->ID, 'large' ) );
+
 			}// END else
 			$return['og:title'] = empty( $post->post_title ) ? ' ' : wp_kses( get_the_title( $post->ID ), array() ) ;
 			$return['og:type']  = 'article';
